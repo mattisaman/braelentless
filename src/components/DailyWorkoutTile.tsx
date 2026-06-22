@@ -17,7 +17,7 @@ interface Props {
 export default function DailyWorkoutTile({ drills }: Props) {
   const storageKey = `braelentless_workout_${todayISO()}`
   const [completed, setCompleted] = useState<string[]>([])
-  const [expanded, setExpanded] = useState(false)
+  const [expanded, setExpanded] = useState(true)
 
   useEffect(() => {
     setCompleted(loadData<string[]>(storageKey, []))
@@ -42,7 +42,7 @@ export default function DailyWorkoutTile({ drills }: Props) {
         background: '#0f0b08',
         borderRadius: 10,
         border: '1px solid #1e1410',
-        padding: 16,
+        overflow: 'hidden',
       }}
     >
       {/* Header */}
@@ -53,17 +53,18 @@ export default function DailyWorkoutTile({ drills }: Props) {
           alignItems: 'center',
           justifyContent: 'space-between',
           cursor: 'pointer',
-          marginBottom: 10,
+          padding: '14px 16px 12px',
+          background: 'linear-gradient(135deg, #1a0e08 0%, #0f0b08 100%)',
+          borderLeft: '3px solid #f57e44',
         }}
       >
         <span
           style={{
-            fontFamily: "'Saira Condensed', sans-serif",
-            fontWeight: 700,
+            fontFamily: "'Anton', sans-serif",
             fontSize: 13,
             textTransform: 'uppercase',
             color: allDone ? '#22c55e' : '#f57e44',
-            letterSpacing: '0.08em',
+            letterSpacing: '0.05em',
           }}
         >
           {allDone ? 'WORKOUT COMPLETE ✓' : "TODAY'S WORKOUT"}
@@ -71,12 +72,14 @@ export default function DailyWorkoutTile({ drills }: Props) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span
             style={{
-              fontFamily: "'Space Mono', monospace",
-              fontSize: 10,
+              fontFamily: "'Barlow Condensed', sans-serif",
+              fontWeight: 700,
+              fontSize: 11,
               color: '#f57e44',
-              background: '#1e1410',
-              borderRadius: 4,
-              padding: '2px 8px',
+              background: '#f57e4422',
+              border: '1px solid #f57e4444',
+              borderRadius: 12,
+              padding: '3px 10px',
             }}
           >
             {doneCount} / {total} DONE
@@ -93,75 +96,101 @@ export default function DailyWorkoutTile({ drills }: Props) {
         </div>
       </div>
 
-      {/* Progress bar always visible */}
-      <ProgressBar pct={pct} height={5} />
+      <div style={{ padding: '12px 16px 16px' }}>
+        {/* Progress bar always visible */}
+        <ProgressBar pct={pct} height={5} />
 
-      {/* Expanded drill list */}
-      {expanded && (
-        <div style={{ marginTop: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
-          {drills.map((drill) => {
-            const done = completed.includes(drill.id)
-            return (
-              <div
-                key={drill.id}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 10,
-                  opacity: done ? 0.5 : 1,
-                  transition: 'opacity 0.2s',
-                }}
-              >
-                {/* Checkbox */}
+        {/* Expanded drill list */}
+        {expanded && (
+          <div style={{ marginTop: 14, display: 'flex', flexDirection: 'column' }}>
+            {drills.map((drill, idx) => {
+              const done = completed.includes(drill.id)
+              const isLast = idx === drills.length - 1
+              return (
                 <div
-                  onClick={() => toggle(drill.id)}
+                  key={drill.id}
                   style={{
-                    width: 20,
-                    height: 20,
-                    borderRadius: 4,
-                    border: `2px solid ${done ? '#f57e44' : '#2a1f18'}`,
-                    background: done ? '#f57e44' : 'transparent',
-                    cursor: 'pointer',
-                    flexShrink: 0,
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
+                    gap: 10,
+                    opacity: done ? 0.5 : 1,
+                    transition: 'opacity 0.2s',
+                    padding: '12px 0',
+                    borderBottom: isLast ? 'none' : '1px solid #1a1008',
                   }}
                 >
-                  {done && <span style={{ color: '#fff', fontSize: 12 }}>✓</span>}
-                </div>
-                {/* Drill info */}
-                <div style={{ flex: 1, minWidth: 0 }}>
+                  {/* Checkbox */}
                   <div
+                    onClick={() => toggle(drill.id)}
                     style={{
-                      fontFamily: "'Barlow Condensed', sans-serif",
-                      fontWeight: 700,
-                      fontSize: 14,
-                      color: '#ffffff',
-                      textDecoration: done ? 'line-through' : 'none',
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
+                      width: 20,
+                      height: 20,
+                      borderRadius: 4,
+                      border: `2px solid ${done ? '#f57e44' : '#2a1f18'}`,
+                      background: done ? '#f57e44' : 'transparent',
+                      cursor: 'pointer',
+                      flexShrink: 0,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
                     }}
                   >
-                    {drill.title}
+                    {done && <span style={{ color: '#fff', fontSize: 12 }}>✓</span>}
                   </div>
-                  <div
-                    style={{
-                      fontFamily: "'Space Mono', monospace",
-                      fontSize: 11,
-                      color: '#6b5a50',
-                      marginTop: 1,
-                    }}
-                  >
-                    {drill.duration}
+                  {/* Drill info */}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <div
+                        style={{
+                          fontFamily: "'Barlow Condensed', sans-serif",
+                          fontWeight: 700,
+                          fontSize: 15,
+                          color: '#ffffff',
+                          textDecoration: done ? 'line-through' : 'none',
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                        }}
+                      >
+                        {drill.title}
+                      </div>
+                      {drill.sport && (
+                        <span
+                          style={{
+                            fontFamily: "'Barlow Condensed', sans-serif",
+                            fontWeight: 700,
+                            fontSize: 9,
+                            color: '#f57e44',
+                            background: '#f57e4415',
+                            border: '1px solid #f57e4430',
+                            borderRadius: 8,
+                            padding: '1px 6px',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.06em',
+                            flexShrink: 0,
+                          }}
+                        >
+                          {drill.sport}
+                        </span>
+                      )}
+                    </div>
+                    <div
+                      style={{
+                        fontFamily: "'Space Mono', monospace",
+                        fontSize: 11,
+                        color: '#8a6a58',
+                        marginTop: 3,
+                      }}
+                    >
+                      {drill.duration}
+                    </div>
                   </div>
                 </div>
-              </div>
-            )
-          })}
-        </div>
-      )}
+              )
+            })}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

@@ -35,7 +35,7 @@ export default function HomePage() {
       {/* A. Compact Athlete Hero */}
       <div
         style={{
-          background: '#0f0b08',
+          background: 'linear-gradient(135deg, #111008 0%, #0f0b07 100%)',
           borderBottom: '1px solid #1e1410',
           padding: '12px 16px',
           display: 'flex',
@@ -172,77 +172,85 @@ export default function HomePage() {
       </div>
 
       {/* C. TODAY'S DASHBOARD */}
-      <div
-        style={{
-          fontFamily: "'Barlow Condensed', sans-serif",
-          fontWeight: 700,
-          fontSize: '11px',
-          color: '#6b5a50',
-          textTransform: 'uppercase',
-          letterSpacing: '0.12em',
-          padding: '16px 16px 8px',
-        }}
-      >
-        TODAY · {dayLabel}
-      </div>
+      <div style={{ maxWidth: '520px', margin: '0 auto', padding: '0' }}>
 
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '12px',
-          padding: '0 16px',
-        }}
-      >
-        <DailyWorkoutTile drills={DEFAULT_DRILLS} />
-        <DailyHabitList habits={DEFAULT_HABITS} />
-        <DailyMealTile meals={DEFAULT_DAILY_MEALS} />
-      </div>
+        <div
+          style={{
+            fontFamily: "'Barlow Condensed', sans-serif",
+            fontWeight: 700,
+            fontSize: '12px',
+            color: '#f57e44',
+            textTransform: 'uppercase',
+            letterSpacing: '0.12em',
+            padding: '16px 16px 8px',
+            borderLeft: '2px solid #f57e44',
+            marginLeft: '16px',
+            paddingLeft: '10px',
+          }}
+        >
+          TODAY · {dayLabel}
+        </div>
 
-      {/* D. Upcoming Events */}
-      <div
-        style={{
-          fontFamily: "'Barlow Condensed', sans-serif",
-          fontWeight: 700,
-          fontSize: '11px',
-          color: '#6b5a50',
-          textTransform: 'uppercase',
-          letterSpacing: '0.12em',
-          padding: '20px 16px 8px',
-        }}
-      >
-        UPCOMING
-      </div>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '12px',
+            padding: '0 16px',
+          }}
+        >
+          <DailyWorkoutTile drills={DEFAULT_DRILLS} />
+          <DailyHabitList habits={DEFAULT_HABITS} />
+          <DailyMealTile meals={DEFAULT_DAILY_MEALS} />
+        </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '0 16px' }}>
-        {upcoming.length === 0 ? (
-          <div
-            style={{
-              fontFamily: "'Barlow Condensed', sans-serif",
-              fontSize: '13px',
-              color: '#4a3a30',
-            }}
-          >
-            No upcoming events
-          </div>
-        ) : (
-          upcoming.map((ev) => {
-            const d = new Date(ev.date + 'T12:00:00')
-            const month = d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase()
-            const day = d.getDate()
-            return (
-              <div
-                key={ev.id}
-                style={{
-                  background: '#0f0b08',
-                  border: '1px solid #1e1410',
-                  borderRadius: '8px',
-                  padding: '10px 12px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                }}
-              >
+        {/* D. Upcoming Events */}
+        <div
+          style={{
+            fontFamily: "'Barlow Condensed', sans-serif",
+            fontWeight: 700,
+            fontSize: '12px',
+            color: '#f57e44',
+            textTransform: 'uppercase',
+            letterSpacing: '0.12em',
+            padding: '20px 0 8px',
+            borderLeft: '2px solid #f57e44',
+            marginLeft: '16px',
+            paddingLeft: '10px',
+          }}
+        >
+          UPCOMING
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '0 16px' }}>
+          {upcoming.length === 0 ? (
+            <div
+              style={{
+                fontFamily: "'Barlow Condensed', sans-serif",
+                fontSize: '13px',
+                color: '#4a3a30',
+              }}
+            >
+              No upcoming events
+            </div>
+          ) : (
+            upcoming.map((ev) => {
+              const d = new Date(ev.date + 'T12:00:00')
+              const month = d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase()
+              const day = d.getDate()
+              return (
+                <div
+                  key={ev.id}
+                  style={{
+                    background: '#0f0b08',
+                    border: '1px solid #1e1410',
+                    borderRadius: '8px',
+                    padding: '12px 14px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                  }}
+                >
                 {/* Date badge */}
                 <div
                   style={{
@@ -327,105 +335,110 @@ export default function HomePage() {
                     {ev.sport}
                   </span>
                 </div>
-              </div>
-            )
-          })
-        )}
-      </div>
+                </div>
+              )
+            })
+          )}
+        </div>
 
-      {/* E. My Sports — horizontal scroll strip */}
-      <div
-        style={{
-          fontFamily: "'Barlow Condensed', sans-serif",
-          fontWeight: 700,
-          fontSize: '11px',
-          color: '#6b5a50',
-          textTransform: 'uppercase',
-          letterSpacing: '0.12em',
-          padding: '20px 16px 8px',
-        }}
-      >
-        MY SPORTS
-      </div>
+        {/* E. My Sports — horizontal scroll strip */}
+        <div
+          style={{
+            fontFamily: "'Barlow Condensed', sans-serif",
+            fontWeight: 700,
+            fontSize: '12px',
+            color: '#f57e44',
+            textTransform: 'uppercase',
+            letterSpacing: '0.12em',
+            padding: '20px 0 8px',
+            borderLeft: '2px solid #f57e44',
+            marginLeft: '16px',
+            paddingLeft: '10px',
+          }}
+        >
+          MY SPORTS
+        </div>
 
-      <div
-        style={{
-          display: 'flex',
-          overflowX: 'auto',
-          gap: '10px',
-          padding: '0 16px 4px',
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none',
-        } as React.CSSProperties}
-      >
-        {SPORTS_DATA.map((sport) => (
-          <div
-            key={sport.key}
-            onClick={() => router.push(`/sports/${sport.key}`)}
-            style={{
-              width: '140px',
-              flexShrink: 0,
-              height: '90px',
-              borderRadius: '10px',
-              overflow: 'hidden',
-              position: 'relative',
-              cursor: 'pointer',
-              backgroundImage: `url(${sport.bgImage})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-            }}
-          >
-            {/* Dark overlay */}
+        <div
+          style={{
+            display: 'flex',
+            overflowX: 'auto',
+            gap: '10px',
+            padding: '0 16px 4px',
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+          } as React.CSSProperties}
+        >
+          {SPORTS_DATA.map((sport) => (
             <div
+              key={sport.key}
+              onClick={() => router.push(`/sports/${sport.key}`)}
               style={{
-                position: 'absolute',
-                inset: 0,
-                background: 'rgba(0,0,0,0.55)',
-              }}
-            />
-            {/* Content */}
-            <div
-              style={{
-                position: 'absolute',
-                bottom: 0,
-                left: 0,
-                right: 0,
-                padding: '8px',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
+                width: '140px',
+                flexShrink: 0,
+                height: '90px',
+                borderRadius: '10px',
+                overflow: 'hidden',
+                position: 'relative',
+                cursor: 'pointer',
+                backgroundImage: `url(${sport.bgImage})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
               }}
             >
+              {/* Dark overlay */}
               <div
                 style={{
-                  fontFamily: "'Saira Condensed', sans-serif",
-                  fontWeight: 700,
-                  fontSize: '16px',
-                  color: '#ffffff',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.04em',
-                  lineHeight: 1.1,
-                  textAlign: 'center',
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'rgba(0,0,0,0.55)',
                 }}
-              >
-                {sport.name}
-              </div>
+              />
+              {/* Content */}
               <div
                 style={{
-                  fontFamily: "'Barlow Condensed', sans-serif",
-                  fontWeight: 600,
-                  fontSize: '11px',
-                  color: '#f57e44',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.06em',
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  padding: '8px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
                 }}
               >
-                {sport.position}
+                <div
+                  style={{
+                    fontFamily: "'Saira Condensed', sans-serif",
+                    fontWeight: 700,
+                    fontSize: '16px',
+                    color: '#ffffff',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.04em',
+                    lineHeight: 1.1,
+                    textAlign: 'center',
+                  }}
+                >
+                  {sport.name}
+                </div>
+                <div
+                  style={{
+                    fontFamily: "'Barlow Condensed', sans-serif",
+                    fontWeight: 600,
+                    fontSize: '11px',
+                    color: '#f57e44',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.06em',
+                  }}
+                >
+                  {sport.position}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+
+      </div>{/* end centered container */}
 
     </div>
   )

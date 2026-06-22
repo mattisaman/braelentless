@@ -18,21 +18,19 @@ export default function TopNav() {
   return (
     <div
       style={{
-        maxWidth: 440,
-        margin: '0 auto',
-        width: '100%',
+        background: '#060403',
+        borderBottom: '1px solid #1e1410',
         overflowX: 'auto',
         scrollbarWidth: 'none',
         msOverflowStyle: 'none',
-        paddingBottom: 2,
-      }}
+        whiteSpace: 'nowrap',
+      } as React.CSSProperties}
     >
       <div
         style={{
-          display: 'flex',
-          gap: 6,
-          padding: '8px 12px',
-          width: 'max-content',
+          display: 'inline-flex',
+          gap: 0,
+          padding: '10px 16px',
         }}
       >
         {NAV_LINKS.map((link) => {
@@ -44,12 +42,10 @@ export default function TopNav() {
               style={{
                 display: 'inline-block',
                 padding: '6px 14px',
-                borderRadius: 20,
-                border: `1px solid ${active ? '#f57e44' : '#2a1f18'}`,
-                background: '#0f0b08',
+                borderBottom: active ? '2px solid #f57e44' : '2px solid transparent',
                 fontFamily: "'Barlow Condensed', sans-serif",
                 fontWeight: 700,
-                fontSize: 10,
+                fontSize: 11,
                 letterSpacing: '0.12em',
                 textTransform: 'uppercase',
                 color: active ? '#f57e44' : '#6b5a50',
