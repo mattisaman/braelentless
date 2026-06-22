@@ -36,11 +36,11 @@ export default function FuelPage() {
   const minSleep = Math.min(...SLEEP_DATA)
 
   const inputStyle = {
-    background: '#1a1008',
-    border: '1px solid #2a1f18',
+    background: 'var(--input-bg)',
+    border: '1px solid var(--input-border)',
     borderRadius: '6px',
     padding: '8px 10px',
-    color: '#e8dcd4',
+    color: 'var(--text-2)',
     fontFamily: "'Barlow', sans-serif",
     fontSize: '14px',
     outline: 'none',
@@ -51,10 +51,10 @@ export default function FuelPage() {
     <div>
       {/* Header */}
       <div style={{ padding: '20px 16px 0' }}>
-        <div style={{ fontFamily: "'Anton', sans-serif", fontSize: '32px', color: '#ffffff', letterSpacing: '0.04em', lineHeight: 1 }}>
+        <div style={{ fontFamily: "'Anton', sans-serif", fontSize: '32px', color: 'var(--text)', letterSpacing: '0.04em', lineHeight: 1 }}>
           FUEL
         </div>
-        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 500, fontSize: '12px', color: '#6b5a50', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '4px' }}>
+        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 500, fontSize: '12px', color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '4px' }}>
           Nutrition & Recovery
         </div>
       </div>
@@ -62,7 +62,7 @@ export default function FuelPage() {
       <div style={{ padding: '20px 16px' }}>
         {/* Macros header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-          <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '11px', color: '#6b5a50', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+          <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '11px', color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
             Daily Targets
           </div>
           <button
@@ -76,7 +76,7 @@ export default function FuelPage() {
             }}
             style={{
               padding: '6px 14px',
-              background: editing ? 'linear-gradient(135deg, #e35d2a, #f57e44)' : '#1e1410',
+              background: editing ? 'linear-gradient(135deg, #e35d2a, #f57e44)' : 'var(--border)',
               border: 'none',
               borderRadius: '6px',
               color: editing ? '#fff' : '#f57e44',
@@ -93,11 +93,11 @@ export default function FuelPage() {
         </div>
 
         {editing ? (
-          <div style={{ background: '#0f0b08', borderRadius: '10px', padding: '16px', border: '1px solid #1e1410', marginBottom: '20px' }}>
+          <div style={{ background: 'var(--bg-2)', borderRadius: '10px', padding: '16px', border: '1px solid var(--border)', marginBottom: '20px' }}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
               {MACROS.map((m) => (
                 <div key={m.key}>
-                  <label style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 600, fontSize: '11px', color: '#6b5a50', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '6px', display: 'block' }}>
+                  <label style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 600, fontSize: '11px', color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '6px', display: 'block' }}>
                     {m.label} ({m.unit})
                   </label>
                   <input
@@ -117,14 +117,14 @@ export default function FuelPage() {
               return (
                 <div key={macro.label}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                    <span style={{ fontFamily: "'Barlow', sans-serif", fontWeight: 600, fontSize: '13px', color: '#e8dcd4' }}>
+                    <span style={{ fontFamily: "'Barlow', sans-serif", fontWeight: 600, fontSize: '13px', color: 'var(--text-2)' }}>
                       {macro.label}
                     </span>
                     <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '11px', color: macro.color }}>
                       {macro.value} / {macro.target} {macro.unit}
                     </span>
                   </div>
-                  <div style={{ height: '6px', background: '#1e1410', borderRadius: '6px', overflow: 'hidden' }}>
+                  <div style={{ height: '6px', background: 'var(--border)', borderRadius: '6px', overflow: 'hidden' }}>
                     <div style={{ width: `${pct}%`, height: '100%', background: macro.color, borderRadius: '6px', transition: 'width 0.3s' }} />
                   </div>
                 </div>
@@ -134,10 +134,10 @@ export default function FuelPage() {
         )}
 
         {/* Macro split pie-like display */}
-        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '11px', color: '#6b5a50', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '12px' }}>
+        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '11px', color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '12px' }}>
           Macro Split
         </div>
-        <div style={{ background: '#0f0b08', borderRadius: '10px', padding: '16px', border: '1px solid #1e1410', marginBottom: '24px' }}>
+        <div style={{ background: 'var(--bg-2)', borderRadius: '10px', padding: '16px', border: '1px solid var(--border)', marginBottom: '24px' }}>
           {/* Visual bar */}
           <div style={{ display: 'flex', height: '12px', borderRadius: '6px', overflow: 'hidden', marginBottom: '12px' }}>
             {[
@@ -157,24 +157,24 @@ export default function FuelPage() {
               <div key={m.label} style={{ textAlign: 'center' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', marginBottom: '2px' }}>
                   <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: m.color }} />
-                  <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 600, fontSize: '10px', color: '#6b5a50', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                  <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 600, fontSize: '10px', color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                     {m.label}
                   </span>
                 </div>
                 <span style={{ fontFamily: "'Teko', sans-serif", fontWeight: 600, fontSize: '18px', color: m.color }}>
                   {m.cals}
                 </span>
-                <span style={{ fontFamily: "'Barlow', sans-serif", fontSize: '10px', color: '#4a3a30', marginLeft: '2px' }}>cal</span>
+                <span style={{ fontFamily: "'Barlow', sans-serif", fontSize: '10px', color: 'var(--text-5)', marginLeft: '2px' }}>cal</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Sleep chart */}
-        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '11px', color: '#6b5a50', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '12px' }}>
+        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '11px', color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '12px' }}>
           Sleep — Last {SLEEP_DATA.length} Days
         </div>
-        <div style={{ background: '#0f0b08', borderRadius: '10px', padding: '16px', border: '1px solid #1e1410', marginBottom: '16px' }}>
+        <div style={{ background: 'var(--bg-2)', borderRadius: '10px', padding: '16px', border: '1px solid var(--border)', marginBottom: '16px' }}>
           {/* Stats row */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', marginBottom: '16px' }}>
             {[
@@ -184,7 +184,7 @@ export default function FuelPage() {
             ].map((s) => (
               <div key={s.label} style={{ textAlign: 'center' }}>
                 <div style={{ fontFamily: "'Teko', sans-serif", fontWeight: 600, fontSize: '24px', color: '#f57e44', lineHeight: 1 }}>{s.value}</div>
-                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 600, fontSize: '9px', color: '#4a3a30', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{s.label} hrs</div>
+                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 600, fontSize: '9px', color: 'var(--text-5)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{s.label} hrs</div>
               </div>
             ))}
           </div>
@@ -199,7 +199,7 @@ export default function FuelPage() {
                   style={{
                     flex: 1,
                     height: `${pct}%`,
-                    background: isGood ? 'linear-gradient(to top, #e35d2a, #f57e44)' : '#2a1f18',
+                    background: isGood ? 'linear-gradient(to top, #e35d2a, #f57e44)' : 'var(--border-2)',
                     borderRadius: '2px 2px 0 0',
                     position: 'relative',
                   }}
@@ -209,13 +209,13 @@ export default function FuelPage() {
             })}
           </div>
           {/* Goal line label */}
-          <div style={{ textAlign: 'right', marginTop: '4px', fontFamily: "'Space Mono', monospace", fontSize: '9px', color: '#4a3a30' }}>
+          <div style={{ textAlign: 'right', marginTop: '4px', fontFamily: "'Space Mono', monospace", fontSize: '9px', color: 'var(--text-5)' }}>
             Target: 9 hrs
           </div>
         </div>
 
         {/* Meal plan tips */}
-        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '11px', color: '#6b5a50', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '12px' }}>
+        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '11px', color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '12px' }}>
           Performance Nutrition Tips
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -227,10 +227,10 @@ export default function FuelPage() {
           ].map((item, i) => (
             <div
               key={i}
-              style={{ background: '#0f0b08', borderRadius: '8px', padding: '12px 14px', border: '1px solid #1e1410', display: 'flex', gap: '10px', alignItems: 'flex-start' }}
+              style={{ background: 'var(--bg-2)', borderRadius: '8px', padding: '12px 14px', border: '1px solid var(--border)', display: 'flex', gap: '10px', alignItems: 'flex-start' }}
             >
               <span style={{ fontSize: '18px', flexShrink: 0 }}>{item.icon}</span>
-              <span style={{ fontFamily: "'Barlow', sans-serif", fontSize: '13px', color: '#8a6a58', lineHeight: 1.5 }}>{item.tip}</span>
+              <span style={{ fontFamily: "'Barlow', sans-serif", fontSize: '13px', color: 'var(--text-3)', lineHeight: 1.5 }}>{item.tip}</span>
             </div>
           ))}
         </div>

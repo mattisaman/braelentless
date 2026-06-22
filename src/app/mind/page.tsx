@@ -74,11 +74,11 @@ export default function MindPage() {
 
   const inputStyle = {
     width: '100%',
-    background: '#1a1008',
-    border: '1px solid #2a1f18',
+    background: 'var(--input-bg)',
+    border: '1px solid var(--input-border)',
     borderRadius: '6px',
     padding: '10px 12px',
-    color: '#e8dcd4',
+    color: 'var(--text-2)',
     fontFamily: "'Barlow', sans-serif",
     fontSize: '13px',
     outline: 'none',
@@ -87,7 +87,7 @@ export default function MindPage() {
     fontFamily: "'Barlow Condensed', sans-serif",
     fontWeight: 600,
     fontSize: '11px',
-    color: '#6b5a50',
+    color: 'var(--text-4)',
     textTransform: 'uppercase' as const,
     letterSpacing: '0.1em',
     marginBottom: '6px',
@@ -98,16 +98,16 @@ export default function MindPage() {
     <div>
       {/* Header */}
       <div style={{ padding: '20px 16px 0' }}>
-        <div style={{ fontFamily: "'Anton', sans-serif", fontSize: '32px', color: '#ffffff', letterSpacing: '0.04em', lineHeight: 1 }}>
+        <div style={{ fontFamily: "'Anton', sans-serif", fontSize: '32px', color: 'var(--text)', letterSpacing: '0.04em', lineHeight: 1 }}>
           MIND / R&amp;R
         </div>
-        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 500, fontSize: '12px', color: '#6b5a50', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '4px' }}>
+        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 500, fontSize: '12px', color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '4px' }}>
           Reflect · Read · Watch
         </div>
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', borderBottom: '1px solid #1e1410', margin: '16px 0 0' }}>
+      <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', margin: '16px 0 0' }}>
         {([['reflect', 'REFLECT'], ['read', 'READ'], ['watch', 'WATCH']] as [MindTab, string][]).map(([t, label]) => (
           <button
             key={t}
@@ -116,7 +116,7 @@ export default function MindPage() {
               flex: 1, padding: '12px 4px', border: 'none', background: 'none', cursor: 'pointer',
               fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '13px',
               textTransform: 'uppercase', letterSpacing: '0.1em',
-              color: tab === t ? '#f57e44' : '#4a3a30',
+              color: tab === t ? '#f57e44' : 'var(--text-5)',
               borderBottom: tab === t ? '2px solid #f57e44' : '2px solid transparent',
             }}
           >
@@ -136,7 +136,7 @@ export default function MindPage() {
               onClick={() => setShowBookForm((v) => !v)}
               style={{
                 width: '100%', padding: '12px',
-                background: showBookForm ? '#1e1410' : 'linear-gradient(135deg, #e35d2a, #f57e44)',
+                background: showBookForm ? 'var(--border)' : 'linear-gradient(135deg, #e35d2a, #f57e44)',
                 border: 'none', borderRadius: '8px',
                 color: showBookForm ? '#f57e44' : '#fff',
                 fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '14px',
@@ -148,7 +148,7 @@ export default function MindPage() {
             </button>
 
             {showBookForm && (
-              <div style={{ background: '#0f0b08', borderRadius: '10px', padding: '16px', border: '1px solid #2a1f18', marginBottom: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ background: 'var(--bg-2)', borderRadius: '10px', padding: '16px', border: '1px solid var(--border-2)', marginBottom: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 <div>
                   <label style={labelStyle}>Title</label>
                   <input type="text" value={bookForm.title} onChange={(e) => setBookForm((f) => ({ ...f, title: e.target.value }))} placeholder="Book title" style={inputStyle} />
@@ -179,9 +179,9 @@ export default function MindPage() {
                   onClick={addBook}
                   style={{
                     padding: '12px',
-                    background: bookForm.title ? 'linear-gradient(135deg, #e35d2a, #f57e44)' : '#1e1410',
+                    background: bookForm.title ? 'linear-gradient(135deg, #e35d2a, #f57e44)' : 'var(--border)',
                     border: 'none', borderRadius: '8px',
-                    color: bookForm.title ? '#fff' : '#4a3a30',
+                    color: bookForm.title ? '#fff' : 'var(--text-5)',
                     fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '14px',
                     textTransform: 'uppercase', letterSpacing: '0.1em',
                     cursor: bookForm.title ? 'pointer' : 'default',
@@ -196,13 +196,13 @@ export default function MindPage() {
               {books.map((book) => {
                 const color = STATUS_COLORS[book.status]
                 return (
-                  <div key={book.id} style={{ background: '#0f0b08', borderRadius: '10px', padding: '14px 16px', border: '1px solid #1e1410' }}>
+                  <div key={book.id} style={{ background: 'var(--bg-2)', borderRadius: '10px', padding: '14px 16px', border: '1px solid var(--border)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', alignItems: 'flex-start', gap: '8px' }}>
                       <div>
-                        <div style={{ fontFamily: "'Saira Condensed', sans-serif", fontWeight: 700, fontSize: '15px', color: '#e8dcd4', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                        <div style={{ fontFamily: "'Saira Condensed', sans-serif", fontWeight: 700, fontSize: '15px', color: 'var(--text-2)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                           {book.title}
                         </div>
-                        <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '12px', color: '#6b5a50' }}>
+                        <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '12px', color: 'var(--text-4)' }}>
                           {book.author}
                         </div>
                       </div>
@@ -211,7 +211,7 @@ export default function MindPage() {
                       </span>
                     </div>
                     {book.note && (
-                      <div style={{ fontFamily: "'Barlow', sans-serif", fontStyle: 'italic', fontSize: '12px', color: '#6b5a50', marginBottom: '8px', lineHeight: 1.5 }}>
+                      <div style={{ fontFamily: "'Barlow', sans-serif", fontStyle: 'italic', fontSize: '12px', color: 'var(--text-4)', marginBottom: '8px', lineHeight: 1.5 }}>
                         &ldquo;{book.note}&rdquo;
                       </div>
                     )}
@@ -230,7 +230,7 @@ export default function MindPage() {
               onClick={() => setShowVideoForm((v) => !v)}
               style={{
                 width: '100%', padding: '12px',
-                background: showVideoForm ? '#1e1410' : 'linear-gradient(135deg, #e35d2a, #f57e44)',
+                background: showVideoForm ? 'var(--border)' : 'linear-gradient(135deg, #e35d2a, #f57e44)',
                 border: 'none', borderRadius: '8px',
                 color: showVideoForm ? '#f57e44' : '#fff',
                 fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '14px',
@@ -242,7 +242,7 @@ export default function MindPage() {
             </button>
 
             {showVideoForm && (
-              <div style={{ background: '#0f0b08', borderRadius: '10px', padding: '16px', border: '1px solid #2a1f18', marginBottom: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ background: 'var(--bg-2)', borderRadius: '10px', padding: '16px', border: '1px solid var(--border-2)', marginBottom: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 <div>
                   <label style={labelStyle}>Title</label>
                   <input type="text" value={videoForm.title} onChange={(e) => setVideoForm((f) => ({ ...f, title: e.target.value }))} placeholder="Video title" style={inputStyle} />
@@ -277,9 +277,9 @@ export default function MindPage() {
                   onClick={addVideo}
                   style={{
                     padding: '12px',
-                    background: videoForm.title && videoForm.url ? 'linear-gradient(135deg, #e35d2a, #f57e44)' : '#1e1410',
+                    background: videoForm.title && videoForm.url ? 'linear-gradient(135deg, #e35d2a, #f57e44)' : 'var(--border)',
                     border: 'none', borderRadius: '8px',
-                    color: videoForm.title && videoForm.url ? '#fff' : '#4a3a30',
+                    color: videoForm.title && videoForm.url ? '#fff' : 'var(--text-5)',
                     fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '14px',
                     textTransform: 'uppercase', letterSpacing: '0.1em',
                     cursor: videoForm.title && videoForm.url ? 'pointer' : 'default',
@@ -295,7 +295,7 @@ export default function MindPage() {
                 <VideoCard key={video.id} video={video} />
               ))}
               {videos.length === 0 && (
-                <div style={{ textAlign: 'center', color: '#4a3a30', fontSize: '13px', padding: '32px 0' }}>
+                <div style={{ textAlign: 'center', color: 'var(--text-5)', fontSize: '13px', padding: '32px 0' }}>
                   No videos yet. Add one above.
                 </div>
               )}

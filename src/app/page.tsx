@@ -26,13 +26,19 @@ const INPUT_STYLE: React.CSSProperties = {
   border: '1px solid rgba(245,126,68,0.3)',
   borderRadius: '6px',
   padding: '9px 12px',
-  color: '#fff',
+  color: 'var(--text)',
   fontFamily: "'Barlow Condensed', sans-serif",
   fontWeight: 600,
   fontSize: '14px',
   letterSpacing: '0.06em',
   outline: 'none',
   boxSizing: 'border-box',
+}
+
+const SPORT_COLORS: Record<string, string> = {
+  soccer: '#22c55e',
+  basketball: '#f57e44',
+  track: '#60a5fa',
 }
 
 export default function HomePage() {
@@ -90,10 +96,23 @@ export default function HomePage() {
     .slice(0, 2)
 
   return (
-    <div style={{ background: '#0a0706', minHeight: '100vh', paddingBottom: '80px' }}>
+    <div style={{ background: 'var(--bg)', minHeight: '100vh', paddingBottom: '80px', position: 'relative' }}>
+
+      {/* Cinematic ambient background */}
+      <div style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 0,
+        backgroundImage: 'url(/basketball-court.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center top',
+        backgroundAttachment: 'fixed',
+        opacity: 0.07,
+        pointerEvents: 'none',
+      }} />
 
       {/* ── HERO ── */}
-      <div style={{ position: 'relative', minHeight: editing ? 'auto' : '220px', overflow: 'hidden' }}>
+      <div style={{ position: 'relative', zIndex: 1, minHeight: editing ? 'auto' : '220px', overflow: 'hidden' }}>
         {/* Background */}
         <div className="animate-kenburns" style={{
           position: editing ? 'fixed' : 'absolute',
@@ -115,18 +134,18 @@ export default function HomePage() {
           <button onClick={openEdit} style={{
             position: 'absolute', top: 12, right: 12, zIndex: 10,
             background: 'rgba(10,7,6,0.75)',
-            border: '1px solid rgba(245,126,68,0.25)',
+            border: '1px solid rgba(245,126,68,0.4)',
             borderRadius: '6px', padding: '5px 10px',
-            color: '#8a6a58', cursor: 'pointer',
+            color: '#c8a080', cursor: 'pointer',
             display: 'flex', alignItems: 'center', gap: '5px',
             backdropFilter: 'blur(4px)',
             transition: 'border-color 0.15s, color 0.15s',
           }}
             onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(245,126,68,0.6)'; (e.currentTarget as HTMLButtonElement).style.color = '#f57e44' }}
-            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(245,126,68,0.25)'; (e.currentTarget as HTMLButtonElement).style.color = '#8a6a58' }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(245,126,68,0.4)'; (e.currentTarget as HTMLButtonElement).style.color = '#c8a080' }}
           >
             <span style={{ fontSize: '11px' }}>✏</span>
-            <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '10px', letterSpacing: '0.1em' }}>EDIT</span>
+            <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '11px', letterSpacing: '0.1em' }}>EDIT PROFILE</span>
           </button>
         )}
 
@@ -140,7 +159,7 @@ export default function HomePage() {
                 <img src={profileImg} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontFamily: "'Anton', sans-serif", fontSize: 'clamp(24px, 5vw, 36px)', color: '#fff', letterSpacing: '0.04em', lineHeight: 1, textShadow: '0 2px 16px rgba(0,0,0,0.9)' }}>
+                <div style={{ fontFamily: "'Anton', sans-serif", fontSize: 'clamp(24px, 5vw, 36px)', color: '#ffffff', letterSpacing: '0.04em', lineHeight: 1, textShadow: '0 2px 16px rgba(0,0,0,0.9)' }}>
                   {profile.name}
                 </div>
                 <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 600, fontSize: '11px', color: '#9a7a68', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '4px' }}>
@@ -164,11 +183,11 @@ export default function HomePage() {
 
         {/* ── EDIT MODE ── */}
         {editing && (
-          <div className="dashboard-content" style={{ position: 'relative', zIndex: 1, background: '#0f0b08', borderBottom: '1px solid #211710', padding: '20px 16px' }}>
+          <div className="dashboard-content" style={{ position: 'relative', zIndex: 1, background: 'var(--bg-2)', borderBottom: '1px solid var(--border)', padding: '20px 16px' }}>
             {/* Edit header */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
               <span style={{ fontFamily: "'Anton', sans-serif", fontSize: '14px', color: '#f57e44', letterSpacing: '0.06em' }}>EDIT PROFILE</span>
-              <button onClick={() => setEditing(false)} style={{ background: 'none', border: 'none', color: '#6b5a50', fontSize: '18px', cursor: 'pointer', padding: '0 4px' }}>✕</button>
+              <button onClick={() => setEditing(false)} style={{ background: 'none', border: 'none', color: 'var(--text-4)', fontSize: '18px', cursor: 'pointer', padding: '0 4px' }}>✕</button>
             </div>
 
             {/* Profile image upload */}
@@ -185,7 +204,7 @@ export default function HomePage() {
               </div>
               <div>
                 <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '12px', color: '#f57e44', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Profile Photo</div>
-                <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '11px', color: '#6b5a50', marginTop: '2px' }}>Tap to upload a new image</div>
+                <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '11px', color: 'var(--text-4)', marginTop: '2px' }}>Tap to upload a new image</div>
               </div>
               <input ref={imgInputRef} type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} />
             </div>
@@ -193,15 +212,15 @@ export default function HomePage() {
             {/* Fields */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '16px' }}>
               <div>
-                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '10px', color: '#6b5a50', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>Name / Handle</div>
+                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '10px', color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>Name / Handle</div>
                 <input value={draft.name} onChange={e => setDraft({ ...draft, name: e.target.value })} placeholder="BRAELENTLESS" style={{ ...INPUT_STYLE, textTransform: 'uppercase' }} />
               </div>
               <div>
-                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '10px', color: '#6b5a50', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>School · Class Year</div>
+                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '10px', color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>School · Class Year</div>
                 <input value={draft.school} onChange={e => setDraft({ ...draft, school: e.target.value })} placeholder="KESHEQUA WILDCATS · CLASS OF 2027" style={INPUT_STYLE} />
               </div>
               <div>
-                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '10px', color: '#6b5a50', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>Commitment (leave blank to hide)</div>
+                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '10px', color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>Commitment (leave blank to hide)</div>
                 <input value={draft.commit} onChange={e => setDraft({ ...draft, commit: e.target.value })} placeholder="Committed · School Name" style={INPUT_STYLE} />
               </div>
             </div>
@@ -223,7 +242,7 @@ export default function HomePage() {
       </div>
 
       {/* ── STATS RIBBON ── */}
-      <div style={{ background: 'linear-gradient(90deg, #e35d2a, #f57e44, #e35d2a)', width: '100%' }}>
+      <div style={{ background: 'linear-gradient(90deg, #e35d2a, #f57e44, #e35d2a)', width: '100%', position: 'relative', zIndex: 1 }}>
         <div className="dashboard-content" style={{ display: 'flex', padding: '0' }}>
           {[{ value: '3', unit: 'SPORTS' }, { value: '18.4', unit: 'PPG' }, { value: '14', unit: 'GOALS' }, { value: '3240', unit: 'PENT' }].map((s, i) => (
             <div key={i} style={{ flex: 1, padding: '10px 6px', textAlign: 'center', borderLeft: i > 0 ? '1px solid rgba(0,0,0,0.2)' : 'none' }}>
@@ -234,8 +253,55 @@ export default function HomePage() {
         </div>
       </div>
 
+      {/* ── SPORT CARDS STRIP (between stats ribbon and TODAY) ── */}
+      <div style={{ padding: '16px 0 4px', position: 'relative', zIndex: 1 }}>
+        <div className="dashboard-content">
+          <div className="sports-grid">
+            {SPORTS_DATA.map((sport) => {
+              const color = SPORT_COLORS[sport.key] ?? '#f57e44'
+              return (
+                <div
+                  key={sport.key}
+                  onClick={() => router.push(`/sports/${sport.key}`)}
+                  style={{
+                    minWidth: '160px',
+                    flexShrink: 0,
+                    height: '120px',
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    position: 'relative',
+                    cursor: 'pointer',
+                    border: `2px solid ${color}55`,
+                    boxShadow: `0 0 20px ${color}22`,
+                  }}
+                >
+                  {/* Background with kenburns */}
+                  <div
+                    className="animate-kenburns"
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      backgroundImage: `url(${sport.bgImage})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                    }}
+                  />
+                  {/* Dark gradient overlay */}
+                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.75) 100%)' }} />
+                  {/* Text */}
+                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '10px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div style={{ fontFamily: "'Saira Condensed', sans-serif", fontWeight: 700, fontSize: '18px', color: '#fff', textTransform: 'uppercase', textAlign: 'center', lineHeight: 1.1 }}>{sport.name}</div>
+                    <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 600, fontSize: '11px', color: color, textTransform: 'uppercase' }}>{sport.position}</div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+
       {/* ── MAIN CONTENT ── */}
-      <div className="dashboard-content">
+      <div className="dashboard-content" style={{ position: 'relative', zIndex: 1 }}>
 
         {/* Today header */}
         <div className="section-header">
@@ -254,9 +320,8 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Lower row: Upcoming + Sports */}
+        {/* Lower row: Upcoming only */}
         <div className="dashboard-lower">
-          {/* Upcoming */}
           <div>
             <div className="section-header">
               <div className="section-header-bar" />
@@ -264,21 +329,20 @@ export default function HomePage() {
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {upcoming.length === 0 ? (
-                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '13px', color: '#4a3a30' }}>No upcoming events</div>
+                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '13px', color: 'var(--text-5)' }}>No upcoming events</div>
               ) : upcoming.map((ev) => {
                 const d = new Date(ev.date + 'T12:00:00')
                 const month = d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase()
-                const SPORT_COLORS: Record<string, string> = { basketball: '#f57e44', soccer: '#22c55e', track: '#60a5fa' }
                 const sc = SPORT_COLORS[ev.sport] ?? '#f57e44'
                 return (
                   <div key={ev.id} className="tile-card" style={{ padding: '12px 14px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <div style={{ background: '#1e1410', borderRadius: '8px', padding: '6px 10px', textAlign: 'center', flexShrink: 0, borderLeft: `3px solid ${sc}` }}>
-                      <div style={{ fontFamily: "'Teko', sans-serif", fontWeight: 600, fontSize: '10px', color: '#8a6a58', lineHeight: 1 }}>{month}</div>
-                      <div style={{ fontFamily: "'Teko', sans-serif", fontWeight: 700, fontSize: '22px', color: '#e8dcd4', lineHeight: 1 }}>{d.getDate()}</div>
+                    <div style={{ background: 'var(--border)', borderRadius: '8px', padding: '6px 10px', textAlign: 'center', flexShrink: 0, borderLeft: `3px solid ${sc}` }}>
+                      <div style={{ fontFamily: "'Teko', sans-serif", fontWeight: 600, fontSize: '10px', color: 'var(--text-3)', lineHeight: 1 }}>{month}</div>
+                      <div style={{ fontFamily: "'Teko', sans-serif", fontWeight: 700, fontSize: '22px', color: 'var(--text-2)', lineHeight: 1 }}>{d.getDate()}</div>
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '14px', color: '#ffffff', textTransform: 'uppercase' }}>{ev.opponent}</div>
-                      <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '12px', color: '#6b5a50', marginTop: '2px' }}>{ev.location}</div>
+                      <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '14px', color: 'var(--text)', textTransform: 'uppercase' }}>{ev.opponent}</div>
+                      <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '12px', color: 'var(--text-4)', marginTop: '2px' }}>{ev.location}</div>
                     </div>
                     <div style={{ background: `${sc}22`, border: `1px solid ${sc}44`, borderRadius: '4px', padding: '3px 8px', flexShrink: 0 }}>
                       <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '9px', color: sc, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{ev.sport}</span>
@@ -286,26 +350,6 @@ export default function HomePage() {
                   </div>
                 )
               })}
-            </div>
-          </div>
-
-          {/* My Sports */}
-          <div>
-            <div className="section-header">
-              <div className="section-header-bar" />
-              <div className="section-header-text">MY SPORTS</div>
-            </div>
-            <div className="sports-grid">
-              {SPORTS_DATA.map((sport) => (
-                <div key={sport.key} onClick={() => router.push(`/sports/${sport.key}`)}
-                  style={{ minWidth: '150px', flexShrink: 0, height: '110px', borderRadius: '12px', overflow: 'hidden', position: 'relative', cursor: 'pointer', backgroundImage: `url(${sport.bgImage})`, backgroundSize: 'cover', backgroundPosition: 'center', border: '1px solid #2a1f18' }}>
-                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.7) 100%)' }} />
-                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '10px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <div style={{ fontFamily: "'Saira Condensed', sans-serif", fontWeight: 700, fontSize: '17px', color: '#fff', textTransform: 'uppercase', textAlign: 'center', lineHeight: 1.1 }}>{sport.name}</div>
-                    <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 600, fontSize: '11px', color: '#f57e44', textTransform: 'uppercase' }}>{sport.position}</div>
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
         </div>

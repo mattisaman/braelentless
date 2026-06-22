@@ -67,11 +67,11 @@ export default function RecruitPage() {
 
   const inputStyle = {
     width: '100%',
-    background: '#1a1008',
-    border: '1px solid #2a1f18',
+    background: 'var(--input-bg)',
+    border: '1px solid var(--input-border)',
     borderRadius: '6px',
     padding: '10px 12px',
-    color: '#e8dcd4',
+    color: 'var(--text-2)',
     fontFamily: "'Barlow', sans-serif",
     fontSize: '13px',
     outline: 'none',
@@ -80,7 +80,7 @@ export default function RecruitPage() {
     fontFamily: "'Barlow Condensed', sans-serif",
     fontWeight: 600,
     fontSize: '11px',
-    color: '#6b5a50',
+    color: 'var(--text-4)',
     textTransform: 'uppercase' as const,
     letterSpacing: '0.1em',
     marginBottom: '6px',
@@ -91,10 +91,10 @@ export default function RecruitPage() {
     <div>
       {/* Header */}
       <div style={{ padding: '20px 16px 0' }}>
-        <div style={{ fontFamily: "'Anton', sans-serif", fontSize: '32px', color: '#ffffff', letterSpacing: '0.04em', lineHeight: 1 }}>
+        <div style={{ fontFamily: "'Anton', sans-serif", fontSize: '32px', color: 'var(--text)', letterSpacing: '0.04em', lineHeight: 1 }}>
           RECRUIT
         </div>
-        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 500, fontSize: '12px', color: '#6b5a50', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '4px' }}>
+        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 500, fontSize: '12px', color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '4px' }}>
           College Pipeline · Eligibility
         </div>
       </div>
@@ -104,7 +104,7 @@ export default function RecruitPage() {
         <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '10px', color: '#4ade80', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '4px' }}>
           Committed
         </div>
-        <div style={{ fontFamily: "'Anton', sans-serif", fontSize: '22px', color: '#ffffff', letterSpacing: '0.04em' }}>
+        <div style={{ fontFamily: "'Anton', sans-serif", fontSize: '22px', color: 'var(--text)', letterSpacing: '0.04em' }}>
           Southeastern University
         </div>
         <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 500, fontSize: '12px', color: '#4ade80', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
@@ -113,7 +113,7 @@ export default function RecruitPage() {
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', borderBottom: '1px solid #1e1410', margin: '16px 0 0' }}>
+      <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', margin: '16px 0 0' }}>
         {(['pipeline', 'checklist'] as const).map((t) => (
           <button
             key={t}
@@ -122,7 +122,7 @@ export default function RecruitPage() {
               flex: 1, padding: '12px', border: 'none', background: 'none', cursor: 'pointer',
               fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '13px',
               textTransform: 'uppercase', letterSpacing: '0.1em',
-              color: tab === t ? '#f57e44' : '#4a3a30',
+              color: tab === t ? '#f57e44' : 'var(--text-5)',
               borderBottom: tab === t ? '2px solid #f57e44' : '2px solid transparent',
             }}
           >
@@ -138,8 +138,8 @@ export default function RecruitPage() {
               onClick={() => setShowForm((v) => !v)}
               style={{
                 width: '100%', padding: '12px',
-                background: showForm ? '#1e1410' : '#0f0b08',
-                border: `1px solid ${showForm ? '#f57e44' : '#1e1410'}`,
+                background: showForm ? 'var(--border)' : 'var(--bg-2)',
+                border: `1px solid ${showForm ? '#f57e44' : 'var(--border)'}`,
                 borderRadius: '8px', color: '#f57e44',
                 fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '14px',
                 textTransform: 'uppercase', letterSpacing: '0.1em', cursor: 'pointer',
@@ -150,7 +150,7 @@ export default function RecruitPage() {
             </button>
 
             {showForm && (
-              <div style={{ background: '#0f0b08', borderRadius: '10px', padding: '16px', border: '1px solid #2a1f18', marginBottom: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ background: 'var(--bg-2)', borderRadius: '10px', padding: '16px', border: '1px solid var(--border-2)', marginBottom: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 <div>
                   <label style={labelStyle}>School Name</label>
                   <input type="text" value={form.school} onChange={(e) => setForm((f) => ({ ...f, school: e.target.value }))} placeholder="University name" style={inputStyle} />
@@ -183,9 +183,9 @@ export default function RecruitPage() {
                   onClick={addCollege}
                   style={{
                     padding: '12px',
-                    background: form.school ? 'linear-gradient(135deg, #e35d2a, #f57e44)' : '#1e1410',
+                    background: form.school ? 'linear-gradient(135deg, #e35d2a, #f57e44)' : 'var(--border)',
                     border: 'none', borderRadius: '8px',
-                    color: form.school ? '#fff' : '#4a3a30',
+                    color: form.school ? '#fff' : 'var(--text-5)',
                     fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '14px',
                     textTransform: 'uppercase', letterSpacing: '0.1em',
                     cursor: form.school ? 'pointer' : 'default',
@@ -206,25 +206,25 @@ export default function RecruitPage() {
                   {grouped[status].map((college) => (
                     <div
                       key={college.id}
-                      style={{ background: '#0f0b08', borderRadius: '10px', padding: '14px 16px', border: `1px solid ${STATUS_COLORS[college.status]}44` }}
+                      style={{ background: 'var(--bg-2)', borderRadius: '10px', padding: '14px 16px', border: `1px solid ${STATUS_COLORS[college.status]}44` }}
                     >
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                        <div style={{ fontFamily: "'Saira Condensed', sans-serif", fontWeight: 700, fontSize: '16px', color: '#e8dcd4', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                        <div style={{ fontFamily: "'Saira Condensed', sans-serif", fontWeight: 700, fontSize: '16px', color: 'var(--text-2)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                           {college.school}
                         </div>
                         {college.date && (
-                          <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', color: '#4a3a30' }}>
+                          <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', color: 'var(--text-5)' }}>
                             {new Date(college.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                           </span>
                         )}
                       </div>
                       {college.coach && (
-                        <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '12px', color: '#6b5a50', marginBottom: '6px' }}>
+                        <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '12px', color: 'var(--text-4)', marginBottom: '6px' }}>
                           {college.coach}
                         </div>
                       )}
                       {college.notes && (
-                        <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '12px', color: '#8a6a58', lineHeight: 1.5 }}>
+                        <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '12px', color: 'var(--text-3)', lineHeight: 1.5 }}>
                           {college.notes}
                         </div>
                       )}
@@ -235,7 +235,7 @@ export default function RecruitPage() {
             ))}
 
             {colleges.length === 0 && (
-              <div style={{ textAlign: 'center', color: '#4a3a30', fontSize: '13px', padding: '32px 0' }}>
+              <div style={{ textAlign: 'center', color: 'var(--text-5)', fontSize: '13px', padding: '32px 0' }}>
                 No schools in pipeline yet.
               </div>
             )}
@@ -245,16 +245,16 @@ export default function RecruitPage() {
         {tab === 'checklist' && (
           <>
             {/* Progress */}
-            <div style={{ background: '#0f0b08', borderRadius: '10px', padding: '16px', border: '1px solid #1e1410', marginBottom: '20px' }}>
+            <div style={{ background: 'var(--bg-2)', borderRadius: '10px', padding: '16px', border: '1px solid var(--border)', marginBottom: '20px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-                <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '13px', color: '#8a6a58', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '13px', color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                   Eligibility Progress
                 </span>
                 <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '12px', color: '#f57e44' }}>
                   {completedCount}/{eligibility.length}
                 </span>
               </div>
-              <div style={{ height: '8px', background: '#1e1410', borderRadius: '8px', overflow: 'hidden' }}>
+              <div style={{ height: '8px', background: 'var(--border)', borderRadius: '8px', overflow: 'hidden' }}>
                 <div style={{ width: `${eligibilityPct}%`, height: '100%', background: 'linear-gradient(90deg, #e35d2a, #f57e44)', borderRadius: '8px', transition: 'width 0.3s' }} />
               </div>
             </div>
@@ -265,8 +265,8 @@ export default function RecruitPage() {
                   key={item.id}
                   onClick={() => toggleEligibility(item.id)}
                   style={{
-                    background: item.completed ? '#0d1a0d' : '#0f0b08',
-                    border: `1px solid ${item.completed ? '#4ade8044' : '#1e1410'}`,
+                    background: item.completed ? '#0d1a0d' : 'var(--bg-2)',
+                    border: `1px solid ${item.completed ? '#4ade8044' : 'var(--border)'}`,
                     borderRadius: '10px',
                     padding: '14px 16px',
                     display: 'flex',
@@ -283,7 +283,7 @@ export default function RecruitPage() {
                       width: '22px',
                       height: '22px',
                       borderRadius: '4px',
-                      border: `2px solid ${item.completed ? '#4ade80' : '#2a1f18'}`,
+                      border: `2px solid ${item.completed ? '#4ade80' : 'var(--border-2)'}`,
                       background: item.completed ? '#4ade80' : 'transparent',
                       display: 'flex',
                       alignItems: 'center',
@@ -294,7 +294,7 @@ export default function RecruitPage() {
                   >
                     {item.completed && <span style={{ color: '#0a0706', fontSize: '12px', fontWeight: 700 }}>✓</span>}
                   </div>
-                  <span style={{ fontFamily: "'Barlow', sans-serif", fontWeight: 600, fontSize: '13px', color: item.completed ? '#8a6a58' : '#c8bab0', textDecoration: item.completed ? 'line-through' : 'none' }}>
+                  <span style={{ fontFamily: "'Barlow', sans-serif", fontWeight: 600, fontSize: '13px', color: item.completed ? 'var(--text-3)' : 'var(--text-2)', textDecoration: item.completed ? 'line-through' : 'none' }}>
                     {item.label}
                   </span>
                 </button>

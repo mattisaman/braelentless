@@ -62,7 +62,7 @@ export default function StatsEntryPage({
             style={{
               fontFamily: "'Anton', sans-serif",
               fontSize: '24px',
-              color: '#ffffff',
+              color: 'var(--text)',
               letterSpacing: '0.04em',
               lineHeight: 1,
             }}
@@ -74,7 +74,7 @@ export default function StatsEntryPage({
               fontFamily: "'Barlow Condensed', sans-serif",
               fontWeight: 500,
               fontSize: '12px',
-              color: '#6b5a50',
+              color: 'var(--text-4)',
               textTransform: 'uppercase',
               letterSpacing: '0.1em',
             }}
@@ -88,8 +88,8 @@ export default function StatsEntryPage({
       <div
         style={{
           display: 'flex',
-          borderBottom: '1px solid #1e1410',
-          background: '#0a0706',
+          borderBottom: '1px solid var(--border)',
+          background: 'var(--bg)',
           marginTop: '12px',
         }}
       >
@@ -112,7 +112,7 @@ export default function StatsEntryPage({
               fontSize: '11px',
               textTransform: 'uppercase',
               letterSpacing: '0.1em',
-              color: tab.label === 'Stats' ? '#f57e44' : '#4a3a30',
+              color: tab.label === 'Stats' ? '#f57e44' : 'var(--text-5)',
               borderBottom: tab.label === 'Stats' ? '2px solid #f57e44' : '2px solid transparent',
             }}
           >
@@ -127,7 +127,7 @@ export default function StatsEntryPage({
             fontFamily: "'Barlow Condensed', sans-serif",
             fontWeight: 700,
             fontSize: '11px',
-            color: '#6b5a50',
+            color: 'var(--text-4)',
             textTransform: 'uppercase',
             letterSpacing: '0.12em',
             marginBottom: '14px',
@@ -141,10 +141,10 @@ export default function StatsEntryPage({
             <div
               key={i}
               style={{
-                background: '#0f0b08',
+                background: 'var(--bg-2)',
                 borderRadius: '8px',
                 padding: '14px 16px',
-                border: '1px solid #1e1410',
+                border: '1px solid var(--border)',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '12px',
@@ -155,7 +155,7 @@ export default function StatsEntryPage({
                   fontFamily: "'Barlow Condensed', sans-serif",
                   fontWeight: 600,
                   fontSize: '13px',
-                  color: '#8a6a58',
+                  color: 'var(--text-3)',
                   textTransform: 'uppercase',
                   letterSpacing: '0.08em',
                   flex: 1,
@@ -164,7 +164,7 @@ export default function StatsEntryPage({
               >
                 {stat.label}
                 {stat.unit && (
-                  <span style={{ color: '#4a3a30', fontSize: '11px', marginLeft: '4px' }}>
+                  <span style={{ color: 'var(--text-5)', fontSize: '11px', marginLeft: '4px' }}>
                     ({stat.unit})
                   </span>
                 )}
@@ -175,8 +175,8 @@ export default function StatsEntryPage({
                 onChange={(e) => handleChange(i, e.target.value)}
                 style={{
                   width: '90px',
-                  background: '#1a1008',
-                  border: '1px solid #2a1f18',
+                  background: 'var(--input-bg)',
+                  border: '1px solid var(--input-border)',
                   borderRadius: '6px',
                   padding: '8px 10px',
                   color: '#f57e44',
@@ -220,7 +220,7 @@ export default function StatsEntryPage({
             fontFamily: "'Barlow Condensed', sans-serif",
             fontWeight: 700,
             fontSize: '11px',
-            color: '#6b5a50',
+            color: 'var(--text-4)',
             textTransform: 'uppercase',
             letterSpacing: '0.12em',
             margin: '24px 0 10px',
@@ -233,17 +233,17 @@ export default function StatsEntryPage({
             display: 'grid',
             gridTemplateColumns: 'repeat(3, 1fr)',
             gap: '1px',
-            background: '#1a1008',
+            background: 'var(--surface)',
             borderRadius: '8px',
             overflow: 'hidden',
-            border: '1px solid #1a1008',
+            border: '1px solid var(--surface)',
           }}
         >
           {stats.map((stat, i) => (
             <div
               key={i}
               style={{
-                background: '#0f0b08',
+                background: 'var(--bg-2)',
                 padding: '14px 10px',
                 display: 'flex',
                 flexDirection: 'column',
@@ -267,7 +267,7 @@ export default function StatsEntryPage({
                   fontFamily: "'Barlow Condensed', sans-serif",
                   fontWeight: 600,
                   fontSize: '9px',
-                  color: '#6b5a50',
+                  color: 'var(--text-4)',
                   textTransform: 'uppercase',
                   letterSpacing: '0.08em',
                   textAlign: 'center',

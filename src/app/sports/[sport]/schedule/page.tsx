@@ -63,11 +63,11 @@ export default function SchedulePage({
 
   const inputStyle = {
     width: '100%',
-    background: '#1a1008',
-    border: '1px solid #2a1f18',
+    background: 'var(--input-bg)',
+    border: '1px solid var(--input-border)',
     borderRadius: '6px',
     padding: '10px 12px',
-    color: '#e8dcd4',
+    color: 'var(--text-2)',
     fontFamily: "'Barlow', sans-serif",
     fontSize: '13px',
     outline: 'none',
@@ -77,7 +77,7 @@ export default function SchedulePage({
     fontFamily: "'Barlow Condensed', sans-serif",
     fontWeight: 600,
     fontSize: '11px',
-    color: '#6b5a50',
+    color: 'var(--text-4)',
     textTransform: 'uppercase' as const,
     letterSpacing: '0.1em',
     marginBottom: '6px',
@@ -94,11 +94,11 @@ export default function SchedulePage({
           </Link>
           <div>
             <div
-              style={{ fontFamily: "'Anton', sans-serif", fontSize: '24px', color: '#ffffff', lineHeight: 1, letterSpacing: '0.04em' }}
+              style={{ fontFamily: "'Anton', sans-serif", fontSize: '24px', color: 'var(--text)', lineHeight: 1, letterSpacing: '0.04em' }}
             >
               SCHEDULE
             </div>
-            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 500, fontSize: '12px', color: '#6b5a50', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 500, fontSize: '12px', color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
               {sportData?.name ?? sportKey}
             </div>
           </div>
@@ -106,7 +106,7 @@ export default function SchedulePage({
       </div>
 
       {/* Sub-nav */}
-      <div style={{ display: 'flex', borderBottom: '1px solid #1e1410', marginTop: '12px' }}>
+      <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', marginTop: '12px' }}>
         {[
           { label: 'Overview', href: `/sports/${sportKey}` },
           { label: 'Stats', href: `/sports/${sportKey}/stats` },
@@ -126,7 +126,7 @@ export default function SchedulePage({
               fontSize: '11px',
               textTransform: 'uppercase',
               letterSpacing: '0.1em',
-              color: tab.label === 'Schedule' ? '#f57e44' : '#4a3a30',
+              color: tab.label === 'Schedule' ? '#f57e44' : 'var(--text-5)',
               borderBottom: tab.label === 'Schedule' ? '2px solid #f57e44' : '2px solid transparent',
             }}
           >
@@ -142,7 +142,7 @@ export default function SchedulePage({
           style={{
             width: '100%',
             padding: '12px',
-            background: showForm ? '#1e1410' : 'linear-gradient(135deg, #e35d2a, #f57e44)',
+            background: showForm ? 'var(--border)' : 'linear-gradient(135deg, #e35d2a, #f57e44)',
             border: 'none',
             borderRadius: '8px',
             color: showForm ? '#f57e44' : '#fff',
@@ -162,10 +162,10 @@ export default function SchedulePage({
         {showForm && (
           <div
             style={{
-              background: '#0f0b08',
+              background: 'var(--bg-2)',
               borderRadius: '10px',
               padding: '16px',
-              border: '1px solid #2a1f18',
+              border: '1px solid var(--border-2)',
               marginBottom: '20px',
               display: 'flex',
               flexDirection: 'column',
@@ -241,10 +241,10 @@ export default function SchedulePage({
               onClick={handleAdd}
               style={{
                 padding: '12px',
-                background: form.opponent && form.date ? 'linear-gradient(135deg, #e35d2a, #f57e44)' : '#1e1410',
+                background: form.opponent && form.date ? 'linear-gradient(135deg, #e35d2a, #f57e44)' : 'var(--border)',
                 border: 'none',
                 borderRadius: '8px',
-                color: form.opponent && form.date ? '#fff' : '#4a3a30',
+                color: form.opponent && form.date ? '#fff' : 'var(--text-5)',
                 fontFamily: "'Barlow Condensed', sans-serif",
                 fontWeight: 700,
                 fontSize: '14px',
@@ -275,7 +275,7 @@ export default function SchedulePage({
         {/* Past */}
         {past.length > 0 && (
           <>
-            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '11px', color: '#4a3a30', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '10px' }}>
+            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '11px', color: 'var(--text-5)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '10px' }}>
               Past Events
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -287,7 +287,7 @@ export default function SchedulePage({
         )}
 
         {events.length === 0 && (
-          <div style={{ textAlign: 'center', color: '#4a3a30', fontFamily: "'Barlow', sans-serif", fontSize: '13px', padding: '32px 0' }}>
+          <div style={{ textAlign: 'center', color: 'var(--text-5)', fontFamily: "'Barlow', sans-serif", fontSize: '13px', padding: '32px 0' }}>
             No events yet. Add one above.
           </div>
         )}

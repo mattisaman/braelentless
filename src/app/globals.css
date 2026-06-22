@@ -8,6 +8,61 @@
   --color-foreground: #ffffff;
 }
 
+/* ── Design tokens ── */
+:root {
+  --bg:              #080503;
+  --bg-2:            #0f0b08;
+  --bg-3:            #141008;
+  --surface:         #1a1210;
+  --border:          #1e1410;
+  --border-2:        #2a1f14;
+  --text:            #ffffff;
+  --text-2:          #e8dcd4;
+  --text-3:          #9a7868;
+  --text-4:          #6b5a50;
+  --text-5:          #4a3a30;
+  --accent:          #f57e44;
+  --accent-dark:     #e35d2a;
+  --accent-green:    #22c55e;
+  --accent-blue:     #60a5fa;
+  --nav-bg:          #0c0906;
+  --nav-border:      #2a1f14;
+  --input-bg:        #1a1008;
+  --input-border:    #2a1f18;
+  --tile-border:     #211710;
+  --tile-header-bg:  linear-gradient(135deg, #1c1008 0%, #150e07 100%);
+  --prog-track:      #1e1410;
+  --checklist-border:#171108;
+  --scrollbar-track: #0a0706;
+}
+
+[data-theme="light"] {
+  --bg:              #f5f2ef;
+  --bg-2:            #ffffff;
+  --bg-3:            #faf8f5;
+  --surface:         #ede8e3;
+  --border:          #ddd8d2;
+  --border-2:        #c8bfb8;
+  --text:            #1a0f0a;
+  --text-2:          #2d1f18;
+  --text-3:          #5c4840;
+  --text-4:          #7a6a60;
+  --text-5:          #a09080;
+  --accent:          #f57e44;
+  --accent-dark:     #e35d2a;
+  --accent-green:    #22c55e;
+  --accent-blue:     #60a5fa;
+  --nav-bg:          #ffffff;
+  --nav-border:      #e0d8d2;
+  --input-bg:        #f0ebe8;
+  --input-border:    #d0c8c0;
+  --tile-border:     #ddd8d2;
+  --tile-header-bg:  linear-gradient(135deg, #f5f2ef 0%, #ede8e3 100%);
+  --prog-track:      #ddd8d2;
+  --checklist-border:#e8e0d8;
+  --scrollbar-track: #e8e2dc;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -15,11 +70,12 @@
 html, body {
   margin: 0;
   padding: 0;
-  background: #0a0706;
-  color: #ffffff;
+  background: var(--bg);
+  color: var(--text);
   font-family: 'Barlow', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background 0.25s ease, color 0.25s ease;
 }
 
 /* Kenburns animation */
@@ -40,10 +96,10 @@ html, body {
   width: 4px;
 }
 ::-webkit-scrollbar-track {
-  background: #0a0706;
+  background: var(--scrollbar-track);
 }
 ::-webkit-scrollbar-thumb {
-  background: #f57e44;
+  background: var(--accent);
   border-radius: 2px;
 }
 
@@ -145,15 +201,15 @@ input[type='number'] {
 
 /* ── Tile card base ── */
 .tile-card {
-  background: linear-gradient(145deg, #141008 0%, #0f0b08 50%, #0c0907 100%);
+  background: var(--bg-2);
   border-radius: 14px;
-  border: 1px solid #211710;
+  border: 1px solid var(--tile-border);
   overflow: hidden;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
 }
 .tile-card:hover {
   border-color: rgba(245,126,68,0.25);
-  box-shadow: 0 0 0 1px rgba(245,126,68,0.08), 0 12px 40px rgba(0,0,0,0.5);
+  box-shadow: 0 0 0 1px rgba(245,126,68,0.08), 0 12px 40px rgba(0,0,0,0.12);
 }
 
 /* ── Glowing circle checkbox ── */
@@ -161,7 +217,7 @@ input[type='number'] {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  border: 2px solid #2e2018;
+  border: 2px solid var(--border-2);
   background: transparent;
   cursor: pointer;
   transition: all 0.18s ease;
@@ -190,9 +246,10 @@ input[type='number'] {
 .prog-track {
   width: 100%;
   height: 5px;
-  background: #1e1410;
+  background: var(--prog-track);
   border-radius: 3px;
   overflow: hidden;
+  transition: background 0.25s ease;
 }
 .prog-fill {
   height: 100%;
@@ -222,7 +279,7 @@ input[type='number'] {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 700;
   font-size: 12px;
-  color: #f57e44;
+  color: var(--accent);
   text-transform: uppercase;
   letter-spacing: 0.16em;
 }
@@ -233,7 +290,7 @@ input[type='number'] {
   align-items: center;
   gap: 12px;
   padding: 12px 0;
-  border-bottom: 1px solid #171108;
+  border-bottom: 1px solid var(--checklist-border);
   transition: background 0.2s;
   border-radius: 4px;
 }
@@ -248,21 +305,22 @@ input[type='number'] {
   align-items: center;
   justify-content: space-between;
   padding: 14px 16px 12px;
-  background: linear-gradient(135deg, #1c1008 0%, #150e07 100%);
-  border-bottom: 1px solid #211710;
+  background: var(--tile-header-bg);
+  border-bottom: 1px solid var(--tile-border);
   cursor: pointer;
   user-select: none;
+  transition: background 0.25s ease;
 }
 .tile-header-label {
   font-family: 'Anton', sans-serif;
   font-size: 13px;
-  color: #f57e44;
+  color: var(--accent);
   letter-spacing: 0.06em;
 }
 .tile-badge {
   font-family: 'Space Mono', monospace;
   font-size: 11px;
-  color: #f57e44;
+  color: var(--accent);
   background: rgba(245,126,68,0.12);
   border: 1px solid rgba(245,126,68,0.25);
   border-radius: 12px;

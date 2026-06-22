@@ -29,8 +29,8 @@ export default async function SportDetailPage({
       <div
         style={{
           display: 'flex',
-          borderBottom: '1px solid #1e1410',
-          background: '#0a0706',
+          borderBottom: '1px solid var(--border)',
+          background: 'var(--bg)',
         }}
       >
         {[
@@ -52,7 +52,7 @@ export default async function SportDetailPage({
               fontSize: '11px',
               textTransform: 'uppercase',
               letterSpacing: '0.1em',
-              color: tab.label === 'Overview' ? '#f57e44' : '#4a3a30',
+              color: tab.label === 'Overview' ? '#f57e44' : 'var(--text-5)',
               borderBottom: tab.label === 'Overview' ? '2px solid #f57e44' : '2px solid transparent',
             }}
           >
@@ -68,12 +68,12 @@ export default async function SportDetailPage({
             fontFamily: "'Barlow', sans-serif",
             fontStyle: 'italic',
             fontSize: '14px',
-            color: '#8a6a58',
+            color: 'var(--text-3)',
             textAlign: 'center',
             padding: '16px',
             borderRadius: '8px',
-            background: '#0f0b08',
-            border: '1px solid #1e1410',
+            background: 'var(--bg-2)',
+            border: '1px solid var(--border)',
             marginBottom: '20px',
             lineHeight: 1.5,
           }}
@@ -87,7 +87,7 @@ export default async function SportDetailPage({
             fontFamily: "'Barlow Condensed', sans-serif",
             fontWeight: 700,
             fontSize: '11px',
-            color: '#6b5a50',
+            color: 'var(--text-4)',
             textTransform: 'uppercase',
             letterSpacing: '0.12em',
             marginBottom: '10px',
@@ -103,7 +103,7 @@ export default async function SportDetailPage({
             fontFamily: "'Barlow Condensed', sans-serif",
             fontWeight: 700,
             fontSize: '11px',
-            color: '#6b5a50',
+            color: 'var(--text-4)',
             textTransform: 'uppercase',
             letterSpacing: '0.12em',
             margin: '20px 0 10px',
@@ -123,7 +123,7 @@ export default async function SportDetailPage({
             fontFamily: "'Barlow Condensed', sans-serif",
             fontWeight: 700,
             fontSize: '11px',
-            color: '#6b5a50',
+            color: 'var(--text-4)',
             textTransform: 'uppercase',
             letterSpacing: '0.12em',
             margin: '20px 0 10px',
@@ -136,10 +136,10 @@ export default async function SportDetailPage({
             <div
               key={i}
               style={{
-                background: '#0f0b08',
+                background: 'var(--bg-2)',
                 borderRadius: '8px',
                 padding: '12px 16px',
-                border: `1px solid ${m.achieved ? '#f57e4444' : '#1e1410'}`,
+                border: `1px solid ${m.achieved ? '#f57e4444' : 'var(--border)'}`,
                 display: 'flex',
                 alignItems: 'center',
                 gap: '12px',
@@ -150,7 +150,7 @@ export default async function SportDetailPage({
                   width: '20px',
                   height: '20px',
                   borderRadius: '50%',
-                  border: `2px solid ${m.achieved ? '#f57e44' : '#2a1f18'}`,
+                  border: `2px solid ${m.achieved ? '#f57e44' : 'var(--border-2)'}`,
                   background: m.achieved ? '#f57e44' : 'transparent',
                   display: 'flex',
                   alignItems: 'center',
@@ -167,7 +167,7 @@ export default async function SportDetailPage({
                   fontFamily: "'Barlow', sans-serif",
                   fontWeight: 600,
                   fontSize: '13px',
-                  color: m.achieved ? '#e8dcd4' : '#4a3a30',
+                  color: m.achieved ? 'var(--text-2)' : 'var(--text-5)',
                   textDecoration: m.achieved ? 'none' : 'none',
                 }}
               >
@@ -201,8 +201,8 @@ export default async function SportDetailPage({
           <Link
             href={`/sports/${sport.key}/stats`}
             style={{
-              background: '#1e1410',
-              border: '1px solid #2a1f18',
+              background: 'var(--border)',
+              border: '1px solid var(--border-2)',
               borderRadius: '8px',
               padding: '14px',
               textAlign: 'center',

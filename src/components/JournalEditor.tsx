@@ -66,9 +66,9 @@ export default function JournalEditor() {
               flex: 1,
               padding: '10px',
               borderRadius: '8px',
-              border: `1px solid ${entryType === t ? '#f57e44' : '#1e1410'}`,
-              background: entryType === t ? '#f57e4422' : '#0f0b08',
-              color: entryType === t ? '#f57e44' : '#6b5a50',
+              border: `1px solid ${entryType === t ? '#f57e44' : 'var(--border)'}`,
+              background: entryType === t ? '#f57e4422' : 'var(--bg-2)',
+              color: entryType === t ? '#f57e44' : 'var(--text-4)',
               fontFamily: "'Barlow Condensed', sans-serif",
               fontWeight: 700,
               fontSize: '12px',
@@ -104,11 +104,11 @@ export default function JournalEditor() {
         placeholder="Write your thoughts..."
         style={{
           width: '100%',
-          background: '#0f0b08',
-          border: '1px solid #1e1410',
+          background: 'var(--bg-2)',
+          border: '1px solid var(--border)',
           borderRadius: '8px',
           padding: '12px',
-          color: '#e8dcd4',
+          color: 'var(--text-2)',
           fontFamily: "'Barlow', sans-serif",
           fontSize: '14px',
           lineHeight: 1.6,
@@ -123,10 +123,10 @@ export default function JournalEditor() {
         style={{
           width: '100%',
           padding: '12px',
-          background: content.trim() ? 'linear-gradient(135deg, #e35d2a, #f57e44)' : '#1e1410',
+          background: content.trim() ? 'linear-gradient(135deg, #e35d2a, #f57e44)' : 'var(--border)',
           border: 'none',
           borderRadius: '8px',
-          color: content.trim() ? '#fff' : '#4a3a30',
+          color: content.trim() ? '#fff' : 'var(--text-5)',
           fontFamily: "'Barlow Condensed', sans-serif",
           fontWeight: 700,
           fontSize: '14px',
@@ -146,7 +146,7 @@ export default function JournalEditor() {
           fontFamily: "'Barlow Condensed', sans-serif",
           fontWeight: 700,
           fontSize: '11px',
-          color: '#6b5a50',
+          color: 'var(--text-4)',
           textTransform: 'uppercase',
           letterSpacing: '0.12em',
           marginBottom: '10px',
@@ -160,7 +160,7 @@ export default function JournalEditor() {
             style={{
               fontFamily: "'Barlow', sans-serif",
               fontSize: '13px',
-              color: '#4a3a30',
+              color: 'var(--text-5)',
               textAlign: 'center',
               padding: '24px 0',
             }}
@@ -172,10 +172,10 @@ export default function JournalEditor() {
           <div
             key={entry.id}
             style={{
-              background: '#0f0b08',
+              background: 'var(--bg-2)',
               borderRadius: '8px',
               padding: '14px 16px',
-              border: '1px solid #1e1410',
+              border: '1px solid var(--border)',
             }}
           >
             <div
@@ -201,7 +201,7 @@ export default function JournalEditor() {
                 style={{
                   fontFamily: "'Space Mono', monospace",
                   fontSize: '10px',
-                  color: '#4a3a30',
+                  color: 'var(--text-5)',
                 }}
               >
                 {new Date(entry.date + 'T12:00:00').toLocaleDateString('en-US', {
@@ -216,7 +216,7 @@ export default function JournalEditor() {
                 fontFamily: "'Barlow', sans-serif",
                 fontStyle: 'italic',
                 fontSize: '11px',
-                color: '#5a4a40',
+                color: 'var(--text-5)',
                 marginBottom: '6px',
               }}
             >
@@ -226,7 +226,7 @@ export default function JournalEditor() {
               style={{
                 fontFamily: "'Barlow', sans-serif",
                 fontSize: '13px',
-                color: '#c8bab0',
+                color: 'var(--text-2)',
                 lineHeight: 1.5,
               }}
             >

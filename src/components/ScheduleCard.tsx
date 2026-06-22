@@ -35,10 +35,10 @@ export default function ScheduleCard({ event, isUpcoming }: ScheduleCardProps) {
   return (
     <div
       style={{
-        background: '#0f0b08',
+        background: 'var(--bg-2)',
         borderRadius: '8px',
         padding: '14px 16px',
-        border: `1px solid ${isUpcoming ? color + '44' : '#1e1410'}`,
+        border: `1px solid ${isUpcoming ? color + '44' : 'var(--border)'}`,
         display: 'flex',
         gap: '12px',
         alignItems: 'flex-start',
@@ -51,7 +51,7 @@ export default function ScheduleCard({ event, isUpcoming }: ScheduleCardProps) {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          background: '#1a1008',
+          background: 'var(--surface)',
           borderRadius: '6px',
           padding: '6px 4px',
           border: `1px solid ${color}44`,
@@ -78,7 +78,7 @@ export default function ScheduleCard({ event, isUpcoming }: ScheduleCardProps) {
                   fontFamily: "'Teko', sans-serif",
                   fontWeight: 600,
                   fontSize: '22px',
-                  color: '#e8dcd4',
+                  color: 'var(--text-2)',
                   lineHeight: 1,
                 }}
               >
@@ -96,7 +96,7 @@ export default function ScheduleCard({ event, isUpcoming }: ScheduleCardProps) {
               fontFamily: "'Saira Condensed', sans-serif",
               fontWeight: 700,
               fontSize: '15px',
-              color: '#e8dcd4',
+              color: 'var(--text-2)',
               textTransform: 'uppercase',
             }}
           >
@@ -123,7 +123,7 @@ export default function ScheduleCard({ event, isUpcoming }: ScheduleCardProps) {
           style={{
             fontFamily: "'Barlow', sans-serif",
             fontSize: '12px',
-            color: '#8a6a58',
+            color: 'var(--text-3)',
             marginTop: '2px',
           }}
         >

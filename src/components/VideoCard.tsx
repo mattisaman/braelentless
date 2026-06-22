@@ -35,10 +35,10 @@ export default function VideoCard({ video }: VideoCardProps) {
   return (
     <div
       style={{
-        background: '#0f0b08',
+        background: 'var(--bg-2)',
         borderRadius: '10px',
         overflow: 'hidden',
-        border: '1px solid #1e1410',
+        border: '1px solid var(--border)',
       }}
     >
       {/* Embed frame */}
@@ -81,8 +81,8 @@ export default function VideoCard({ video }: VideoCardProps) {
               fontFamily: "'Barlow Condensed', sans-serif",
               fontWeight: 700,
               fontSize: '9px',
-              color: '#8a6a58',
-              background: '#1e1410',
+              color: 'var(--text-3)',
+              background: 'var(--border)',
               padding: '2px 7px',
               borderRadius: '4px',
               textTransform: 'uppercase',
@@ -97,7 +97,7 @@ export default function VideoCard({ video }: VideoCardProps) {
             fontFamily: "'Saira Condensed', sans-serif",
             fontWeight: 700,
             fontSize: '14px',
-            color: '#e8dcd4',
+            color: 'var(--text-2)',
             textTransform: 'uppercase',
             marginBottom: '4px',
           }}
@@ -109,7 +109,7 @@ export default function VideoCard({ video }: VideoCardProps) {
             style={{
               fontFamily: "'Barlow', sans-serif",
               fontSize: '12px',
-              color: '#6b5a50',
+              color: 'var(--text-4)',
               lineHeight: 1.4,
             }}
           >

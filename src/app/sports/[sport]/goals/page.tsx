@@ -71,11 +71,11 @@ export default function GoalsPage({
   }
 
   const inputStyle = {
-    background: '#1a1008',
-    border: '1px solid #2a1f18',
+    background: 'var(--input-bg)',
+    border: '1px solid var(--input-border)',
     borderRadius: '6px',
     padding: '8px 10px',
-    color: '#e8dcd4',
+    color: 'var(--text-2)',
     fontFamily: "'Barlow', sans-serif",
     fontSize: '13px',
     outline: 'none',
@@ -84,7 +84,7 @@ export default function GoalsPage({
     fontFamily: "'Barlow Condensed', sans-serif",
     fontWeight: 600,
     fontSize: '11px',
-    color: '#6b5a50',
+    color: 'var(--text-4)',
     textTransform: 'uppercase' as const,
     letterSpacing: '0.1em',
     marginBottom: '6px',
@@ -98,10 +98,10 @@ export default function GoalsPage({
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <Link href={`/sports/${sportKey}`} style={{ color: '#f57e44', textDecoration: 'none', fontSize: '20px' }}>‹</Link>
           <div>
-            <div style={{ fontFamily: "'Anton', sans-serif", fontSize: '24px', color: '#ffffff', lineHeight: 1, letterSpacing: '0.04em' }}>
+            <div style={{ fontFamily: "'Anton', sans-serif", fontSize: '24px', color: 'var(--text)', lineHeight: 1, letterSpacing: '0.04em' }}>
               GOALS
             </div>
-            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 500, fontSize: '12px', color: '#6b5a50', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 500, fontSize: '12px', color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
               {sportData?.name ?? sportKey}
             </div>
           </div>
@@ -109,7 +109,7 @@ export default function GoalsPage({
       </div>
 
       {/* Sub-nav */}
-      <div style={{ display: 'flex', borderBottom: '1px solid #1e1410', marginTop: '12px' }}>
+      <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', marginTop: '12px' }}>
         {[
           { label: 'Overview', href: `/sports/${sportKey}` },
           { label: 'Stats', href: `/sports/${sportKey}/stats` },
@@ -123,7 +123,7 @@ export default function GoalsPage({
               flex: 1, padding: '12px 4px', textAlign: 'center', textDecoration: 'none',
               fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '11px',
               textTransform: 'uppercase', letterSpacing: '0.1em',
-              color: tab.label === 'Goals' ? '#f57e44' : '#4a3a30',
+              color: tab.label === 'Goals' ? '#f57e44' : 'var(--text-5)',
               borderBottom: tab.label === 'Goals' ? '2px solid #f57e44' : '2px solid transparent',
             }}
           >
@@ -141,13 +141,13 @@ export default function GoalsPage({
             return (
               <div
                 key={goal.id}
-                style={{ background: '#0f0b08', borderRadius: '10px', padding: '14px 16px', border: '1px solid #1e1410' }}
+                style={{ background: 'var(--bg-2)', borderRadius: '10px', padding: '14px 16px', border: '1px solid var(--border)' }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                  <span style={{ fontFamily: "'Barlow', sans-serif", fontWeight: 600, fontSize: '13px', color: '#e8dcd4' }}>
+                  <span style={{ fontFamily: "'Barlow', sans-serif", fontWeight: 600, fontSize: '13px', color: 'var(--text-2)' }}>
                     {goal.label}
                     {goal.lowerBetter && (
-                      <span style={{ fontSize: '10px', color: '#6b5a50', marginLeft: '6px' }}>(lower is better)</span>
+                      <span style={{ fontSize: '10px', color: 'var(--text-4)', marginLeft: '6px' }}>(lower is better)</span>
                     )}
                   </span>
                   <div style={{ display: 'flex', gap: '8px' }}>
@@ -159,7 +159,7 @@ export default function GoalsPage({
                     </button>
                     <button
                       onClick={() => handleDelete(goal.id)}
-                      style={{ background: 'none', border: 'none', color: '#4a3a30', cursor: 'pointer', fontSize: '14px' }}
+                      style={{ background: 'none', border: 'none', color: 'var(--text-5)', cursor: 'pointer', fontSize: '14px' }}
                     >
                       ×
                     </button>
@@ -194,7 +194,7 @@ export default function GoalsPage({
                 )}
 
                 <ProgressBar pct={pct} height={5} />
-                <div style={{ textAlign: 'right', marginTop: '4px', fontFamily: "'Space Mono', monospace", fontSize: '10px', color: '#4a3a30' }}>
+                <div style={{ textAlign: 'right', marginTop: '4px', fontFamily: "'Space Mono', monospace", fontSize: '10px', color: 'var(--text-5)' }}>
                   {Math.round(pct)}%
                 </div>
               </div>
@@ -224,8 +224,8 @@ export default function GoalsPage({
           onClick={() => setShowForm((v) => !v)}
           style={{
             width: '100%', padding: '12px',
-            background: showForm ? '#1e1410' : '#0f0b08',
-            border: `1px solid ${showForm ? '#f57e44' : '#1e1410'}`,
+            background: showForm ? 'var(--border)' : 'var(--bg-2)',
+            border: `1px solid ${showForm ? '#f57e44' : 'var(--border)'}`,
             borderRadius: '8px',
             color: '#f57e44',
             fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '14px',
@@ -237,7 +237,7 @@ export default function GoalsPage({
         </button>
 
         {showForm && (
-          <div style={{ background: '#0f0b08', borderRadius: '10px', padding: '16px', border: '1px solid #2a1f18', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div style={{ background: 'var(--bg-2)', borderRadius: '10px', padding: '16px', border: '1px solid var(--border-2)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <div>
               <label style={labelStyle}>Goal Label</label>
               <input type="text" value={form.label} onChange={(e) => setForm((f) => ({ ...f, label: e.target.value }))} placeholder="e.g. Points Per Game" style={{ ...inputStyle, width: '100%' }} />
@@ -263,15 +263,15 @@ export default function GoalsPage({
                 onChange={(e) => setForm((f) => ({ ...f, lowerBetter: e.target.checked }))}
                 style={{ width: '16px', height: '16px', accentColor: '#f57e44' }}
               />
-              <span style={{ fontFamily: "'Barlow', sans-serif", fontSize: '13px', color: '#8a6a58' }}>Lower value is better (e.g. time, errors)</span>
+              <span style={{ fontFamily: "'Barlow', sans-serif", fontSize: '13px', color: 'var(--text-3)' }}>Lower value is better (e.g. time, errors)</span>
             </label>
             <button
               onClick={handleAddGoal}
               style={{
                 padding: '12px',
-                background: form.label && form.target ? 'linear-gradient(135deg, #e35d2a, #f57e44)' : '#1e1410',
+                background: form.label && form.target ? 'linear-gradient(135deg, #e35d2a, #f57e44)' : 'var(--border)',
                 border: 'none', borderRadius: '8px',
-                color: form.label && form.target ? '#fff' : '#4a3a30',
+                color: form.label && form.target ? '#fff' : 'var(--text-5)',
                 fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '14px',
                 textTransform: 'uppercase', letterSpacing: '0.1em',
                 cursor: form.label && form.target ? 'pointer' : 'default',

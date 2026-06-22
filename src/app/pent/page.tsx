@@ -116,17 +116,17 @@ export default function PentPage() {
       {/* Header */}
       <div
         style={{
-          background: 'linear-gradient(to bottom, #1a0d08, #0a0706)',
+          background: 'linear-gradient(to bottom, var(--surface), var(--bg))',
           padding: '24px 16px 20px',
         }}
       >
         <Link href="/sports/track" style={{ color: '#f57e44', textDecoration: 'none', fontSize: '13px', fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: '12px' }}>
           ‹ Track & Field
         </Link>
-        <div style={{ fontFamily: "'Anton', sans-serif", fontSize: '32px', color: '#ffffff', letterSpacing: '0.04em', lineHeight: 1 }}>
+        <div style={{ fontFamily: "'Anton', sans-serif", fontSize: '32px', color: 'var(--text)', letterSpacing: '0.04em', lineHeight: 1 }}>
           PENTATHLON
         </div>
-        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 500, fontSize: '12px', color: '#6b5a50', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '4px' }}>
+        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 500, fontSize: '12px', color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '4px' }}>
           IAAF Score Calculator · Adjust sliders
         </div>
 
@@ -135,7 +135,7 @@ export default function PentPage() {
           <div style={{ fontFamily: "'Anton', sans-serif", fontSize: '72px', color: '#f57e44', lineHeight: 1 }}>
             {totalPoints.toLocaleString()}
           </div>
-          <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '13px', color: '#8a6a58', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+          <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '13px', color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
             Total Points
           </div>
           {currentTier && (
@@ -151,14 +151,14 @@ export default function PentPage() {
         {nextTier && totalPoints < nextTier.pts && (
           <div style={{ marginTop: '16px', padding: '0 8px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-              <span style={{ fontFamily: "'Barlow', sans-serif", fontSize: '11px', color: '#6b5a50' }}>
+              <span style={{ fontFamily: "'Barlow', sans-serif", fontSize: '11px', color: 'var(--text-4)' }}>
                 {nextTier.pts - totalPoints} pts to {nextTier.label}
               </span>
               <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', color: '#f57e44' }}>
                 {Math.round(tierPct)}%
               </span>
             </div>
-            <div style={{ height: '4px', background: '#1e1410', borderRadius: '4px', overflow: 'hidden' }}>
+            <div style={{ height: '4px', background: 'var(--border)', borderRadius: '4px', overflow: 'hidden' }}>
               <div style={{ width: `${tierPct}%`, height: '100%', background: 'linear-gradient(90deg, #e35d2a, #f57e44)', borderRadius: '4px' }} />
             </div>
           </div>
@@ -170,23 +170,23 @@ export default function PentPage() {
         {eventPoints.map((event) => (
           <div
             key={event.key}
-            style={{ background: '#0f0b08', borderRadius: '10px', padding: '16px', border: '1px solid #1e1410', marginBottom: '10px' }}
+            style={{ background: 'var(--bg-2)', borderRadius: '10px', padding: '16px', border: '1px solid var(--border)', marginBottom: '10px' }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
               <div>
-                <div style={{ fontFamily: "'Saira Condensed', sans-serif", fontWeight: 700, fontSize: '15px', color: '#e8dcd4', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                <div style={{ fontFamily: "'Saira Condensed', sans-serif", fontWeight: 700, fontSize: '15px', color: 'var(--text-2)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                   {event.label}
                 </div>
                 <div style={{ fontFamily: "'Teko', sans-serif", fontWeight: 600, fontSize: '24px', color: '#f57e44', lineHeight: 1 }}>
                   {formatDisplay(event)}
-                  <span style={{ fontSize: '14px', color: '#8a6a58', marginLeft: '4px' }}>{event.unit}</span>
+                  <span style={{ fontSize: '14px', color: 'var(--text-3)', marginLeft: '4px' }}>{event.unit}</span>
                 </div>
               </div>
               <div style={{ textAlign: 'right' }}>
-                <div style={{ fontFamily: "'Anton', sans-serif", fontSize: '28px', color: '#ffffff', lineHeight: 1 }}>
+                <div style={{ fontFamily: "'Anton', sans-serif", fontSize: '28px', color: 'var(--text)', lineHeight: 1 }}>
                   {event.pts}
                 </div>
-                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 600, fontSize: '10px', color: '#4a3a30', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 600, fontSize: '10px', color: 'var(--text-5)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                   pts
                 </div>
               </div>
@@ -206,10 +206,10 @@ export default function PentPage() {
               }}
             />
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px' }}>
-              <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '9px', color: '#2a1f18' }}>
+              <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '9px', color: 'var(--border-2)' }}>
                 {event.lowerBetter ? event.max : event.min}{event.unit}
               </span>
-              <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '9px', color: '#2a1f18' }}>
+              <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '9px', color: 'var(--border-2)' }}>
                 {event.lowerBetter ? event.min : event.max}{event.unit}
               </span>
             </div>
@@ -217,7 +217,7 @@ export default function PentPage() {
         ))}
 
         {/* Event breakdown */}
-        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '11px', color: '#6b5a50', textTransform: 'uppercase', letterSpacing: '0.12em', margin: '16px 0 10px' }}>
+        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '11px', color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.12em', margin: '16px 0 10px' }}>
           Point Breakdown
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
@@ -225,10 +225,10 @@ export default function PentPage() {
             const pct = (e.pts / Math.max(1, totalPoints)) * 100
             return (
               <div key={e.key} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 600, fontSize: '11px', color: '#6b5a50', textTransform: 'uppercase', letterSpacing: '0.08em', width: '80px', flexShrink: 0 }}>
+                <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 600, fontSize: '11px', color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.08em', width: '80px', flexShrink: 0 }}>
                   {e.label.replace('100m Hurdles', '100mH')}
                 </span>
-                <div style={{ flex: 1, height: '6px', background: '#1e1410', borderRadius: '4px', overflow: 'hidden' }}>
+                <div style={{ flex: 1, height: '6px', background: 'var(--border)', borderRadius: '4px', overflow: 'hidden' }}>
                   <div style={{ width: `${pct}%`, height: '100%', background: 'linear-gradient(90deg, #e35d2a, #f57e44)', borderRadius: '4px' }} />
                 </div>
                 <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', color: '#f57e44', width: '36px', textAlign: 'right', flexShrink: 0 }}>
@@ -240,7 +240,7 @@ export default function PentPage() {
         </div>
 
         {/* Tier table */}
-        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '11px', color: '#6b5a50', textTransform: 'uppercase', letterSpacing: '0.12em', margin: '20px 0 10px' }}>
+        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '11px', color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.12em', margin: '20px 0 10px' }}>
           Score Tiers
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
@@ -254,15 +254,15 @@ export default function PentPage() {
                   justifyContent: 'space-between',
                   alignItems: 'center',
                   padding: '10px 14px',
-                  background: isCurrentOrAbove ? '#f57e4411' : '#0f0b08',
+                  background: isCurrentOrAbove ? '#f57e4411' : 'var(--bg-2)',
                   borderRadius: '6px',
-                  border: `1px solid ${isCurrentOrAbove ? '#f57e4444' : '#1e1410'}`,
+                  border: `1px solid ${isCurrentOrAbove ? '#f57e4444' : 'var(--border)'}`,
                 }}
               >
-                <span style={{ fontFamily: "'Barlow', sans-serif", fontWeight: 600, fontSize: '13px', color: isCurrentOrAbove ? '#e8dcd4' : '#4a3a30' }}>
+                <span style={{ fontFamily: "'Barlow', sans-serif", fontWeight: 600, fontSize: '13px', color: isCurrentOrAbove ? 'var(--text-2)' : 'var(--text-5)' }}>
                   {tier.label}
                 </span>
-                <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '11px', color: isCurrentOrAbove ? '#f57e44' : '#2a1f18' }}>
+                <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '11px', color: isCurrentOrAbove ? '#f57e44' : 'var(--border-2)' }}>
                   {tier.pts.toLocaleString()}+
                 </span>
               </div>

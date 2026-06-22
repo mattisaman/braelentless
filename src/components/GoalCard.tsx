@@ -21,10 +21,10 @@ export default function GoalCard({ goal }: GoalCardProps) {
   return (
     <div
       style={{
-        background: '#0f0b08',
+        background: 'var(--bg-2)',
         borderRadius: '8px',
         padding: '14px 16px',
-        border: '1px solid #1e1410',
+        border: '1px solid var(--border)',
       }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
@@ -33,7 +33,7 @@ export default function GoalCard({ goal }: GoalCardProps) {
             fontFamily: "'Barlow', sans-serif",
             fontWeight: 600,
             fontSize: '13px',
-            color: '#e8dcd4',
+            color: 'var(--text-2)',
           }}
         >
           {goal.label}

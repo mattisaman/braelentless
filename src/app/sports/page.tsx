@@ -11,7 +11,7 @@ export default function SportsPage() {
           style={{
             fontFamily: "'Anton', sans-serif",
             fontSize: '32px',
-            color: '#ffffff',
+            color: 'var(--text)',
             letterSpacing: '0.04em',
             lineHeight: 1,
           }}
@@ -23,7 +23,7 @@ export default function SportsPage() {
             fontFamily: "'Barlow Condensed', sans-serif",
             fontWeight: 500,
             fontSize: '13px',
-            color: '#6b5a50',
+            color: 'var(--text-4)',
             textTransform: 'uppercase',
             letterSpacing: '0.1em',
             marginTop: '4px',

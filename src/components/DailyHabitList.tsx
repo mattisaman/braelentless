@@ -86,7 +86,7 @@ export default function DailyHabitList({ habits }: Props) {
                   fontFamily: "'Barlow Condensed', sans-serif",
                   fontWeight: 700,
                   fontSize: '14px',
-                  color: done ? '#6b5a50' : '#e8dcd4',
+                  color: done ? 'var(--text-4)' : 'var(--text-2)',
                 }}>
                   {habit.label}
                 </div>

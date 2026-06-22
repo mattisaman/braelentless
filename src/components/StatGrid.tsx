@@ -11,8 +11,8 @@ export default function StatGrid({ stats }: StatGridProps) {
         display: 'grid',
         gridTemplateColumns: 'repeat(3, 1fr)',
         gap: '1px',
-        background: '#1a1008',
-        border: '1px solid #1a1008',
+        background: 'var(--surface)',
+        border: '1px solid var(--surface)',
         borderRadius: '8px',
         overflow: 'hidden',
       }}
@@ -21,7 +21,7 @@ export default function StatGrid({ stats }: StatGridProps) {
         <div
           key={i}
           style={{
-            background: '#0f0b08',
+            background: 'var(--bg-2)',
             padding: '14px 10px',
             display: 'flex',
             flexDirection: 'column',
@@ -50,7 +50,7 @@ export default function StatGrid({ stats }: StatGridProps) {
               fontFamily: "'Barlow Condensed', sans-serif",
               fontWeight: 600,
               fontSize: '10px',
-              color: '#8a6a58',
+              color: 'var(--text-3)',
               textTransform: 'uppercase',
               letterSpacing: '0.1em',
               textAlign: 'center',

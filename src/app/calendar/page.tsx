@@ -37,7 +37,7 @@ export default function CalendarPage() {
           style={{
             fontFamily: "'Anton', sans-serif",
             fontSize: '32px',
-            color: '#ffffff',
+            color: 'var(--text)',
             letterSpacing: '0.04em',
             lineHeight: 1,
           }}
@@ -49,7 +49,7 @@ export default function CalendarPage() {
             fontFamily: "'Barlow Condensed', sans-serif",
             fontWeight: 500,
             fontSize: '12px',
-            color: '#6b5a50',
+            color: 'var(--text-4)',
             textTransform: 'uppercase',
             letterSpacing: '0.1em',
             marginTop: '4px',
@@ -68,7 +68,7 @@ export default function CalendarPage() {
             fontFamily: "'Barlow Condensed', sans-serif",
             fontWeight: 700,
             fontSize: '11px',
-            color: '#6b5a50',
+            color: 'var(--text-4)',
             textTransform: 'uppercase',
             letterSpacing: '0.12em',
             margin: '28px 0 12px',
@@ -91,7 +91,7 @@ export default function CalendarPage() {
 
           if (upcoming.length === 0) {
             return (
-              <div style={{ textAlign: 'center', color: '#4a3a30', fontSize: '13px', padding: '24px 0' }}>
+              <div style={{ textAlign: 'center', color: 'var(--text-5)', fontSize: '13px', padding: '24px 0' }}>
                 No upcoming events. Add events from the sport schedule pages.
               </div>
             )
@@ -111,7 +111,7 @@ export default function CalendarPage() {
                   <div
                     key={ev.id}
                     style={{
-                      background: '#0f0b08',
+                      background: 'var(--bg-2)',
                       borderRadius: '8px',
                       padding: '12px 14px',
                       border: `1px solid ${color}44`,
@@ -124,7 +124,7 @@ export default function CalendarPage() {
                     <div
                       style={{
                         minWidth: '40px',
-                        background: '#1a1008',
+                        background: 'var(--surface)',
                         borderRadius: '6px',
                         padding: '6px 4px',
                         textAlign: 'center',
@@ -135,15 +135,15 @@ export default function CalendarPage() {
                       <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '8px', color, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                         {d.toLocaleDateString('en-US', { month: 'short' })}
                       </div>
-                      <div style={{ fontFamily: "'Teko', sans-serif", fontWeight: 600, fontSize: '20px', color: '#e8dcd4', lineHeight: 1 }}>
+                      <div style={{ fontFamily: "'Teko', sans-serif", fontWeight: 600, fontSize: '20px', color: 'var(--text-2)', lineHeight: 1 }}>
                         {d.getDate()}
                       </div>
                     </div>
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontFamily: "'Saira Condensed', sans-serif", fontWeight: 700, fontSize: '14px', color: '#e8dcd4', textTransform: 'uppercase', marginBottom: '2px' }}>
+                      <div style={{ fontFamily: "'Saira Condensed', sans-serif", fontWeight: 700, fontSize: '14px', color: 'var(--text-2)', textTransform: 'uppercase', marginBottom: '2px' }}>
                         {ev.opponent}
                       </div>
-                      <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '11px', color: '#6b5a50' }}>
+                      <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '11px', color: 'var(--text-4)' }}>
                         {timeStr} · {ev.location}
                       </div>
                     </div>

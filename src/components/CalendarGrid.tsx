@@ -61,7 +61,7 @@ export default function CalendarGrid({ events }: CalendarGridProps) {
         <button
           onClick={prevMonth}
           style={{
-            background: '#1e1410',
+            background: 'var(--border)',
             border: 'none',
             color: '#f57e44',
             width: '36px',
@@ -81,7 +81,7 @@ export default function CalendarGrid({ events }: CalendarGridProps) {
             fontFamily: "'Saira Condensed', sans-serif",
             fontWeight: 700,
             fontSize: '18px',
-            color: '#e8dcd4',
+            color: 'var(--text-2)',
             textTransform: 'uppercase',
             letterSpacing: '0.06em',
           }}
@@ -91,7 +91,7 @@ export default function CalendarGrid({ events }: CalendarGridProps) {
         <button
           onClick={nextMonth}
           style={{
-            background: '#1e1410',
+            background: 'var(--border)',
             border: 'none',
             color: '#f57e44',
             width: '36px',
@@ -118,7 +118,7 @@ export default function CalendarGrid({ events }: CalendarGridProps) {
               fontFamily: "'Barlow Condensed', sans-serif",
               fontWeight: 700,
               fontSize: '10px',
-              color: '#4a3a30',
+              color: 'var(--text-5)',
               textTransform: 'uppercase',
               letterSpacing: '0.08em',
               padding: '4px 0',
@@ -154,7 +154,7 @@ export default function CalendarGrid({ events }: CalendarGridProps) {
                   : isToday
                   ? '1px solid #f57e4466'
                   : '1px solid transparent',
-                background: isSelected ? '#f57e4422' : isToday ? '#1a1008' : '#0f0b08',
+                background: isSelected ? '#f57e4422' : isToday ? 'var(--surface)' : 'var(--bg-2)',
                 cursor: 'pointer',
                 display: 'flex',
                 flexDirection: 'column',
@@ -168,7 +168,7 @@ export default function CalendarGrid({ events }: CalendarGridProps) {
                   fontFamily: "'Teko', sans-serif",
                   fontWeight: 500,
                   fontSize: '16px',
-                  color: isSelected ? '#f57e44' : isToday ? '#f57e44' : '#c8bab0',
+                  color: isSelected ? '#f57e44' : isToday ? '#f57e44' : 'var(--text-2)',
                   lineHeight: 1,
                 }}
               >
@@ -203,7 +203,7 @@ export default function CalendarGrid({ events }: CalendarGridProps) {
               fontFamily: "'Barlow Condensed', sans-serif",
               fontWeight: 700,
               fontSize: '11px',
-              color: '#6b5a50',
+              color: 'var(--text-4)',
               textTransform: 'uppercase',
               letterSpacing: '0.12em',
               marginBottom: '10px',
@@ -220,7 +220,7 @@ export default function CalendarGrid({ events }: CalendarGridProps) {
               style={{
                 fontFamily: "'Barlow', sans-serif",
                 fontSize: '13px',
-                color: '#4a3a30',
+                color: 'var(--text-5)',
                 textAlign: 'center',
                 padding: '16px',
               }}
@@ -235,7 +235,7 @@ export default function CalendarGrid({ events }: CalendarGridProps) {
                   <div
                     key={ev.id}
                     style={{
-                      background: '#0f0b08',
+                      background: 'var(--bg-2)',
                       borderRadius: '8px',
                       padding: '12px 14px',
                       border: `1px solid ${color}44`,
@@ -259,7 +259,7 @@ export default function CalendarGrid({ events }: CalendarGridProps) {
                           fontFamily: "'Saira Condensed', sans-serif",
                           fontWeight: 700,
                           fontSize: '14px',
-                          color: '#e8dcd4',
+                          color: 'var(--text-2)',
                           textTransform: 'uppercase',
                         }}
                       >
@@ -269,7 +269,7 @@ export default function CalendarGrid({ events }: CalendarGridProps) {
                         style={{
                           fontFamily: "'Barlow', sans-serif",
                           fontSize: '12px',
-                          color: '#6b5a50',
+                          color: 'var(--text-4)',
                         }}
                       >
                         {ev.time} · {ev.location}
@@ -306,7 +306,7 @@ export default function CalendarGrid({ events }: CalendarGridProps) {
           justifyContent: 'center',
           marginTop: '20px',
           paddingTop: '16px',
-          borderTop: '1px solid #1e1410',
+          borderTop: '1px solid var(--border)',
         }}
       >
         {(['soccer', 'basketball', 'track'] as const).map((sport) => (
@@ -327,7 +327,7 @@ export default function CalendarGrid({ events }: CalendarGridProps) {
                 fontFamily: "'Barlow Condensed', sans-serif",
                 fontWeight: 600,
                 fontSize: '10px',
-                color: '#6b5a50',
+                color: 'var(--text-4)',
                 textTransform: 'capitalize',
               }}
             >

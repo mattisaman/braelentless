@@ -45,16 +45,16 @@ export default function TrainPage() {
     <div>
       {/* Header */}
       <div style={{ padding: '20px 16px 0' }}>
-        <div style={{ fontFamily: "'Anton', sans-serif", fontSize: '32px', color: '#ffffff', letterSpacing: '0.04em', lineHeight: 1 }}>
+        <div style={{ fontFamily: "'Anton', sans-serif", fontSize: '32px', color: 'var(--text)', letterSpacing: '0.04em', lineHeight: 1 }}>
           TRAIN
         </div>
-        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 500, fontSize: '12px', color: '#6b5a50', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '4px' }}>
+        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 500, fontSize: '12px', color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '4px' }}>
           Habits & Drill Library
         </div>
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', borderBottom: '1px solid #1e1410', margin: '16px 0 0' }}>
+      <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', margin: '16px 0 0' }}>
         {(['habits', 'drills'] as const).map((t) => (
           <button
             key={t}
@@ -63,7 +63,7 @@ export default function TrainPage() {
               flex: 1, padding: '12px', border: 'none', background: 'none',
               fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '13px',
               textTransform: 'uppercase', letterSpacing: '0.1em', cursor: 'pointer',
-              color: tab === t ? '#f57e44' : '#4a3a30',
+              color: tab === t ? '#f57e44' : 'var(--text-5)',
               borderBottom: tab === t ? '2px solid #f57e44' : '2px solid transparent',
             }}
           >
@@ -76,16 +76,16 @@ export default function TrainPage() {
         {tab === 'habits' && (
           <>
             {/* Daily progress */}
-            <div style={{ background: '#0f0b08', borderRadius: '10px', padding: '16px', border: '1px solid #1e1410', marginBottom: '20px' }}>
+            <div style={{ background: 'var(--bg-2)', borderRadius: '10px', padding: '16px', border: '1px solid var(--border)', marginBottom: '20px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-                <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '13px', color: '#8a6a58', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '13px', color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                   Today&apos;s Progress
                 </span>
                 <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '12px', color: '#f57e44' }}>
                   {completedCount}/{habits.length}
                 </span>
               </div>
-              <div style={{ height: '8px', background: '#1e1410', borderRadius: '8px', overflow: 'hidden' }}>
+              <div style={{ height: '8px', background: 'var(--border)', borderRadius: '8px', overflow: 'hidden' }}>
                 <div style={{ width: `${completionPct}%`, height: '100%', background: 'linear-gradient(90deg, #e35d2a, #f57e44)', borderRadius: '8px', transition: 'width 0.3s ease' }} />
               </div>
               {completionPct === 100 && (
@@ -101,8 +101,8 @@ export default function TrainPage() {
                   key={habit.id}
                   onClick={() => toggleHabit(habit.id)}
                   style={{
-                    background: habit.completedToday ? '#0d1a0d' : '#0f0b08',
-                    border: `1px solid ${habit.completedToday ? '#4ade8044' : '#1e1410'}`,
+                    background: habit.completedToday ? '#0d1a0d' : 'var(--bg-2)',
+                    border: `1px solid ${habit.completedToday ? '#4ade8044' : 'var(--border)'}`,
                     borderRadius: '10px',
                     padding: '14px 16px',
                     display: 'flex',
@@ -120,7 +120,7 @@ export default function TrainPage() {
                       width: '22px',
                       height: '22px',
                       borderRadius: '50%',
-                      border: `2px solid ${habit.completedToday ? '#4ade80' : '#2a1f18'}`,
+                      border: `2px solid ${habit.completedToday ? '#4ade80' : 'var(--border-2)'}`,
                       background: habit.completedToday ? '#4ade80' : 'transparent',
                       display: 'flex',
                       alignItems: 'center',
@@ -134,7 +134,7 @@ export default function TrainPage() {
                     )}
                   </div>
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontFamily: "'Barlow', sans-serif", fontWeight: 600, fontSize: '13px', color: habit.completedToday ? '#e8dcd4' : '#8a6a58' }}>
+                    <div style={{ fontFamily: "'Barlow', sans-serif", fontWeight: 600, fontSize: '13px', color: habit.completedToday ? 'var(--text-2)' : 'var(--text-3)' }}>
                       {habit.label}
                     </div>
                   </div>
@@ -162,9 +162,9 @@ export default function TrainPage() {
                   style={{
                     padding: '6px 14px',
                     borderRadius: '20px',
-                    border: `1px solid ${filter === f ? (SPORT_COLORS[f] ?? '#f57e44') : '#1e1410'}`,
-                    background: filter === f ? (SPORT_COLORS[f] ?? '#f57e44') + '22' : '#0f0b08',
-                    color: filter === f ? (SPORT_COLORS[f] ?? '#f57e44') : '#4a3a30',
+                    border: `1px solid ${filter === f ? (SPORT_COLORS[f] ?? '#f57e44') : 'var(--border)'}`,
+                    background: filter === f ? (SPORT_COLORS[f] ?? '#f57e44') + '22' : 'var(--bg-2)',
+                    color: filter === f ? (SPORT_COLORS[f] ?? '#f57e44') : 'var(--text-5)',
                     fontFamily: "'Barlow Condensed', sans-serif",
                     fontWeight: 700,
                     fontSize: '11px',
@@ -185,29 +185,29 @@ export default function TrainPage() {
                 return (
                   <div
                     key={drill.id}
-                    style={{ background: '#0f0b08', borderRadius: '10px', padding: '14px 16px', border: '1px solid #1e1410' }}
+                    style={{ background: 'var(--bg-2)', borderRadius: '10px', padding: '14px 16px', border: '1px solid var(--border)' }}
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', alignItems: 'flex-start' }}>
-                      <div style={{ fontFamily: "'Saira Condensed', sans-serif", fontWeight: 700, fontSize: '16px', color: '#e8dcd4', textTransform: 'uppercase', letterSpacing: '0.04em', flex: 1, paddingRight: '8px' }}>
+                      <div style={{ fontFamily: "'Saira Condensed', sans-serif", fontWeight: 700, fontSize: '16px', color: 'var(--text-2)', textTransform: 'uppercase', letterSpacing: '0.04em', flex: 1, paddingRight: '8px' }}>
                         {drill.title}
                       </div>
                       <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
                         <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '9px', color, background: color + '22', padding: '2px 7px', borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                           {drill.sport}
                         </span>
-                        <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '9px', color: '#4a3a30', background: '#1e1410', padding: '2px 7px', borderRadius: '4px' }}>
+                        <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '9px', color: 'var(--text-5)', background: 'var(--border)', padding: '2px 7px', borderRadius: '4px' }}>
                           {drill.duration}
                         </span>
                       </div>
                     </div>
-                    <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '13px', color: '#6b5a50', lineHeight: 1.5 }}>
+                    <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '13px', color: 'var(--text-4)', lineHeight: 1.5 }}>
                       {drill.description}
                     </div>
                   </div>
                 )
               })}
               {filteredDrills.length === 0 && (
-                <div style={{ textAlign: 'center', color: '#4a3a30', fontSize: '13px', padding: '32px 0' }}>
+                <div style={{ textAlign: 'center', color: 'var(--text-5)', fontSize: '13px', padding: '32px 0' }}>
                   No drills found for this filter.
                 </div>
               )}

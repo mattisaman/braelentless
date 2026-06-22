@@ -82,7 +82,7 @@ export default function DailyMealTile({ meals }: Props) {
                     fontFamily: "'Barlow Condensed', sans-serif",
                     fontWeight: 700,
                     fontSize: '14px',
-                    color: '#ffffff',
+                    color: 'var(--text)',
                     textTransform: 'uppercase',
                   }}>
                     {meal.label}
@@ -90,7 +90,7 @@ export default function DailyMealTile({ meals }: Props) {
                   <div style={{
                     fontFamily: "'Barlow Condensed', sans-serif",
                     fontSize: '12px',
-                    color: '#6b5a50',
+                    color: 'var(--text-4)',
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
@@ -123,7 +123,7 @@ export default function DailyMealTile({ meals }: Props) {
               fontFamily: "'Barlow Condensed', sans-serif",
               fontWeight: 700,
               fontSize: '11px',
-              color: '#6b5a50',
+              color: 'var(--text-4)',
               textTransform: 'uppercase',
               letterSpacing: '0.12em',
             }}>

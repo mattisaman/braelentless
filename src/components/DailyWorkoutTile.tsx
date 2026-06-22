@@ -53,7 +53,7 @@ export default function DailyWorkoutTile({ drills }: Props) {
           <span className="tile-badge">
             {doneCount}/{total} DONE
           </span>
-          <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', color: '#6b5a50' }}>
+          <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', color: 'var(--text-4)' }}>
             {expanded ? '▴' : '▾'}
           </span>
         </div>
@@ -111,7 +111,7 @@ export default function DailyWorkoutTile({ drills }: Props) {
                       fontFamily: "'Saira Condensed', sans-serif",
                       fontWeight: 700,
                       fontSize: '14px',
-                      color: '#ffffff',
+                      color: 'var(--text)',
                       textTransform: 'uppercase',
                       whiteSpace: 'nowrap',
                       overflow: 'hidden',
@@ -119,7 +119,7 @@ export default function DailyWorkoutTile({ drills }: Props) {
                     }}>
                       {drill.title}
                     </div>
-                    <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '11px', color: '#6b5a50' }}>
+                    <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '11px', color: 'var(--text-4)' }}>
                       {drill.duration}
                     </div>
                   </div>

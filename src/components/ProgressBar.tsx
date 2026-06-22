@@ -25,7 +25,7 @@ export default function ProgressBar({ pct, height = 6, showLabel = false }: Prog
         style={{
           width: '100%',
           height: `${height}px`,
-          background: '#1e1410',
+          background: 'var(--border)',
           borderRadius: `${height}px`,
           overflow: 'hidden',
         }}
