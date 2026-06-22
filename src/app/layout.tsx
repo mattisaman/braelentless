@@ -4,6 +4,7 @@ import BottomNav from '@/components/BottomNav'
 import TopNav from '@/components/TopNav'
 import { ThemeProvider } from '@/components/ThemeProvider'
 import SyncProvider from '@/components/SyncProvider'
+import AuthProvider from '@/components/AuthProvider'
 
 export const metadata: Metadata = {
   title: 'Braelentless — Braelyn Keshequa',
@@ -23,11 +24,13 @@ export default function RootLayout({
     <html lang="en">
       <body style={{ margin: 0, padding: 0, minHeight: '100%' }}>
         <ThemeProvider>
-          <SyncProvider>
-            <TopNav />
-            <main className="app-main">{children}</main>
-            <BottomNav />
-          </SyncProvider>
+          <AuthProvider>
+            <SyncProvider>
+              <TopNav />
+              <main className="app-main">{children}</main>
+              <BottomNav />
+            </SyncProvider>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

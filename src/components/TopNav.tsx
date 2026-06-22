@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useTheme } from './ThemeProvider'
+import { useAuth } from './AuthProvider'
 
 const NAV_LINKS = [
   { label: 'HOME', href: '/' },
@@ -20,6 +21,7 @@ const NAV_LINKS = [
 export default function TopNav() {
   const pathname = usePathname()
   const { theme, toggle } = useTheme()
+  const { email, signOut } = useAuth()
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
@@ -98,6 +100,36 @@ export default function TopNav() {
         >
           {theme === 'dark' ? '☀️' : '🌙'}
         </button>
+
+        {/* Sign out */}
+        {email && (
+          <button
+            onClick={signOut}
+            title={`Sign out (${email})`}
+            aria-label="Sign out"
+            style={{
+              flexShrink: 0,
+              width: '36px',
+              height: '36px',
+              borderRadius: '50%',
+              border: '1px solid var(--nav-border)',
+              background: 'var(--bg-2)',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'background 0.2s, border-color 0.2s',
+            }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--accent)' }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--nav-border)' }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+          </button>
+        )}
       </div>
     </header>
   )
