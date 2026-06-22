@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import type { DailyMealEntry } from '@/lib/types'
 import { loadData, saveData } from '@/lib/storage'
-import ProgressBar from '@/components/ProgressBar'
 
 function todayISO() {
   const d = new Date()
@@ -11,6 +10,13 @@ function todayISO() {
 }
 
 const DAILY_CAL_GOAL = 2400
+
+const MEAL_EMOJIS: Record<string, string> = {
+  Breakfast: '🌅',
+  Lunch: '⚡',
+  Dinner: '🔥',
+  Snack: '🍎',
+}
 
 interface Props {
   meals: DailyMealEntry[]
@@ -34,179 +40,102 @@ export default function DailyMealTile({ meals }: Props) {
 
   const doneCount = completed.length
   const total = meals.length
-  const totalCal = meals.reduce((sum, m) => sum + m.calories, 0)
-  const consumedCal = meals
+  const totalConsumed = meals
     .filter((m) => completed.includes(m.id))
     .reduce((sum, m) => sum + m.calories, 0)
-  const calPct = Math.round((consumedCal / DAILY_CAL_GOAL) * 100)
+  const calPct = Math.min(100, (totalConsumed / DAILY_CAL_GOAL) * 100)
 
   return (
-    <div
-      style={{
-        background: '#0f0b08',
-        borderRadius: 10,
-        border: '1px solid #1e1410',
-        overflow: 'hidden',
-      }}
-    >
+    <div className="tile-card">
       {/* Header */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '14px 16px 12px',
-          background: 'linear-gradient(135deg, #1a0e08 0%, #0f0b08 100%)',
-          borderLeft: '3px solid #f57e44',
-        }}
-      >
-        <span
-          style={{
-            fontFamily: "'Anton', sans-serif",
-            fontSize: 13,
-            textTransform: 'uppercase',
-            color: '#f57e44',
-            letterSpacing: '0.05em',
-          }}
-        >
-          TODAY&apos;S FUEL
-        </span>
-        <span
-          style={{
-            fontFamily: "'Barlow Condensed', sans-serif",
-            fontWeight: 700,
-            fontSize: 11,
-            color: '#f57e44',
-            background: '#f57e4422',
-            border: '1px solid #f57e4444',
-            borderRadius: 12,
-            padding: '3px 10px',
-          }}
-        >
-          {doneCount} / {total} MEALS
-        </span>
+      <div className="tile-header">
+        <span className="tile-header-label">TODAY&apos;S FUEL</span>
+        <span className="tile-badge tile-badge-green">{doneCount}/{total} MEALS</span>
       </div>
 
-      <div style={{ padding: '4px 16px 16px' }}>
+      {/* Body */}
+      <div style={{ padding: '16px' }}>
         {/* Meal rows */}
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {meals.map((meal, idx) => {
+        <div>
+          {meals.map((meal) => {
             const done = completed.includes(meal.id)
-            const isLast = idx === meals.length - 1
+            const emoji = MEAL_EMOJIS[meal.label] ?? '🍽️'
             return (
               <div
                 key={meal.id}
-                style={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: 12,
-                  opacity: done ? 0.5 : 1,
-                  transition: 'opacity 0.2s',
-                  padding: '11px 0',
-                  borderBottom: isLast ? 'none' : '1px solid #1a1008',
-                }}
+                className={'checklist-row' + (done ? ' row-done' : '')}
               >
-                {/* Checkbox */}
+                {/* Circle checkbox */}
                 <div
+                  className={'check-circle' + (done ? ' done-green' : '')}
                   onClick={() => toggle(meal.id)}
-                  style={{
-                    width: 20,
-                    height: 20,
-                    borderRadius: 4,
-                    border: `2px solid ${done ? '#f57e44' : '#2a1f18'}`,
-                    background: done ? '#f57e44' : 'transparent',
-                    cursor: 'pointer',
-                    flexShrink: 0,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginTop: 2,
-                  }}
                 >
-                  {done && <span style={{ color: '#fff', fontSize: 12 }}>✓</span>}
+                  {done && <span style={{ color: '#fff', fontSize: '13px', fontWeight: 700 }}>✓</span>}
                 </div>
 
-                {/* Label + calories + description */}
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span
-                      style={{
-                        fontFamily: "'Barlow Condensed', sans-serif",
-                        fontWeight: 700,
-                        fontSize: 13,
-                        color: '#ffffff',
-                        textDecoration: done ? 'line-through' : 'none',
-                      }}
-                    >
-                      {meal.label}
-                    </span>
-                    <span
-                      style={{
-                        fontFamily: "'Space Mono', monospace",
-                        fontSize: 10,
-                        color: '#f57e44',
-                        background: '#f57e4415',
-                        borderRadius: 8,
-                        padding: '1px 6px',
-                        flexShrink: 0,
-                      }}
-                    >
-                      {meal.calories} cal
-                    </span>
+                {/* Emoji */}
+                <span style={{ fontSize: '18px', flexShrink: 0 }}>{emoji}</span>
+
+                {/* Label + description */}
+                <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                  <div style={{
+                    fontFamily: "'Barlow Condensed', sans-serif",
+                    fontWeight: 700,
+                    fontSize: '14px',
+                    color: '#ffffff',
+                    textTransform: 'uppercase',
+                  }}>
+                    {meal.label}
                   </div>
-                  <div
-                    style={{
-                      fontFamily: "'Barlow', sans-serif",
-                      fontSize: 12,
-                      color: '#6b5a50',
-                      marginTop: 2,
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                    }}
-                  >
+                  <div style={{
+                    fontFamily: "'Barlow Condensed', sans-serif",
+                    fontSize: '12px',
+                    color: '#6b5a50',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}>
                     {meal.description}
                   </div>
+                </div>
+
+                {/* Calorie pill */}
+                <div style={{
+                  background: 'rgba(34,197,94,0.1)',
+                  border: '1px solid rgba(34,197,94,0.2)',
+                  borderRadius: '8px',
+                  padding: '2px 8px',
+                  flexShrink: 0,
+                }}>
+                  <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', color: '#22c55e' }}>
+                    {meal.calories}
+                  </span>
                 </div>
               </div>
             )
           })}
         </div>
 
-        {/* Calorie progress bar */}
-        <div style={{ marginTop: 14 }}>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: 8,
-            }}
-          >
-            <span
-              style={{
-                fontFamily: "'Barlow Condensed', sans-serif",
-                fontWeight: 700,
-                fontSize: 11,
-                color: '#6b5a50',
-                textTransform: 'uppercase',
-                letterSpacing: '0.12em',
-              }}
-            >
+        {/* Calorie total */}
+        <div style={{ marginTop: '16px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+            <span style={{
+              fontFamily: "'Barlow Condensed', sans-serif",
+              fontWeight: 700,
+              fontSize: '11px',
+              color: '#6b5a50',
+              textTransform: 'uppercase',
+              letterSpacing: '0.12em',
+            }}>
               CALORIES
             </span>
-            <span
-              style={{
-                fontFamily: "'Space Mono', monospace",
-                fontSize: 11,
-                color: '#f57e44',
-                fontWeight: 700,
-              }}
-            >
-              {consumedCal} / {DAILY_CAL_GOAL} cal
+            <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '11px', color: '#f57e44', fontWeight: 700 }}>
+              {totalConsumed} / {DAILY_CAL_GOAL} cal
             </span>
           </div>
-          <ProgressBar pct={calPct} height={6} />
+          <div className="prog-track">
+            <div className="prog-fill prog-fill-green" style={{ width: `${calPct}%` }} />
+          </div>
         </div>
       </div>
     </div>

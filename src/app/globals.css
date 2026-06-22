@@ -77,3 +77,199 @@ input[type='number']::-webkit-outer-spin-button {
 input[type='number'] {
   -moz-appearance: textfield;
 }
+
+/* ── Responsive dashboard grid ── */
+.dashboard-content {
+  width: 100%;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+@media (min-width: 768px) {
+  .dashboard-content {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+}
+
+.dashboard-tiles {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+@media (min-width: 768px) {
+  .dashboard-tiles {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "workout right";
+    gap: 16px;
+    align-items: start;
+  }
+  .tile-workout { grid-area: workout; }
+  .tile-right-col {
+    grid-area: right;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+.dashboard-lower {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+@media (min-width: 768px) {
+  .dashboard-lower {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+}
+
+.sports-grid {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+@media (min-width: 768px) {
+  .sports-grid {
+    overflow-x: visible;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ── Tile card base ── */
+.tile-card {
+  background: linear-gradient(145deg, #141008 0%, #0f0b08 50%, #0c0907 100%);
+  border-radius: 14px;
+  border: 1px solid #211710;
+  overflow: hidden;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.tile-card:hover {
+  border-color: rgba(245,126,68,0.25);
+  box-shadow: 0 0 0 1px rgba(245,126,68,0.08), 0 12px 40px rgba(0,0,0,0.5);
+}
+
+/* ── Glowing circle checkbox ── */
+.check-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #2e2018;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  user-select: none;
+}
+.check-circle:hover {
+  border-color: rgba(245,126,68,0.5);
+  box-shadow: 0 0 8px rgba(245,126,68,0.2);
+}
+.check-circle.done {
+  border-color: #f57e44;
+  background: linear-gradient(135deg, #e35d2a, #f57e44);
+  box-shadow: 0 0 16px rgba(245,126,68,0.55), 0 0 4px rgba(245,126,68,0.3);
+}
+.check-circle.done-green {
+  border-color: #22c55e;
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+  box-shadow: 0 0 16px rgba(34,197,94,0.5), 0 0 4px rgba(34,197,94,0.25);
+}
+
+/* ── Progress bar base ── */
+.prog-track {
+  width: 100%;
+  height: 5px;
+  background: #1e1410;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.prog-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #e35d2a, #f57e44);
+  transition: width 0.4s ease;
+}
+.prog-fill-green {
+  background: linear-gradient(90deg, #16a34a, #22c55e);
+}
+
+/* ── Section header accent ── */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 0 12px;
+}
+.section-header-bar {
+  width: 3px;
+  height: 18px;
+  background: linear-gradient(180deg, #f57e44, #e35d2a);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.section-header-text {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  color: #f57e44;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+
+/* ── Row checked state ── */
+.checklist-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #171108;
+  transition: background 0.2s;
+  border-radius: 4px;
+}
+.checklist-row:last-child { border-bottom: none; }
+.checklist-row.row-done {
+  opacity: 0.5;
+}
+
+/* ── Tile header gradient ── */
+.tile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 12px;
+  background: linear-gradient(135deg, #1c1008 0%, #150e07 100%);
+  border-bottom: 1px solid #211710;
+  cursor: pointer;
+  user-select: none;
+}
+.tile-header-label {
+  font-family: 'Anton', sans-serif;
+  font-size: 13px;
+  color: #f57e44;
+  letter-spacing: 0.06em;
+}
+.tile-badge {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: #f57e44;
+  background: rgba(245,126,68,0.12);
+  border: 1px solid rgba(245,126,68,0.25);
+  border-radius: 12px;
+  padding: 3px 10px;
+}
+.tile-badge-green {
+  color: #22c55e;
+  background: rgba(34,197,94,0.1);
+  border-color: rgba(34,197,94,0.2);
+}

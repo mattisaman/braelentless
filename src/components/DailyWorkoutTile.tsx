@@ -3,11 +3,17 @@
 import { useState, useEffect } from 'react'
 import type { Drill } from '@/lib/types'
 import { loadData, saveData } from '@/lib/storage'
-import ProgressBar from '@/components/ProgressBar'
 
 function todayISO() {
   const d = new Date()
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
+const SPORT_COLORS: Record<string, string> = {
+  basketball: '#f57e44',
+  soccer: '#22c55e',
+  track: '#60a5fa',
+  general: '#a78bfa',
 }
 
 interface Props {
@@ -33,158 +39,112 @@ export default function DailyWorkoutTile({ drills }: Props) {
 
   const doneCount = completed.length
   const total = drills.length
-  const pct = total > 0 ? Math.round((doneCount / total) * 100) : 0
   const allDone = doneCount === total && total > 0
+  const pct = total > 0 ? (doneCount / total) * 100 : 0
 
   return (
-    <div
-      style={{
-        background: '#0f0b08',
-        borderRadius: 10,
-        border: '1px solid #1e1410',
-        overflow: 'hidden',
-      }}
-    >
+    <div className="tile-card tile-workout">
       {/* Header */}
-      <div
-        onClick={() => setExpanded((v) => !v)}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          cursor: 'pointer',
-          padding: '14px 16px 12px',
-          background: 'linear-gradient(135deg, #1a0e08 0%, #0f0b08 100%)',
-          borderLeft: '3px solid #f57e44',
-        }}
-      >
-        <span
-          style={{
-            fontFamily: "'Anton', sans-serif",
-            fontSize: 13,
-            textTransform: 'uppercase',
-            color: allDone ? '#22c55e' : '#f57e44',
-            letterSpacing: '0.05em',
-          }}
-        >
-          {allDone ? 'WORKOUT COMPLETE ✓' : "TODAY'S WORKOUT"}
+      <div className="tile-header" onClick={() => setExpanded((v) => !v)}>
+        <span className="tile-header-label">
+          TODAY&apos;S WORKOUT
         </span>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span
-            style={{
-              fontFamily: "'Barlow Condensed', sans-serif",
-              fontWeight: 700,
-              fontSize: 11,
-              color: '#f57e44',
-              background: '#f57e4422',
-              border: '1px solid #f57e4444',
-              borderRadius: 12,
-              padding: '3px 10px',
-            }}
-          >
-            {doneCount} / {total} DONE
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span className="tile-badge">
+            {doneCount}/{total} DONE
           </span>
-          <span
-            style={{
-              fontFamily: "'Space Mono', monospace",
-              fontSize: 10,
-              color: '#6b5a50',
-            }}
-          >
-            {expanded ? '▲' : '▼'}
+          <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', color: '#6b5a50' }}>
+            {expanded ? '▴' : '▾'}
           </span>
         </div>
       </div>
 
-      <div style={{ padding: '12px 16px 16px' }}>
-        {/* Progress bar always visible */}
-        <ProgressBar pct={pct} height={5} />
+      {/* Body */}
+      <div style={{ padding: '16px' }}>
+        {/* Progress bar */}
+        <div className="prog-track">
+          <div className="prog-fill" style={{ width: `${pct}%` }} />
+        </div>
 
-        {/* Expanded drill list */}
+        {/* All done banner */}
+        {allDone && (
+          <div style={{
+            marginTop: '12px',
+            background: 'linear-gradient(135deg, #22c55e22, #16a34a11)',
+            border: '1px solid #22c55e44',
+            borderRadius: '8px',
+            padding: '10px',
+            textAlign: 'center',
+            fontFamily: "'Barlow Condensed', sans-serif",
+            fontWeight: 700,
+            fontSize: '12px',
+            color: '#22c55e',
+            textTransform: 'uppercase',
+            letterSpacing: '0.1em',
+          }}>
+            WORKOUT COMPLETE ✓
+          </div>
+        )}
+
+        {/* Drill list */}
         {expanded && (
-          <div style={{ marginTop: 14, display: 'flex', flexDirection: 'column' }}>
-            {drills.map((drill, idx) => {
+          <div style={{ marginTop: '4px' }}>
+            {drills.map((drill) => {
               const done = completed.includes(drill.id)
-              const isLast = idx === drills.length - 1
+              const sportColor = SPORT_COLORS[drill.sport] ?? '#a78bfa'
               return (
                 <div
                   key={drill.id}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 10,
-                    opacity: done ? 0.5 : 1,
-                    transition: 'opacity 0.2s',
-                    padding: '12px 0',
-                    borderBottom: isLast ? 'none' : '1px solid #1a1008',
-                  }}
+                  className={'checklist-row' + (done ? ' row-done' : '')}
                 >
-                  {/* Checkbox */}
+                  {/* Circle checkbox */}
                   <div
+                    className={'check-circle' + (done ? ' done' : '')}
                     onClick={() => toggle(drill.id)}
-                    style={{
-                      width: 20,
-                      height: 20,
-                      borderRadius: 4,
-                      border: `2px solid ${done ? '#f57e44' : '#2a1f18'}`,
-                      background: done ? '#f57e44' : 'transparent',
-                      cursor: 'pointer',
-                      flexShrink: 0,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
                   >
-                    {done && <span style={{ color: '#fff', fontSize: 12 }}>✓</span>}
+                    {done && <span style={{ color: '#fff', fontSize: '13px', fontWeight: 700 }}>✓</span>}
                   </div>
-                  {/* Drill info */}
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <div
-                        style={{
-                          fontFamily: "'Barlow Condensed', sans-serif",
-                          fontWeight: 700,
-                          fontSize: 15,
-                          color: '#ffffff',
-                          textDecoration: done ? 'line-through' : 'none',
-                          whiteSpace: 'nowrap',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                        }}
-                      >
-                        {drill.title}
-                      </div>
-                      {drill.sport && (
-                        <span
-                          style={{
-                            fontFamily: "'Barlow Condensed', sans-serif",
-                            fontWeight: 700,
-                            fontSize: 9,
-                            color: '#f57e44',
-                            background: '#f57e4415',
-                            border: '1px solid #f57e4430',
-                            borderRadius: 8,
-                            padding: '1px 6px',
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.06em',
-                            flexShrink: 0,
-                          }}
-                        >
-                          {drill.sport}
-                        </span>
-                      )}
+
+                  {/* Info */}
+                  <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                    <div style={{
+                      fontFamily: "'Saira Condensed', sans-serif",
+                      fontWeight: 700,
+                      fontSize: '14px',
+                      color: '#ffffff',
+                      textTransform: 'uppercase',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}>
+                      {drill.title}
                     </div>
-                    <div
-                      style={{
-                        fontFamily: "'Space Mono', monospace",
-                        fontSize: 11,
-                        color: '#8a6a58',
-                        marginTop: 3,
-                      }}
-                    >
+                    <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '11px', color: '#6b5a50' }}>
                       {drill.duration}
                     </div>
                   </div>
+
+                  {/* Sport badge */}
+                  {drill.sport && (
+                    <div style={{
+                      background: `${sportColor}18`,
+                      border: `1px solid ${sportColor}44`,
+                      borderRadius: '10px',
+                      padding: '3px 8px',
+                      flexShrink: 0,
+                    }}>
+                      <span style={{
+                        fontFamily: "'Barlow Condensed', sans-serif",
+                        fontWeight: 700,
+                        fontSize: '9px',
+                        color: sportColor,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.06em',
+                      }}>
+                        {drill.sport}
+                      </span>
+                    </div>
+                  )}
                 </div>
               )
             })}
