@@ -113,3 +113,27 @@ export interface DailyMealEntry {
   description: string
   calories: number
 }
+
+export interface Dream {
+  id: string
+  title: string
+  detail: string
+  horizon: string   // e.g. 'This season', 'By senior year', 'Lifetime'
+  sport?: SportKey | 'life'
+  progress?: number // 0–100, optional sense of momentum
+}
+
+export interface PersonalRecord {
+  id: string
+  sport: SportKey
+  event: string     // e.g. '100m Hurdles', 'Vertical Jump'
+  value: string     // formatted, e.g. '14.2s', "5'4\""
+  date: string      // ISO
+  prev?: string     // previous best, for "improved from"
+  note?: string
+}
+
+export interface Quote {
+  text: string
+  author: string
+}

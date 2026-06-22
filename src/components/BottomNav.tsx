@@ -21,6 +21,7 @@ export default function BottomNav() {
 
   return (
     <nav
+      className="bottom-nav"
       style={{
         position: 'fixed',
         bottom: 0,
@@ -28,7 +29,6 @@ export default function BottomNav() {
         right: 0,
         background: 'var(--nav-bg)',
         borderTop: '1px solid var(--nav-border)',
-        display: 'flex',
         zIndex: 50,
         boxShadow: '0 -4px 24px rgba(0,0,0,0.15)',
         transition: 'background 0.25s ease, border-color 0.25s ease',

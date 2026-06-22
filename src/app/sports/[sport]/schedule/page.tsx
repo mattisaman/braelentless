@@ -7,6 +7,14 @@ import { loadData, saveData } from '@/lib/storage'
 import ScheduleCard from '@/components/ScheduleCard'
 import type { ScheduleEvent, SportKey } from '@/lib/types'
 
+const SPORT_COLORS: Record<string, string> = {
+  soccer: '#22c55e',
+  basketball: '#f57e44',
+  track: '#60a5fa',
+}
+
+const SUB_TABS = ['Overview', 'Stats', 'Schedule', 'Goals'] as const
+
 function getTodayKey() {
   const today = new Date()
   return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
@@ -19,6 +27,7 @@ export default function SchedulePage({
 }) {
   const { sport: sportKey } = use(params)
   const sportData = SPORTS_DATA.find((s) => s.key === sportKey)
+  const color = SPORT_COLORS[sportKey] ?? '#f57e44'
 
   const STORAGE_KEY = `braelentless_schedule_${sportKey}`
   const defaultEvents = DEFAULT_SCHEDULE.filter((e) => e.sport === sportKey)
@@ -61,44 +70,42 @@ export default function SchedulePage({
     setShowForm(false)
   }
 
-  const inputStyle = {
+  const inputStyle: React.CSSProperties = {
     width: '100%',
     background: 'var(--input-bg)',
     border: '1px solid var(--input-border)',
-    borderRadius: '6px',
+    borderRadius: 8,
     padding: '10px 12px',
     color: 'var(--text-2)',
     fontFamily: "'Barlow', sans-serif",
-    fontSize: '13px',
+    fontSize: 14,
     outline: 'none',
   }
 
-  const labelStyle = {
+  const labelStyle: React.CSSProperties = {
     fontFamily: "'Barlow Condensed', sans-serif",
-    fontWeight: 600,
-    fontSize: '11px',
+    fontWeight: 700,
+    fontSize: 11,
     color: 'var(--text-4)',
-    textTransform: 'uppercase' as const,
-    letterSpacing: '0.1em',
-    marginBottom: '6px',
+    textTransform: 'uppercase',
+    letterSpacing: '0.12em',
+    marginBottom: 6,
     display: 'block',
   }
 
+  const hrefFor = (label: string) =>
+    label === 'Overview' ? `/sports/${sportKey}` : `/sports/${sportKey}/${label.toLowerCase()}`
+
   return (
-    <div>
-      {/* Header */}
-      <div style={{ padding: '20px 16px 0', marginBottom: '4px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <Link href={`/sports/${sportKey}`} style={{ color: '#f57e44', textDecoration: 'none', fontSize: '20px' }}>
-            ‹
-          </Link>
+    <div style={{ background: 'var(--bg)', minHeight: '100vh', paddingBottom: 56 }}>
+      <div className="dashboard-content" style={{ paddingTop: 24 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <Link href={`/sports/${sportKey}`} style={{ color, textDecoration: 'none', fontSize: 26, lineHeight: 1 }}>‹</Link>
           <div>
-            <div
-              style={{ fontFamily: "'Anton', sans-serif", fontSize: '24px', color: 'var(--text)', lineHeight: 1, letterSpacing: '0.04em' }}
-            >
+            <div style={{ fontFamily: "'Anton', sans-serif", fontSize: 'clamp(28px, 4vw, 40px)', color: 'var(--text)', lineHeight: 1, letterSpacing: '0.03em' }}>
               SCHEDULE
             </div>
-            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 500, fontSize: '12px', color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 600, fontSize: 12, color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.14em', marginTop: 4 }}>
               {sportData?.name ?? sportKey}
             </div>
           </div>
@@ -106,53 +113,43 @@ export default function SchedulePage({
       </div>
 
       {/* Sub-nav */}
-      <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', marginTop: '12px' }}>
-        {[
-          { label: 'Overview', href: `/sports/${sportKey}` },
-          { label: 'Stats', href: `/sports/${sportKey}/stats` },
-          { label: 'Schedule', href: `/sports/${sportKey}/schedule` },
-          { label: 'Goals', href: `/sports/${sportKey}/goals` },
-        ].map((tab) => (
-          <Link
-            key={tab.href}
-            href={tab.href}
-            style={{
-              flex: 1,
-              padding: '12px 4px',
-              textAlign: 'center',
-              textDecoration: 'none',
-              fontFamily: "'Barlow Condensed', sans-serif",
-              fontWeight: 700,
-              fontSize: '11px',
-              textTransform: 'uppercase',
-              letterSpacing: '0.1em',
-              color: tab.label === 'Schedule' ? '#f57e44' : 'var(--text-5)',
-              borderBottom: tab.label === 'Schedule' ? '2px solid #f57e44' : '2px solid transparent',
-            }}
-          >
-            {tab.label}
-          </Link>
-        ))}
+      <div style={{ borderBottom: '1px solid var(--border)', marginTop: 16 }}>
+        <div className="dashboard-content" style={{ display: 'flex', maxWidth: 640 }}>
+          {SUB_TABS.map((label) => {
+            const isActive = label === 'Schedule'
+            return (
+              <Link key={label} href={hrefFor(label)} style={{
+                flex: 1, padding: '14px 4px', textAlign: 'center', textDecoration: 'none',
+                fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 12,
+                textTransform: 'uppercase', letterSpacing: '0.12em',
+                color: isActive ? '#f57e44' : 'var(--text-4)',
+                borderBottom: isActive ? '2px solid #f57e44' : '2px solid transparent',
+              }}>
+                {label}
+              </Link>
+            )
+          })}
+        </div>
       </div>
 
-      <div style={{ padding: '20px 16px' }}>
+      <div className="dashboard-content" style={{ paddingTop: 22 }}>
         {/* Add event button */}
         <button
           onClick={() => setShowForm((v) => !v)}
           style={{
             width: '100%',
-            padding: '12px',
-            background: showForm ? 'var(--border)' : 'linear-gradient(135deg, #e35d2a, #f57e44)',
-            border: 'none',
-            borderRadius: '8px',
+            padding: 13,
+            background: showForm ? 'var(--bg-2)' : 'linear-gradient(135deg, #e35d2a, #f57e44)',
+            border: showForm ? '1px solid var(--border-2)' : 'none',
+            borderRadius: 10,
             color: showForm ? '#f57e44' : '#fff',
             fontFamily: "'Barlow Condensed', sans-serif",
             fontWeight: 700,
-            fontSize: '14px',
+            fontSize: 14,
             textTransform: 'uppercase',
-            letterSpacing: '0.1em',
+            letterSpacing: '0.12em',
             cursor: 'pointer',
-            marginBottom: '16px',
+            marginBottom: 18,
           }}
         >
           {showForm ? '✕ Cancel' : '+ Add Event'}
@@ -160,18 +157,7 @@ export default function SchedulePage({
 
         {/* Add event form */}
         {showForm && (
-          <div
-            style={{
-              background: 'var(--bg-2)',
-              borderRadius: '10px',
-              padding: '16px',
-              border: '1px solid var(--border-2)',
-              marginBottom: '20px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '12px',
-            }}
-          >
+          <div className="tile-card" style={{ padding: 18, marginBottom: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
             <div>
               <label style={labelStyle}>Opponent / Event</label>
               <input
@@ -182,14 +168,14 @@ export default function SchedulePage({
                 style={inputStyle}
               />
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
               <div>
                 <label style={labelStyle}>Date</label>
                 <input
                   type="date"
                   value={form.date}
                   onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))}
-                  style={{ ...inputStyle, colorScheme: 'dark' }}
+                  style={inputStyle}
                 />
               </div>
               <div>
@@ -198,7 +184,7 @@ export default function SchedulePage({
                   type="time"
                   value={form.time}
                   onChange={(e) => setForm((f) => ({ ...f, time: e.target.value }))}
-                  style={{ ...inputStyle, colorScheme: 'dark' }}
+                  style={inputStyle}
                 />
               </div>
             </div>
@@ -212,7 +198,7 @@ export default function SchedulePage({
                 style={inputStyle}
               />
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
               <div>
                 <label style={labelStyle}>Type</label>
                 <select
@@ -240,16 +226,16 @@ export default function SchedulePage({
             <button
               onClick={handleAdd}
               style={{
-                padding: '12px',
+                padding: 13,
                 background: form.opponent && form.date ? 'linear-gradient(135deg, #e35d2a, #f57e44)' : 'var(--border)',
                 border: 'none',
-                borderRadius: '8px',
+                borderRadius: 8,
                 color: form.opponent && form.date ? '#fff' : 'var(--text-5)',
                 fontFamily: "'Barlow Condensed', sans-serif",
                 fontWeight: 700,
-                fontSize: '14px',
+                fontSize: 14,
                 textTransform: 'uppercase',
-                letterSpacing: '0.1em',
+                letterSpacing: '0.12em',
                 cursor: form.opponent && form.date ? 'pointer' : 'default',
               }}
             >
@@ -258,40 +244,64 @@ export default function SchedulePage({
           </div>
         )}
 
-        {/* Upcoming */}
-        {upcoming.length > 0 && (
-          <>
-            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '11px', color: '#f57e44', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '10px' }}>
-              Upcoming ({upcoming.length})
+        {/* Two-column upcoming / past on desktop */}
+        <div className="schedule-cols">
+          {/* Upcoming */}
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+              <span style={{ width: 8, height: 8, borderRadius: '50%', background: color, boxShadow: `0 0 10px ${color}` }} />
+              <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 12, color, textTransform: 'uppercase', letterSpacing: '0.16em' }}>
+                Upcoming ({upcoming.length})
+              </span>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px' }}>
-              {upcoming.map((ev) => (
-                <ScheduleCard key={ev.id} event={ev} isUpcoming={true} />
-              ))}
-            </div>
-          </>
-        )}
+            {upcoming.length > 0 ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {upcoming.map((ev) => (
+                  <ScheduleCard key={ev.id} event={ev} isUpcoming={true} />
+                ))}
+              </div>
+            ) : (
+              <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: 13, color: 'var(--text-4)', padding: '8px 0' }}>No upcoming events.</div>
+            )}
+          </div>
 
-        {/* Past */}
-        {past.length > 0 && (
-          <>
-            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '11px', color: 'var(--text-5)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '10px' }}>
-              Past Events
+          {/* Past */}
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+              <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--text-5)' }} />
+              <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 12, color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.16em' }}>
+                Results ({past.length})
+              </span>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {[...past].reverse().map((ev) => (
-                <ScheduleCard key={ev.id} event={ev} isUpcoming={false} />
-              ))}
-            </div>
-          </>
-        )}
+            {past.length > 0 ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {[...past].reverse().map((ev) => (
+                  <ScheduleCard key={ev.id} event={ev} isUpcoming={false} />
+                ))}
+              </div>
+            ) : (
+              <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: 13, color: 'var(--text-4)', padding: '8px 0' }}>No past events yet.</div>
+            )}
+          </div>
+        </div>
 
         {events.length === 0 && (
-          <div style={{ textAlign: 'center', color: 'var(--text-5)', fontFamily: "'Barlow', sans-serif", fontSize: '13px', padding: '32px 0' }}>
+          <div style={{ textAlign: 'center', color: 'var(--text-5)', fontFamily: "'Barlow', sans-serif", fontSize: 14, padding: '40px 0' }}>
             No events yet. Add one above.
           </div>
         )}
       </div>
+
+      <style>{`
+        .schedule-cols {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 28px;
+        }
+        @media (min-width: 900px) {
+          .schedule-cols { grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+        }
+      `}</style>
     </div>
   )
 }

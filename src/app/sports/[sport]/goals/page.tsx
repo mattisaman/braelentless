@@ -5,7 +5,15 @@ import Link from 'next/link'
 import { SPORTS_DATA } from '@/lib/data'
 import { loadData, saveData } from '@/lib/storage'
 import ProgressBar from '@/components/ProgressBar'
-import type { Goal, SportKey } from '@/lib/types'
+import type { Goal } from '@/lib/types'
+
+const SPORT_COLORS: Record<string, string> = {
+  soccer: '#22c55e',
+  basketball: '#f57e44',
+  track: '#60a5fa',
+}
+
+const SUB_TABS = ['Overview', 'Stats', 'Schedule', 'Goals'] as const
 
 export default function GoalsPage({
   params,
@@ -14,6 +22,7 @@ export default function GoalsPage({
 }) {
   const { sport: sportKey } = use(params)
   const sportData = SPORTS_DATA.find((s) => s.key === sportKey)
+  const color = SPORT_COLORS[sportKey] ?? '#f57e44'
 
   const STORAGE_KEY = `braelentless_goals_${sportKey}`
 
@@ -70,96 +79,102 @@ export default function GoalsPage({
     saveData(STORAGE_KEY, updated)
   }
 
-  const inputStyle = {
+  const inputStyle: React.CSSProperties = {
     background: 'var(--input-bg)',
     border: '1px solid var(--input-border)',
-    borderRadius: '6px',
-    padding: '8px 10px',
+    borderRadius: 8,
+    padding: '9px 11px',
     color: 'var(--text-2)',
     fontFamily: "'Barlow', sans-serif",
-    fontSize: '13px',
+    fontSize: 14,
     outline: 'none',
   }
-  const labelStyle = {
+  const labelStyle: React.CSSProperties = {
     fontFamily: "'Barlow Condensed', sans-serif",
-    fontWeight: 600,
-    fontSize: '11px',
+    fontWeight: 700,
+    fontSize: 11,
     color: 'var(--text-4)',
-    textTransform: 'uppercase' as const,
-    letterSpacing: '0.1em',
-    marginBottom: '6px',
+    textTransform: 'uppercase',
+    letterSpacing: '0.12em',
+    marginBottom: 6,
     display: 'block',
   }
 
+  const hrefFor = (label: string) =>
+    label === 'Overview' ? `/sports/${sportKey}` : `/sports/${sportKey}/${label.toLowerCase()}`
+
+  const completed = goals.filter((g) => calcPct(g) >= 100).length
+
   return (
-    <div>
-      {/* Header */}
-      <div style={{ padding: '20px 16px 0', marginBottom: '4px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <Link href={`/sports/${sportKey}`} style={{ color: '#f57e44', textDecoration: 'none', fontSize: '20px' }}>‹</Link>
-          <div>
-            <div style={{ fontFamily: "'Anton', sans-serif", fontSize: '24px', color: 'var(--text)', lineHeight: 1, letterSpacing: '0.04em' }}>
-              GOALS
+    <div style={{ background: 'var(--bg)', minHeight: '100vh', paddingBottom: 56 }}>
+      <div className="dashboard-content" style={{ paddingTop: 24 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+            <Link href={`/sports/${sportKey}`} style={{ color, textDecoration: 'none', fontSize: 26, lineHeight: 1 }}>‹</Link>
+            <div>
+              <div style={{ fontFamily: "'Anton', sans-serif", fontSize: 'clamp(28px, 4vw, 40px)', color: 'var(--text)', lineHeight: 1, letterSpacing: '0.03em' }}>
+                GOALS
+              </div>
+              <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 600, fontSize: 12, color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.14em', marginTop: 4 }}>
+                {sportData?.name ?? sportKey}
+              </div>
             </div>
-            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 500, fontSize: '12px', color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-              {sportData?.name ?? sportKey}
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <div style={{ fontFamily: "'Teko', sans-serif", fontWeight: 700, fontSize: 36, color, lineHeight: 0.9 }}>
+              {completed}<span style={{ color: 'var(--text-4)', fontSize: 22 }}>/{goals.length}</span>
             </div>
+            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 10, color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.14em' }}>Goals Hit</div>
           </div>
         </div>
       </div>
 
       {/* Sub-nav */}
-      <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', marginTop: '12px' }}>
-        {[
-          { label: 'Overview', href: `/sports/${sportKey}` },
-          { label: 'Stats', href: `/sports/${sportKey}/stats` },
-          { label: 'Schedule', href: `/sports/${sportKey}/schedule` },
-          { label: 'Goals', href: `/sports/${sportKey}/goals` },
-        ].map((tab) => (
-          <Link
-            key={tab.href}
-            href={tab.href}
-            style={{
-              flex: 1, padding: '12px 4px', textAlign: 'center', textDecoration: 'none',
-              fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '11px',
-              textTransform: 'uppercase', letterSpacing: '0.1em',
-              color: tab.label === 'Goals' ? '#f57e44' : 'var(--text-5)',
-              borderBottom: tab.label === 'Goals' ? '2px solid #f57e44' : '2px solid transparent',
-            }}
-          >
-            {tab.label}
-          </Link>
-        ))}
+      <div style={{ borderBottom: '1px solid var(--border)', marginTop: 16 }}>
+        <div className="dashboard-content" style={{ display: 'flex', maxWidth: 640 }}>
+          {SUB_TABS.map((label) => {
+            const isActive = label === 'Goals'
+            return (
+              <Link key={label} href={hrefFor(label)} style={{
+                flex: 1, padding: '14px 4px', textAlign: 'center', textDecoration: 'none',
+                fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 12,
+                textTransform: 'uppercase', letterSpacing: '0.12em',
+                color: isActive ? '#f57e44' : 'var(--text-4)',
+                borderBottom: isActive ? '2px solid #f57e44' : '2px solid transparent',
+              }}>
+                {label}
+              </Link>
+            )
+          })}
+        </div>
       </div>
 
-      <div style={{ padding: '20px 16px' }}>
-        {/* Goals list */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '16px' }}>
+      <div className="dashboard-content" style={{ paddingTop: 22 }}>
+        {/* Goals grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 12, marginBottom: 18 }}>
           {goals.map((goal) => {
             const pct = calcPct(goal)
             const isEditing = editingId === goal.id
+            const complete = pct >= 100
             return (
-              <div
-                key={goal.id}
-                style={{ background: 'var(--bg-2)', borderRadius: '10px', padding: '14px 16px', border: '1px solid var(--border)' }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                  <span style={{ fontFamily: "'Barlow', sans-serif", fontWeight: 600, fontSize: '13px', color: 'var(--text-2)' }}>
+              <div key={goal.id} className="tile-card" style={{ padding: '16px 18px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12, gap: 8 }}>
+                  <span style={{ fontFamily: "'Saira Condensed', sans-serif", fontWeight: 800, fontSize: 16, color: 'var(--text-2)', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
                     {goal.label}
                     {goal.lowerBetter && (
-                      <span style={{ fontSize: '10px', color: 'var(--text-4)', marginLeft: '6px' }}>(lower is better)</span>
+                      <span style={{ fontSize: 10, color: 'var(--text-4)', marginLeft: 6, fontFamily: "'Barlow', sans-serif", fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>(lower is better)</span>
                     )}
                   </span>
-                  <div style={{ display: 'flex', gap: '8px' }}>
+                  <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
                     <button
                       onClick={() => setEditingId(isEditing ? null : goal.id)}
-                      style={{ background: 'none', border: 'none', color: '#f57e44', cursor: 'pointer', fontSize: '11px', fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}
+                      style={{ background: 'none', border: 'none', color: '#f57e44', cursor: 'pointer', fontSize: 11, fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}
                     >
                       {isEditing ? 'Done' : 'Edit'}
                     </button>
                     <button
                       onClick={() => handleDelete(goal.id)}
-                      style={{ background: 'none', border: 'none', color: 'var(--text-5)', cursor: 'pointer', fontSize: '14px' }}
+                      style={{ background: 'none', border: 'none', color: 'var(--text-5)', cursor: 'pointer', fontSize: 16, lineHeight: 1 }}
                     >
                       ×
                     </button>
@@ -167,34 +182,25 @@ export default function GoalsPage({
                 </div>
 
                 {isEditing ? (
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '10px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
                     <div>
                       <label style={labelStyle}>Current</label>
-                      <input
-                        type="number"
-                        value={goal.current}
-                        onChange={(e) => handleUpdateGoal(goal.id, 'current', e.target.value)}
-                        style={{ ...inputStyle, width: '100%' }}
-                      />
+                      <input type="number" value={goal.current} onChange={(e) => handleUpdateGoal(goal.id, 'current', e.target.value)} style={{ ...inputStyle, width: '100%' }} />
                     </div>
                     <div>
                       <label style={labelStyle}>Target</label>
-                      <input
-                        type="number"
-                        value={goal.target}
-                        onChange={(e) => handleUpdateGoal(goal.id, 'target', e.target.value)}
-                        style={{ ...inputStyle, width: '100%' }}
-                      />
+                      <input type="number" value={goal.target} onChange={(e) => handleUpdateGoal(goal.id, 'target', e.target.value)} style={{ ...inputStyle, width: '100%' }} />
                     </div>
                   </div>
                 ) : (
-                  <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '11px', color: '#f57e44', marginBottom: '8px' }}>
-                    {goal.current} / {goal.target} {goal.unit}
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 12 }}>
+                    <span style={{ fontFamily: "'Teko', sans-serif", fontWeight: 700, fontSize: 34, color: 'var(--text)', lineHeight: 0.9 }}>{goal.current}</span>
+                    <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 12, color: 'var(--text-4)' }}>/ {goal.target} {goal.unit}</span>
                   </div>
                 )}
 
-                <ProgressBar pct={pct} height={5} />
-                <div style={{ textAlign: 'right', marginTop: '4px', fontFamily: "'Space Mono', monospace", fontSize: '10px', color: 'var(--text-5)' }}>
+                <ProgressBar pct={pct} height={6} color={complete ? '#22c55e' : color} />
+                <div style={{ textAlign: 'right', marginTop: 5, fontFamily: "'Space Mono', monospace", fontSize: 10, color: complete ? '#22c55e' : 'var(--text-4)' }}>
                   {Math.round(pct)}%
                 </div>
               </div>
@@ -206,16 +212,16 @@ export default function GoalsPage({
           <button
             onClick={handleSaveAll}
             style={{
-              width: '100%', padding: '12px',
+              width: '100%', padding: 14,
               background: saved ? '#1e3a1e' : 'linear-gradient(135deg, #e35d2a, #f57e44)',
-              border: 'none', borderRadius: '8px',
+              border: 'none', borderRadius: 10,
               color: saved ? '#4ade80' : '#fff',
-              fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '14px',
-              textTransform: 'uppercase', letterSpacing: '0.1em', cursor: 'pointer',
-              transition: 'all 0.3s', marginBottom: '20px',
+              fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 14,
+              textTransform: 'uppercase', letterSpacing: '0.12em', cursor: 'pointer',
+              transition: 'all 0.3s', marginBottom: 16,
             }}
           >
-            {saved ? 'Saved!' : 'Save All Goals'}
+            {saved ? '✓ Saved!' : 'Save All Goals'}
           </button>
         )}
 
@@ -223,26 +229,26 @@ export default function GoalsPage({
         <button
           onClick={() => setShowForm((v) => !v)}
           style={{
-            width: '100%', padding: '12px',
-            background: showForm ? 'var(--border)' : 'var(--bg-2)',
-            border: `1px solid ${showForm ? '#f57e44' : 'var(--border)'}`,
-            borderRadius: '8px',
+            width: '100%', padding: 13,
+            background: 'var(--bg-2)',
+            border: `1px solid ${showForm ? '#f57e44' : 'var(--border-2)'}`,
+            borderRadius: 10,
             color: '#f57e44',
-            fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '14px',
-            textTransform: 'uppercase', letterSpacing: '0.1em', cursor: 'pointer',
-            marginBottom: '16px',
+            fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 14,
+            textTransform: 'uppercase', letterSpacing: '0.12em', cursor: 'pointer',
+            marginBottom: 16,
           }}
         >
           {showForm ? '✕ Cancel' : '+ New Goal'}
         </button>
 
         {showForm && (
-          <div style={{ background: 'var(--bg-2)', borderRadius: '10px', padding: '16px', border: '1px solid var(--border-2)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div className="tile-card" style={{ padding: 18, display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 560 }}>
             <div>
               <label style={labelStyle}>Goal Label</label>
               <input type="text" value={form.label} onChange={(e) => setForm((f) => ({ ...f, label: e.target.value }))} placeholder="e.g. Points Per Game" style={{ ...inputStyle, width: '100%' }} />
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
               <div>
                 <label style={labelStyle}>Current Value</label>
                 <input type="number" value={form.current} onChange={(e) => setForm((f) => ({ ...f, current: e.target.value }))} placeholder="0" style={{ ...inputStyle, width: '100%' }} />
@@ -256,24 +262,24 @@ export default function GoalsPage({
               <label style={labelStyle}>Unit (optional)</label>
               <input type="text" value={form.unit} onChange={(e) => setForm((f) => ({ ...f, unit: e.target.value }))} placeholder="pts, %, goals..." style={{ ...inputStyle, width: '100%' }} />
             </div>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
               <input
                 type="checkbox"
                 checked={form.lowerBetter}
                 onChange={(e) => setForm((f) => ({ ...f, lowerBetter: e.target.checked }))}
-                style={{ width: '16px', height: '16px', accentColor: '#f57e44' }}
+                style={{ width: 16, height: 16, accentColor: '#f57e44' }}
               />
-              <span style={{ fontFamily: "'Barlow', sans-serif", fontSize: '13px', color: 'var(--text-3)' }}>Lower value is better (e.g. time, errors)</span>
+              <span style={{ fontFamily: "'Barlow', sans-serif", fontSize: 13, color: 'var(--text-3)' }}>Lower value is better (e.g. time, errors)</span>
             </label>
             <button
               onClick={handleAddGoal}
               style={{
-                padding: '12px',
+                padding: 13,
                 background: form.label && form.target ? 'linear-gradient(135deg, #e35d2a, #f57e44)' : 'var(--border)',
-                border: 'none', borderRadius: '8px',
+                border: 'none', borderRadius: 8,
                 color: form.label && form.target ? '#fff' : 'var(--text-5)',
-                fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '14px',
-                textTransform: 'uppercase', letterSpacing: '0.1em',
+                fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 14,
+                textTransform: 'uppercase', letterSpacing: '0.12em',
                 cursor: form.label && form.target ? 'pointer' : 'default',
               }}
             >

@@ -36,7 +36,15 @@ export default function JournalEditor() {
   function handleTypeChange(type: 'reflect' | 'forward') {
     setEntryType(type)
     const idx = Math.floor(Math.random() * JOURNAL_PROMPTS[type].length)
+    setPromptIndex(idx)
     setActivePrompt(getPrompt(type, idx))
+  }
+
+  function shufflePrompt() {
+    const prompts = JOURNAL_PROMPTS[entryType]
+    const idx = (promptIndex + 1) % prompts.length
+    setPromptIndex(idx)
+    setActivePrompt(getPrompt(entryType, idx))
   }
 
   function handleSubmit() {
@@ -54,67 +62,109 @@ export default function JournalEditor() {
     setContent('')
   }
 
+  const accent = entryType === 'reflect' ? 'var(--accent-blue)' : '#f57e44'
+
   return (
     <div>
       {/* Type toggle */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
-        {(['reflect', 'forward'] as const).map((t) => (
-          <button
-            key={t}
-            onClick={() => handleTypeChange(t)}
-            style={{
-              flex: 1,
-              padding: '10px',
-              borderRadius: '8px',
-              border: `1px solid ${entryType === t ? '#f57e44' : 'var(--border)'}`,
-              background: entryType === t ? '#f57e4422' : 'var(--bg-2)',
-              color: entryType === t ? '#f57e44' : 'var(--text-4)',
-              fontFamily: "'Barlow Condensed', sans-serif",
-              fontWeight: 700,
-              fontSize: '12px',
-              textTransform: 'uppercase',
-              letterSpacing: '0.1em',
-              cursor: 'pointer',
-            }}
-          >
-            {t === 'reflect' ? 'Looking Back' : 'Looking Forward'}
-          </button>
-        ))}
+      <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
+        {(['reflect', 'forward'] as const).map((t) => {
+          const active = entryType === t
+          const c = t === 'reflect' ? 'var(--accent-blue)' : '#f57e44'
+          return (
+            <button
+              key={t}
+              onClick={() => handleTypeChange(t)}
+              style={{
+                flex: 1,
+                padding: '13px',
+                borderRadius: '10px',
+                border: `1px solid ${active ? c : 'var(--border)'}`,
+                background: active ? `color-mix(in srgb, ${c} 14%, transparent)` : 'var(--bg-2)',
+                color: active ? c : 'var(--text-4)',
+                fontFamily: "'Barlow Condensed', sans-serif",
+                fontWeight: 700,
+                fontSize: '13px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.12em',
+                cursor: 'pointer',
+                transition: 'all 0.18s',
+              }}
+            >
+              {t === 'reflect' ? 'Looking Back' : 'Looking Forward'}
+            </button>
+          )
+        })}
       </div>
 
-      {/* Prompt */}
+      {/* Prompt card */}
       <div
         style={{
-          fontFamily: "'Barlow', sans-serif",
-          fontStyle: 'italic',
-          fontSize: '13px',
-          color: '#a08070',
-          marginBottom: '10px',
-          lineHeight: 1.5,
+          position: 'relative',
+          background: 'var(--bg-2)',
+          border: '1px solid var(--border)',
+          borderLeft: `3px solid ${accent}`,
+          borderRadius: '10px',
+          padding: '14px 16px',
+          marginBottom: '14px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '14px',
         }}
       >
-        {activePrompt}
+        <div style={{ flex: 1 }}>
+          <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '10px', color: accent, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: '5px' }}>
+            Prompt
+          </div>
+          <div style={{ fontFamily: "'Barlow', sans-serif", fontStyle: 'italic', fontSize: '15px', color: 'var(--text-2)', lineHeight: 1.45 }}>
+            {activePrompt}
+          </div>
+        </div>
+        <button
+          onClick={shufflePrompt}
+          title="New prompt"
+          style={{
+            background: 'transparent',
+            border: '1px solid var(--border-2)',
+            borderRadius: '8px',
+            color: 'var(--text-4)',
+            cursor: 'pointer',
+            padding: '8px 12px',
+            fontFamily: "'Barlow Condensed', sans-serif",
+            fontWeight: 700,
+            fontSize: '11px',
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+            flexShrink: 0,
+            transition: 'all 0.15s',
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.color = accent }}
+          onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-2)'; e.currentTarget.style.color = 'var(--text-4)' }}
+        >
+          ↻ New
+        </button>
       </div>
 
       {/* Textarea */}
       <textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        rows={5}
+        rows={6}
         placeholder="Write your thoughts..."
         style={{
           width: '100%',
           background: 'var(--bg-2)',
           border: '1px solid var(--border)',
-          borderRadius: '8px',
-          padding: '12px',
+          borderRadius: '10px',
+          padding: '14px',
           color: 'var(--text-2)',
           fontFamily: "'Barlow', sans-serif",
-          fontSize: '14px',
+          fontSize: '15px',
           lineHeight: 1.6,
           resize: 'vertical',
           outline: 'none',
-          marginBottom: '10px',
+          marginBottom: '12px',
+          boxSizing: 'border-box',
         }}
       />
 
@@ -122,19 +172,19 @@ export default function JournalEditor() {
         onClick={handleSubmit}
         style={{
           width: '100%',
-          padding: '12px',
+          padding: '13px',
           background: content.trim() ? 'linear-gradient(135deg, #e35d2a, #f57e44)' : 'var(--border)',
           border: 'none',
-          borderRadius: '8px',
+          borderRadius: '10px',
           color: content.trim() ? '#fff' : 'var(--text-5)',
           fontFamily: "'Barlow Condensed', sans-serif",
           fontWeight: 700,
           fontSize: '14px',
           textTransform: 'uppercase',
-          letterSpacing: '0.1em',
+          letterSpacing: '0.12em',
           cursor: content.trim() ? 'pointer' : 'default',
           transition: 'background 0.2s',
-          marginBottom: '24px',
+          marginBottom: '28px',
         }}
       >
         Save Entry
@@ -143,16 +193,29 @@ export default function JournalEditor() {
       {/* Past entries */}
       <div
         style={{
-          fontFamily: "'Barlow Condensed', sans-serif",
-          fontWeight: 700,
-          fontSize: '11px',
-          color: 'var(--text-4)',
-          textTransform: 'uppercase',
-          letterSpacing: '0.12em',
-          marginBottom: '10px',
+          display: 'flex',
+          alignItems: 'baseline',
+          justifyContent: 'space-between',
+          marginBottom: '12px',
         }}
       >
-        Past Entries
+        <span
+          style={{
+            fontFamily: "'Barlow Condensed', sans-serif",
+            fontWeight: 700,
+            fontSize: '11px',
+            color: 'var(--text-4)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.16em',
+          }}
+        >
+          Past Entries
+        </span>
+        {entries.length > 0 && (
+          <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '11px', color: 'var(--text-5)' }}>
+            {entries.length} logged
+          </span>
+        )}
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {entries.length === 0 && (
@@ -168,72 +231,77 @@ export default function JournalEditor() {
             No entries yet. Write your first one above.
           </div>
         )}
-        {entries.map((entry) => (
-          <div
-            key={entry.id}
-            style={{
-              background: 'var(--bg-2)',
-              borderRadius: '8px',
-              padding: '14px 16px',
-              border: '1px solid var(--border)',
-            }}
-          >
+        {entries.map((entry) => {
+          const c = entry.type === 'reflect' ? 'var(--accent-blue)' : '#f57e44'
+          return (
             <div
+              key={entry.id}
               style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginBottom: '6px',
+                background: 'var(--bg-2)',
+                borderRadius: '10px',
+                padding: '15px 17px',
+                border: '1px solid var(--border)',
+                borderLeft: `3px solid ${c}`,
               }}
             >
-              <span
+              <div
                 style={{
-                  fontFamily: "'Barlow Condensed', sans-serif",
-                  fontWeight: 700,
-                  fontSize: '10px',
-                  color: entry.type === 'reflect' ? '#60a5fa' : '#f57e44',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.1em',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '8px',
                 }}
               >
-                {entry.type === 'reflect' ? 'Looking Back' : 'Looking Forward'}
-              </span>
-              <span
+                <span
+                  style={{
+                    fontFamily: "'Barlow Condensed', sans-serif",
+                    fontWeight: 700,
+                    fontSize: '10px',
+                    color: c,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.12em',
+                  }}
+                >
+                  {entry.type === 'reflect' ? 'Looking Back' : 'Looking Forward'}
+                </span>
+                <span
+                  style={{
+                    fontFamily: "'Space Mono', monospace",
+                    fontSize: '10px',
+                    color: 'var(--text-5)',
+                  }}
+                >
+                  {new Date(entry.date + 'T12:00:00').toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                  })}
+                </span>
+              </div>
+              <div
                 style={{
-                  fontFamily: "'Space Mono', monospace",
-                  fontSize: '10px',
-                  color: 'var(--text-5)',
+                  fontFamily: "'Barlow', sans-serif",
+                  fontStyle: 'italic',
+                  fontSize: '12px',
+                  color: 'var(--text-4)',
+                  marginBottom: '7px',
                 }}
               >
-                {new Date(entry.date + 'T12:00:00').toLocaleDateString('en-US', {
-                  month: 'short',
-                  day: 'numeric',
-                  year: 'numeric',
-                })}
-              </span>
+                {entry.prompt}
+              </div>
+              <div
+                style={{
+                  fontFamily: "'Barlow', sans-serif",
+                  fontSize: '14px',
+                  color: 'var(--text-2)',
+                  lineHeight: 1.55,
+                }}
+              >
+                {entry.content}
+              </div>
             </div>
-            <div
-              style={{
-                fontFamily: "'Barlow', sans-serif",
-                fontStyle: 'italic',
-                fontSize: '11px',
-                color: 'var(--text-5)',
-                marginBottom: '6px',
-              }}
-            >
-              {entry.prompt}
-            </div>
-            <div
-              style={{
-                fontFamily: "'Barlow', sans-serif",
-                fontSize: '13px',
-                color: 'var(--text-2)',
-                lineHeight: 1.5,
-              }}
-            >
-              {entry.content}
-            </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </div>
   )

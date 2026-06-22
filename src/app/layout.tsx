@@ -23,7 +23,7 @@ export default function RootLayout({
       <body style={{ margin: 0, padding: 0, minHeight: '100%' }}>
         <ThemeProvider>
           <TopNav />
-          <main style={{ paddingBottom: '64px' }}>{children}</main>
+          <main className="app-main">{children}</main>
           <BottomNav />
         </ThemeProvider>
       </body>

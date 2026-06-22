@@ -10,6 +10,9 @@ import type {
   CollegeContact,
   EligibilityItem,
   DailyMealEntry,
+  Dream,
+  PersonalRecord,
+  Quote,
 } from './types'
 
 export const SPORTS_DATA: SportData[] = [
@@ -72,15 +75,15 @@ export const SPORTS_DATA: SportData[] = [
     stats: [
       { label: '100m H', value: '14.2', unit: 's' },
       { label: 'High Jump', value: "5'4\"", unit: '' },
-      { label: 'Shot Put', value: '32.1', unit: 'ft' },
-      { label: '200m', value: '25.8', unit: 's' },
+      { label: 'Shot Put', value: "32'1\"", unit: '' },
+      { label: 'Long Jump', value: "15'9\"", unit: '' },
       { label: '800m', value: '2:28', unit: '' },
-      { label: 'Pent Pts', value: 3240, unit: '' },
+      { label: 'Pent Pts', value: 3461, unit: '' },
     ],
     goals: [
-      { id: 'track-g1', label: 'Pentathlon Score', current: 3240, target: 3600, unit: 'pts' },
+      { id: 'track-g1', label: 'Pentathlon Score', current: 3461, target: 3800, unit: 'pts' },
       { id: 'track-g2', label: '100m Hurdles', current: 14.2, target: 13.8, unit: 's', lowerBetter: true },
-      { id: 'track-g3', label: 'High Jump', current: 64, target: 67, unit: 'in' },
+      { id: 'track-g3', label: 'Long Jump', current: 189, target: 200, unit: 'in' },
     ],
     milestones: [
       { label: 'Section VI Champion', achieved: false },
@@ -305,6 +308,59 @@ export const DEFAULT_DAILY_MEALS: DailyMealEntry[] = [
   { id: 'meal-l', label: 'Lunch', description: 'Grilled chicken, brown rice, veggies', calories: 750 },
   { id: 'meal-d', label: 'Dinner', description: 'Salmon, sweet potato, salad', calories: 700 },
   { id: 'meal-s', label: 'Snack', description: 'Greek yogurt, almonds, fruit', calories: 300 },
+]
+
+export const DEFAULT_DREAMS: Dream[] = [
+  {
+    id: 'dream-1',
+    title: 'Score in college',
+    detail: 'Play meaningful minutes and contribute as a freshman at Southeastern.',
+    horizon: 'By freshman year',
+    sport: 'basketball',
+    progress: 45,
+  },
+  {
+    id: 'dream-2',
+    title: 'Section VI Pentathlon Champion',
+    detail: 'Win the sectional title and PR in all five events the same day.',
+    horizon: 'This season',
+    sport: 'track',
+    progress: 60,
+  },
+  {
+    id: 'dream-3',
+    title: '1,000 career points',
+    detail: 'Join the Keshequa 1K club before graduation.',
+    horizon: 'By senior year',
+    sport: 'basketball',
+    progress: 72,
+  },
+  {
+    id: 'dream-4',
+    title: 'Lead by example',
+    detail: 'Be the teammate everyone trusts. Relentless effort, every rep, every day.',
+    horizon: 'Lifetime',
+    sport: 'life',
+    progress: 80,
+  },
+]
+
+export const DEFAULT_PRS: PersonalRecord[] = [
+  { id: 'pr-1', sport: 'track', event: '100m Hurdles', value: '14.2s', date: '2026-05-30', prev: '14.6s', note: 'Sectional qualifier' },
+  { id: 'pr-2', sport: 'track', event: 'High Jump', value: "5'4\"", date: '2026-05-16', prev: "5'2\"" },
+  { id: 'pr-3', sport: 'basketball', event: 'Points (game)', value: '31', date: '2026-02-04', prev: '27', note: 'vs. Letchworth' },
+  { id: 'pr-4', sport: 'track', event: 'Long Jump', value: "15'9\"", date: '2026-05-09', prev: "15'3\"" },
+  { id: 'pr-5', sport: 'soccer', event: 'Goals (game)', value: '3', date: '2025-10-11', prev: '2', note: 'Hat trick vs. Genesee Valley' },
+]
+
+export const MOTIVATION_QUOTES: Quote[] = [
+  { text: "Everything negative — pressure, challenges — is all an opportunity for me to rise.", author: 'Kobe Bryant' },
+  { text: "It's not about perfect. It's about effort.", author: 'Jillian Michaels' },
+  { text: "Hard work beats talent when talent doesn't work hard.", author: 'Tim Notke' },
+  { text: "You miss 100% of the shots you don't take.", author: 'Wayne Gretzky' },
+  { text: "Champions keep playing until they get it right.", author: 'Billie Jean King' },
+  { text: "The will to win means nothing without the will to prepare.", author: 'Juma Ikangaa' },
+  { text: "Relentless is a decision you make every single day.", author: 'Braelentless' },
 ]
 
 export const JOURNAL_PROMPTS = {

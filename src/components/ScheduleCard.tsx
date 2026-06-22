@@ -6,7 +6,7 @@ interface ScheduleCardProps {
 }
 
 const SPORT_COLORS: Record<string, string> = {
-  soccer: '#4ade80',
+  soccer: '#22c55e',
   basketball: '#f57e44',
   track: '#60a5fa',
 }
@@ -18,11 +18,6 @@ const TYPE_LABELS: Record<string, string> = {
   meet: 'MEET',
 }
 
-function formatDate(dateStr: string) {
-  const d = new Date(dateStr + 'T12:00:00')
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', weekday: 'short' })
-}
-
 function formatTime(timeStr: string) {
   const [h, m] = timeStr.split(':').map(Number)
   const ampm = h >= 12 ? 'PM' : 'AM'
@@ -32,72 +27,68 @@ function formatTime(timeStr: string) {
 
 export default function ScheduleCard({ event, isUpcoming }: ScheduleCardProps) {
   const color = SPORT_COLORS[event.sport] ?? '#f57e44'
+  const d = new Date(event.date + 'T12:00:00')
+  const isWin = /^w/i.test(event.result?.trim() ?? '')
+  const isLoss = /^l/i.test(event.result?.trim() ?? '')
+
   return (
     <div
+      className="tile-card"
       style={{
-        background: 'var(--bg-2)',
-        borderRadius: '8px',
-        padding: '14px 16px',
-        border: `1px solid ${isUpcoming ? color + '44' : 'var(--border)'}`,
+        padding: '16px 18px',
         display: 'flex',
-        gap: '12px',
-        alignItems: 'flex-start',
+        gap: 16,
+        alignItems: 'center',
+        opacity: isUpcoming ? 1 : 0.86,
+        borderColor: isUpcoming ? `${color}3a` : undefined,
       }}
     >
-      {/* Date badge */}
+      {/* Date block */}
       <div
         style={{
-          minWidth: '44px',
+          minWidth: 58,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          background: 'var(--surface)',
-          borderRadius: '6px',
-          padding: '6px 4px',
-          border: `1px solid ${color}44`,
+          background: 'var(--bg-3)',
+          borderRadius: 10,
+          padding: '8px 6px',
+          borderLeft: `3px solid ${color}`,
+          flexShrink: 0,
         }}
       >
-        {(() => {
-          const d = new Date(event.date + 'T12:00:00')
-          return (
-            <>
-              <span
-                style={{
-                  fontFamily: "'Barlow Condensed', sans-serif",
-                  fontWeight: 700,
-                  fontSize: '9px',
-                  color,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.1em',
-                }}
-              >
-                {d.toLocaleDateString('en-US', { month: 'short' })}
-              </span>
-              <span
-                style={{
-                  fontFamily: "'Teko', sans-serif",
-                  fontWeight: 600,
-                  fontSize: '22px',
-                  color: 'var(--text-2)',
-                  lineHeight: 1,
-                }}
-              >
-                {d.getDate()}
-              </span>
-            </>
-          )
-        })()}
+        <span
+          style={{
+            fontFamily: "'Barlow Condensed', sans-serif",
+            fontWeight: 700,
+            fontSize: '10px',
+            color,
+            textTransform: 'uppercase',
+            letterSpacing: '0.12em',
+          }}
+        >
+          {d.toLocaleDateString('en-US', { month: 'short' })}
+        </span>
+        <span style={{ fontFamily: "'Teko', sans-serif", fontWeight: 700, fontSize: '30px', color: 'var(--text)', lineHeight: 1 }}>
+          {d.getDate()}
+        </span>
+        <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 600, fontSize: '9px', color: 'var(--text-4)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+          {d.toLocaleDateString('en-US', { weekday: 'short' })}
+        </span>
       </div>
+
       {/* Info */}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 10 }}>
           <div
             style={{
               fontFamily: "'Saira Condensed', sans-serif",
-              fontWeight: 700,
-              fontSize: '15px',
-              color: 'var(--text-2)',
+              fontWeight: 800,
+              fontSize: '19px',
+              color: 'var(--text)',
               textTransform: 'uppercase',
+              letterSpacing: '0.02em',
+              lineHeight: 1.05,
             }}
           >
             {event.opponent}
@@ -105,15 +96,16 @@ export default function ScheduleCard({ event, isUpcoming }: ScheduleCardProps) {
           <span
             style={{
               fontFamily: "'Barlow Condensed', sans-serif",
-              fontWeight: 600,
+              fontWeight: 700,
               fontSize: '9px',
               color,
-              letterSpacing: '0.1em',
-              background: color + '22',
-              padding: '2px 6px',
-              borderRadius: '4px',
+              letterSpacing: '0.12em',
+              background: `${color}22`,
+              border: `1px solid ${color}44`,
+              padding: '3px 8px',
+              borderRadius: 4,
               whiteSpace: 'nowrap',
-              marginLeft: '8px',
+              flexShrink: 0,
             }}
           >
             {TYPE_LABELS[event.type] ?? event.type.toUpperCase()}
@@ -122,9 +114,9 @@ export default function ScheduleCard({ event, isUpcoming }: ScheduleCardProps) {
         <div
           style={{
             fontFamily: "'Barlow', sans-serif",
-            fontSize: '12px',
+            fontSize: '13px',
             color: 'var(--text-3)',
-            marginTop: '2px',
+            marginTop: 4,
           }}
         >
           {formatTime(event.time)} · {event.location}
@@ -132,10 +124,16 @@ export default function ScheduleCard({ event, isUpcoming }: ScheduleCardProps) {
         {event.result && (
           <div
             style={{
-              marginTop: '6px',
+              marginTop: 8,
+              display: 'inline-block',
               fontFamily: "'Space Mono', monospace",
-              fontSize: '11px',
-              color: '#f57e44',
+              fontWeight: 700,
+              fontSize: '12px',
+              color: isWin ? '#22c55e' : isLoss ? '#ef4444' : '#f57e44',
+              background: isWin ? 'rgba(34,197,94,0.12)' : isLoss ? 'rgba(239,68,68,0.12)' : 'rgba(245,126,68,0.12)',
+              border: `1px solid ${isWin ? 'rgba(34,197,94,0.35)' : isLoss ? 'rgba(239,68,68,0.35)' : 'rgba(245,126,68,0.3)'}`,
+              borderRadius: 6,
+              padding: '2px 10px',
             }}
           >
             {event.result}
