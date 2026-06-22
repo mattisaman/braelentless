@@ -1,26 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Saira+Condensed:wght@500;600;700;800&family=Teko:wght@400;500;600;700&family=Barlow:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Barlow+Condensed:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap');
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-base: #0a0706;
+  --color-orange: #f57e44;
+  --color-oranged: #e35d2a;
+  --color-foreground: #ffffff;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #0a0706;
+  color: #ffffff;
+  font-family: 'Barlow', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Kenburns animation */
+@keyframes kenburns {
+  0%   { transform: scale(1.05) translate(0, 0); }
+  25%  { transform: scale(1.12) translate(-1%, -1%); }
+  50%  { transform: scale(1.08) translate(1%, -0.5%); }
+  75%  { transform: scale(1.14) translate(-0.5%, 1%); }
+  100% { transform: scale(1.05) translate(0, 0); }
+}
+
+.animate-kenburns {
+  animation: kenburns 18s ease-in-out infinite;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0706;
+}
+::-webkit-scrollbar-thumb {
+  background: #f57e44;
+  border-radius: 2px;
+}
+
+/* Hide number input spinners */
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type='number'] {
+  -moz-appearance: textfield;
 }
