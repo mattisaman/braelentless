@@ -6,6 +6,10 @@ import TopNav from '@/components/TopNav'
 export const metadata: Metadata = {
   title: 'Braelentless — Braelyn Keshequa',
   description: 'Athlete performance platform',
+  icons: {
+    icon: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
 }
 
 export default function RootLayout({

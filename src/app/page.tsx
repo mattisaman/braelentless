@@ -1,17 +1,51 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import Image from 'next/image'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { SPORTS_DATA, DEFAULT_SCHEDULE, DEFAULT_HABITS, DEFAULT_DRILLS, DEFAULT_DAILY_MEALS } from '@/lib/data'
+import { loadData, saveData } from '@/lib/storage'
 import DailyWorkoutTile from '@/components/DailyWorkoutTile'
 import DailyMealTile from '@/components/DailyMealTile'
 import DailyHabitList from '@/components/DailyHabitList'
+
+interface HeroProfile {
+  name: string
+  school: string
+  commit: string
+}
+
+const DEFAULT_PROFILE: HeroProfile = {
+  name: 'BRAELENTLESS',
+  school: 'KESHEQUA WILDCATS · CLASS OF 2027',
+  commit: 'Committed · Southeastern University',
+}
+
+const INPUT_STYLE: React.CSSProperties = {
+  width: '100%',
+  background: 'rgba(255,255,255,0.06)',
+  border: '1px solid rgba(245,126,68,0.3)',
+  borderRadius: '6px',
+  padding: '9px 12px',
+  color: '#fff',
+  fontFamily: "'Barlow Condensed', sans-serif",
+  fontWeight: 600,
+  fontSize: '14px',
+  letterSpacing: '0.06em',
+  outline: 'none',
+  boxSizing: 'border-box',
+}
 
 export default function HomePage() {
   const router = useRouter()
   const [dateLabel, setDateLabel] = useState('')
   const [dayLabel, setDayLabel] = useState('')
+
+  // Hero profile state
+  const [profile, setProfile] = useState<HeroProfile>(DEFAULT_PROFILE)
+  const [profileImg, setProfileImg] = useState('/wildcats-logo.jpeg')
+  const [editing, setEditing] = useState(false)
+  const [draft, setDraft] = useState<HeroProfile>(DEFAULT_PROFILE)
+  const imgInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     const d = new Date()
@@ -19,7 +53,35 @@ export default function HomePage() {
     const mon = d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase()
     setDateLabel(`${mon} ${d.getDate()}`)
     setDayLabel(weekday)
+
+    const saved = loadData<HeroProfile>('braelentless_hero', DEFAULT_PROFILE)
+    setProfile(saved)
+    const savedImg = loadData<string>('braelentless_profile_img', '')
+    if (savedImg) setProfileImg(savedImg)
   }, [])
+
+  function openEdit() {
+    setDraft({ ...profile })
+    setEditing(true)
+  }
+
+  function saveHero() {
+    saveData('braelentless_hero', draft)
+    setProfile(draft)
+    setEditing(false)
+  }
+
+  function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      const url = ev.target?.result as string
+      setProfileImg(url)
+      saveData('braelentless_profile_img', url)
+    }
+    reader.readAsDataURL(file)
+  }
 
   const todayStr = new Date().toISOString().split('T')[0]
   const upcoming = DEFAULT_SCHEDULE
@@ -31,42 +93,133 @@ export default function HomePage() {
     <div style={{ background: '#0a0706', minHeight: '100vh', paddingBottom: '80px' }}>
 
       {/* ── HERO ── */}
-      <div style={{ position: 'relative', height: '220px', overflow: 'hidden' }}>
+      <div style={{ position: 'relative', minHeight: editing ? 'auto' : '220px', overflow: 'hidden' }}>
+        {/* Background */}
         <div className="animate-kenburns" style={{
-          position: 'absolute', inset: 0,
+          position: editing ? 'fixed' : 'absolute',
+          inset: 0, zIndex: 0,
           backgroundImage: 'url(/basketball-court.png)',
           backgroundSize: 'cover', backgroundPosition: 'center',
+          opacity: editing ? 0 : 1,
+          height: editing ? 0 : undefined,
         }} />
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: 'linear-gradient(to bottom, rgba(10,7,6,0.45) 0%, rgba(10,7,6,0.95) 100%)',
-        }} />
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, #f57e44 20%, #f57e44 80%, transparent)' }} />
+        {!editing && (
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(10,7,6,0.45) 0%, rgba(10,7,6,0.95) 100%)' }} />
+        )}
+        {!editing && (
+          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, #f57e44 20%, #f57e44 80%, transparent)' }} />
+        )}
 
-        <div className="dashboard-content" style={{ position: 'relative', zIndex: 1, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', paddingBottom: '18px' }}>
-          <div style={{ display: 'flex', alignItems: 'flex-end', gap: '14px' }}>
-            <div style={{ width: 56, height: 56, borderRadius: '50%', overflow: 'hidden', border: '2px solid #f57e44', flexShrink: 0, boxShadow: '0 0 20px rgba(245,126,68,0.45)' }}>
-              <Image src="/wildcats-logo.jpeg" alt="Wildcats" width={56} height={56} style={{ objectFit: 'cover' }} />
+        {/* Edit button — top right of hero */}
+        {!editing && (
+          <button onClick={openEdit} style={{
+            position: 'absolute', top: 12, right: 12, zIndex: 10,
+            background: 'rgba(10,7,6,0.75)',
+            border: '1px solid rgba(245,126,68,0.25)',
+            borderRadius: '6px', padding: '5px 10px',
+            color: '#8a6a58', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', gap: '5px',
+            backdropFilter: 'blur(4px)',
+            transition: 'border-color 0.15s, color 0.15s',
+          }}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(245,126,68,0.6)'; (e.currentTarget as HTMLButtonElement).style.color = '#f57e44' }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(245,126,68,0.25)'; (e.currentTarget as HTMLButtonElement).style.color = '#8a6a58' }}
+          >
+            <span style={{ fontSize: '11px' }}>✏</span>
+            <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '10px', letterSpacing: '0.1em' }}>EDIT</span>
+          </button>
+        )}
+
+        {/* ── VIEW MODE ── */}
+        {!editing && (
+          <div className="dashboard-content" style={{ position: 'relative', zIndex: 1, height: '220px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', paddingBottom: '18px' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-end', gap: '14px' }}>
+              {/* Profile image */}
+              <div style={{ width: 56, height: 56, borderRadius: '50%', overflow: 'hidden', border: '2px solid #f57e44', flexShrink: 0, boxShadow: '0 0 20px rgba(245,126,68,0.45)' }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={profileImg} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontFamily: "'Anton', sans-serif", fontSize: 'clamp(24px, 5vw, 36px)', color: '#fff', letterSpacing: '0.04em', lineHeight: 1, textShadow: '0 2px 16px rgba(0,0,0,0.9)' }}>
+                  {profile.name}
+                </div>
+                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 600, fontSize: '11px', color: '#9a7a68', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '4px' }}>
+                  {profile.school}
+                </div>
+                {profile.commit && (
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', marginTop: '5px', background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: '4px', padding: '2px 8px' }}>
+                    <span style={{ fontSize: '9px', color: '#22c55e' }}>✓</span>
+                    <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '10px', color: '#22c55e', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{profile.commit}</span>
+                  </div>
+                )}
+              </div>
+              {dateLabel && (
+                <div style={{ flexShrink: 0, textAlign: 'right', paddingBottom: '4px' }}>
+                  <div style={{ fontFamily: "'Teko', sans-serif", fontWeight: 600, fontSize: '15px', color: '#f57e44', lineHeight: 1 }}>{dateLabel}</div>
+                </div>
+              )}
             </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontFamily: "'Anton', sans-serif", fontSize: 'clamp(24px, 5vw, 36px)', color: '#fff', letterSpacing: '0.04em', lineHeight: 1, textShadow: '0 2px 16px rgba(0,0,0,0.9)' }}>
-                BRAELENTLESS
-              </div>
-              <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 600, fontSize: '11px', color: '#9a7a68', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '4px' }}>
-                KESHEQUA WILDCATS · CLASS OF 2027
-              </div>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', marginTop: '5px', background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: '4px', padding: '2px 8px' }}>
-                <span style={{ fontSize: '9px', color: '#22c55e' }}>✓</span>
-                <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '10px', color: '#22c55e', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Committed · Southeastern University</span>
-              </div>
-            </div>
-            {dateLabel && (
-              <div style={{ flexShrink: 0, textAlign: 'right' }}>
-                <div style={{ fontFamily: "'Teko', sans-serif", fontWeight: 600, fontSize: '15px', color: '#f57e44', lineHeight: 1 }}>{dateLabel}</div>
-              </div>
-            )}
           </div>
-        </div>
+        )}
+
+        {/* ── EDIT MODE ── */}
+        {editing && (
+          <div className="dashboard-content" style={{ position: 'relative', zIndex: 1, background: '#0f0b08', borderBottom: '1px solid #211710', padding: '20px 16px' }}>
+            {/* Edit header */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
+              <span style={{ fontFamily: "'Anton', sans-serif", fontSize: '14px', color: '#f57e44', letterSpacing: '0.06em' }}>EDIT PROFILE</span>
+              <button onClick={() => setEditing(false)} style={{ background: 'none', border: 'none', color: '#6b5a50', fontSize: '18px', cursor: 'pointer', padding: '0 4px' }}>✕</button>
+            </div>
+
+            {/* Profile image upload */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '18px' }}>
+              <div
+                onClick={() => imgInputRef.current?.click()}
+                style={{ position: 'relative', width: 64, height: 64, borderRadius: '50%', overflow: 'hidden', border: '2px solid rgba(245,126,68,0.5)', cursor: 'pointer', flexShrink: 0 }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={profileImg} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.55)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ fontSize: '20px' }}>📷</span>
+                </div>
+              </div>
+              <div>
+                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '12px', color: '#f57e44', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Profile Photo</div>
+                <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '11px', color: '#6b5a50', marginTop: '2px' }}>Tap to upload a new image</div>
+              </div>
+              <input ref={imgInputRef} type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} />
+            </div>
+
+            {/* Fields */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '16px' }}>
+              <div>
+                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '10px', color: '#6b5a50', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>Name / Handle</div>
+                <input value={draft.name} onChange={e => setDraft({ ...draft, name: e.target.value })} placeholder="BRAELENTLESS" style={{ ...INPUT_STYLE, textTransform: 'uppercase' }} />
+              </div>
+              <div>
+                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '10px', color: '#6b5a50', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>School · Class Year</div>
+                <input value={draft.school} onChange={e => setDraft({ ...draft, school: e.target.value })} placeholder="KESHEQUA WILDCATS · CLASS OF 2027" style={INPUT_STYLE} />
+              </div>
+              <div>
+                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '10px', color: '#6b5a50', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>Commitment (leave blank to hide)</div>
+                <input value={draft.commit} onChange={e => setDraft({ ...draft, commit: e.target.value })} placeholder="Committed · School Name" style={INPUT_STYLE} />
+              </div>
+            </div>
+
+            {/* Save button */}
+            <button onClick={saveHero} style={{
+              width: '100%', padding: '12px',
+              background: 'linear-gradient(135deg, #e35d2a, #f57e44)',
+              border: 'none', borderRadius: '8px',
+              color: '#fff', cursor: 'pointer',
+              fontFamily: "'Barlow Condensed', sans-serif",
+              fontWeight: 700, fontSize: '14px',
+              textTransform: 'uppercase', letterSpacing: '0.12em',
+            }}>
+              SAVE PROFILE
+            </button>
+          </div>
+        )}
       </div>
 
       {/* ── STATS RIBBON ── */}
