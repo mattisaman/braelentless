@@ -106,3 +106,10 @@ export interface EligibilityItem {
   label: string
   completed: boolean
 }
+
+export interface DailyMealEntry {
+  id: string
+  label: string      // 'Breakfast' | 'Lunch' | 'Dinner' | 'Snack'
+  description: string
+  calories: number
+}

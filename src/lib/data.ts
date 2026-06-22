@@ -9,6 +9,7 @@ import type {
   MealPlan,
   CollegeContact,
   EligibilityItem,
+  DailyMealEntry,
 } from './types'
 
 export const SPORTS_DATA: SportData[] = [
@@ -297,6 +298,13 @@ export const DEFAULT_ELIGIBILITY: EligibilityItem[] = [
   { id: 'e-6', label: 'Athletic Resume Updated', completed: false },
   { id: 'e-7', label: 'NLI Paperwork Ready', completed: false },
   { id: 'e-8', label: 'Financial Aid / FAFSA Filed', completed: false },
+]
+
+export const DEFAULT_DAILY_MEALS: DailyMealEntry[] = [
+  { id: 'meal-b', label: 'Breakfast', description: 'Eggs, oats, banana, protein shake', calories: 650 },
+  { id: 'meal-l', label: 'Lunch', description: 'Grilled chicken, brown rice, veggies', calories: 750 },
+  { id: 'meal-d', label: 'Dinner', description: 'Salmon, sweet potato, salad', calories: 700 },
+  { id: 'meal-s', label: 'Snack', description: 'Greek yogurt, almonds, fruit', calories: 300 },
 ]
 
 export const JOURNAL_PROMPTS = {

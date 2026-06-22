@@ -1,150 +1,139 @@
-import Image from 'next/image'
-import Link from 'next/link'
-import { SPORTS_DATA, DEFAULT_SCHEDULE } from '@/lib/data'
+'use client'
 
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <div
-      style={{
-        fontFamily: "'Barlow Condensed', sans-serif",
-        fontWeight: 700,
-        fontSize: '11px',
-        color: '#6b5a50',
-        textTransform: 'uppercase',
-        letterSpacing: '0.12em',
-        marginBottom: '10px',
-      }}
-    >
-      {children}
-    </div>
-  )
-}
+import { useState, useEffect } from 'react'
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import { SPORTS_DATA, DEFAULT_SCHEDULE, DEFAULT_HABITS, DEFAULT_DRILLS, DEFAULT_DAILY_MEALS } from '@/lib/data'
+import DailyWorkoutTile from '@/components/DailyWorkoutTile'
+import DailyMealTile from '@/components/DailyMealTile'
+import DailyHabitList from '@/components/DailyHabitList'
 
 export default function HomePage() {
-  const today = new Date()
-  const todayKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
+  const router = useRouter()
+  const [dateLabel, setDateLabel] = useState('')
+
+  useEffect(() => {
+    const d = new Date()
+    const day = d.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase()
+    const mon = d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase()
+    setDateLabel(`${day} · ${mon} ${d.getDate()}`)
+  }, [])
+
+  const todayStr = new Date().toISOString().split('T')[0]
 
   const upcoming = DEFAULT_SCHEDULE
-    .filter((e) => e.date >= todayKey)
+    .filter((e) => e.date >= todayStr)
     .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time))
     .slice(0, 2)
 
-  const SPORT_COLORS: Record<string, string> = {
-    soccer: '#4ade80',
-    basketball: '#f57e44',
-    track: '#60a5fa',
-  }
+  // Day label for section header
+  const dayLabel = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase()
 
   return (
-    <div style={{ padding: '0 0 8px' }}>
-      {/* Hero header */}
+    <div style={{ paddingBottom: '8px', background: '#0a0706', minHeight: '100vh' }}>
+
+      {/* A. Compact Athlete Hero */}
       <div
         style={{
+          background: '#0f0b08',
+          borderBottom: '1px solid #1e1410',
+          padding: '12px 16px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
           position: 'relative',
-          height: '220px',
-          overflow: 'hidden',
         }}
       >
-        <div className="animate-kenburns" style={{ position: 'absolute', inset: 0 }}>
-          <Image
-            src="/basketball-court.png"
-            alt="Braelentless"
-            fill
-            style={{ objectFit: 'cover', objectPosition: 'center' }}
-            priority
-          />
-        </div>
+        {/* Logo */}
         <div
           style={{
-            position: 'absolute',
-            inset: 0,
-            background: 'linear-gradient(to bottom, rgba(10,7,6,0.4) 0%, rgba(10,7,6,0.9) 100%)',
-          }}
-        />
-        {/* Logo + identity */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: 16,
-            left: 16,
-            right: 16,
-            display: 'flex',
-            alignItems: 'flex-end',
-            gap: '14px',
+            width: '44px',
+            height: '44px',
+            borderRadius: '50%',
+            overflow: 'hidden',
+            border: '2px solid #f57e44',
+            flexShrink: 0,
           }}
         >
+          <Image
+            src="/wildcats-logo.jpeg"
+            alt="Wildcats"
+            width={44}
+            height={44}
+            style={{ objectFit: 'cover' }}
+          />
+        </div>
+
+        {/* Identity */}
+        <div style={{ flex: 1, minWidth: 0 }}>
           <div
             style={{
-              width: '56px',
-              height: '56px',
-              borderRadius: '50%',
-              overflow: 'hidden',
-              border: '2px solid #f57e44',
-              flexShrink: 0,
+              fontFamily: "'Anton', sans-serif",
+              fontSize: '22px',
+              color: '#ffffff',
+              letterSpacing: '0.04em',
+              lineHeight: 1,
             }}
           >
-            <Image
-              src="/wildcats-logo.jpeg"
-              alt="Wildcats"
-              width={56}
-              height={56}
-              style={{ objectFit: 'cover' }}
-            />
+            BRAELENTLESS
           </div>
-          <div>
-            <div
-              style={{
-                fontFamily: "'Anton', sans-serif",
-                fontSize: '26px',
-                color: '#ffffff',
-                letterSpacing: '0.04em',
-                lineHeight: 1,
-              }}
-            >
-              BRAELENTLESS
-            </div>
-            <div
-              style={{
-                fontFamily: "'Barlow Condensed', sans-serif",
-                fontWeight: 500,
-                fontSize: '12px',
-                color: '#f57e44',
-                textTransform: 'uppercase',
-                letterSpacing: '0.12em',
-                marginTop: '2px',
-              }}
-            >
-              Keshequa Wildcats · Class of 2027
-            </div>
-            <div
-              style={{
-                fontFamily: "'Barlow Condensed', sans-serif",
-                fontWeight: 500,
-                fontSize: '11px',
-                color: '#8a6a58',
-                textTransform: 'uppercase',
-                letterSpacing: '0.1em',
-              }}
-            >
-              Committed: Southeastern University
-            </div>
+          <div
+            style={{
+              fontFamily: "'Barlow Condensed', sans-serif",
+              fontWeight: 600,
+              fontSize: '11px',
+              color: '#8a6a58',
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em',
+              marginTop: '2px',
+            }}
+          >
+            KESHEQUA WILDCATS · CLASS OF 2027
+          </div>
+          <div
+            style={{
+              fontFamily: "'Barlow Condensed', sans-serif",
+              fontWeight: 600,
+              fontSize: '11px',
+              color: '#8a6a58',
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em',
+            }}
+          >
+            COMMITTED: SOUTHEASTERN UNIVERSITY
           </div>
         </div>
+
+        {/* Date chip */}
+        {dateLabel ? (
+          <div
+            style={{
+              fontFamily: "'Teko', sans-serif",
+              fontWeight: 600,
+              fontSize: '12px',
+              color: '#f57e44',
+              flexShrink: 0,
+              textAlign: 'right',
+            }}
+          >
+            {dateLabel}
+          </div>
+        ) : null}
       </div>
 
-      {/* Quick stats ribbon */}
+      {/* B. Stats Ribbon */}
       <div
         style={{
           background: '#f57e44',
           display: 'flex',
-          overflow: 'hidden',
+          width: '100%',
         }}
       >
         {[
-          { label: 'Sports', value: '3' },
-          { label: 'PPG', value: '18.4' },
-          { label: 'Goals', value: '14' },
-          { label: 'Pent', value: '3240' },
+          { label: '3 SPORTS', value: '3', unit: 'SPORTS' },
+          { label: '18.4 PPG', value: '18.4', unit: 'PPG' },
+          { label: '14 GOALS', value: '14', unit: 'GOALS' },
+          { label: '3240 PENT', value: '3240', unit: 'PENT' },
         ].map((s, i) => (
           <div
             key={i}
@@ -158,8 +147,8 @@ export default function HomePage() {
             <div
               style={{
                 fontFamily: "'Teko', sans-serif",
-                fontWeight: 600,
-                fontSize: '22px',
+                fontWeight: 700,
+                fontSize: '24px',
                 color: '#0a0706',
                 lineHeight: 1,
               }}
@@ -169,205 +158,275 @@ export default function HomePage() {
             <div
               style={{
                 fontFamily: "'Barlow Condensed', sans-serif",
-                fontWeight: 700,
+                fontWeight: 600,
                 fontSize: '9px',
-                color: '#7a3a10',
+                color: '#7a3a1a',
                 textTransform: 'uppercase',
                 letterSpacing: '0.08em',
               }}
             >
-              {s.label}
+              {s.unit}
             </div>
           </div>
         ))}
       </div>
 
-      {/* Content */}
-      <div style={{ padding: '20px 16px 0' }}>
-        {/* Sports quick access */}
-        <SectionLabel>My Sports</SectionLabel>
-        <div style={{ display: 'flex', gap: '8px', marginBottom: '24px' }}>
-          {SPORTS_DATA.map((sport) => (
-            <Link
-              key={sport.key}
-              href={`/sports/${sport.key}`}
-              style={{
-                flex: 1,
-                position: 'relative',
-                height: '80px',
-                borderRadius: '10px',
-                overflow: 'hidden',
-                textDecoration: 'none',
-                display: 'block',
-              }}
-            >
-              <div className="animate-kenburns" style={{ position: 'absolute', inset: 0 }}>
-                <Image
-                  src={sport.bgImage}
-                  alt={sport.name}
-                  fill
-                  style={{ objectFit: 'cover' }}
-                />
-              </div>
-              <div
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  background: 'rgba(10,7,6,0.6)',
-                }}
-              />
-              <div
-                style={{
-                  position: 'absolute',
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  padding: '6px 8px',
-                }}
-              >
-                <div
-                  style={{
-                    fontFamily: "'Saira Condensed', sans-serif",
-                    fontWeight: 800,
-                    fontSize: '11px',
-                    color: '#ffffff',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.04em',
-                    lineHeight: 1.1,
-                  }}
-                >
-                  {sport.name}
-                </div>
-                <div
-                  style={{
-                    fontFamily: "'Barlow Condensed', sans-serif",
-                    fontWeight: 500,
-                    fontSize: '9px',
-                    color: '#f57e44',
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  {sport.position}
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
+      {/* C. TODAY'S DASHBOARD */}
+      <div
+        style={{
+          fontFamily: "'Barlow Condensed', sans-serif",
+          fontWeight: 700,
+          fontSize: '11px',
+          color: '#6b5a50',
+          textTransform: 'uppercase',
+          letterSpacing: '0.12em',
+          padding: '16px 16px 8px',
+        }}
+      >
+        TODAY · {dayLabel}
+      </div>
 
-        {/* Upcoming events */}
-        <SectionLabel>Upcoming Events</SectionLabel>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '12px',
+          padding: '0 16px',
+        }}
+      >
+        <DailyWorkoutTile drills={DEFAULT_DRILLS} />
+        <DailyHabitList habits={DEFAULT_HABITS} />
+        <DailyMealTile meals={DEFAULT_DAILY_MEALS} />
+      </div>
+
+      {/* D. Upcoming Events */}
+      <div
+        style={{
+          fontFamily: "'Barlow Condensed', sans-serif",
+          fontWeight: 700,
+          fontSize: '11px',
+          color: '#6b5a50',
+          textTransform: 'uppercase',
+          letterSpacing: '0.12em',
+          padding: '20px 16px 8px',
+        }}
+      >
+        UPCOMING
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '0 16px' }}>
         {upcoming.length === 0 ? (
-          <div style={{ color: '#4a3a30', fontSize: '13px', marginBottom: '24px' }}>
+          <div
+            style={{
+              fontFamily: "'Barlow Condensed', sans-serif",
+              fontSize: '13px',
+              color: '#4a3a30',
+            }}
+          >
             No upcoming events
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '24px' }}>
-            {upcoming.map((ev) => {
-              const color = SPORT_COLORS[ev.sport] ?? '#f57e44'
-              const d = new Date(ev.date + 'T12:00:00')
-              return (
+          upcoming.map((ev) => {
+            const d = new Date(ev.date + 'T12:00:00')
+            const month = d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase()
+            const day = d.getDate()
+            return (
+              <div
+                key={ev.id}
+                style={{
+                  background: '#0f0b08',
+                  border: '1px solid #1e1410',
+                  borderRadius: '8px',
+                  padding: '10px 12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                }}
+              >
+                {/* Date badge */}
                 <div
-                  key={ev.id}
                   style={{
-                    background: '#0f0b08',
-                    borderRadius: '8px',
-                    padding: '12px 14px',
-                    border: `1px solid ${color}44`,
-                    display: 'flex',
-                    gap: '12px',
-                    alignItems: 'center',
+                    background: '#1e1410',
+                    borderRadius: '6px',
+                    padding: '4px 8px',
+                    textAlign: 'center',
+                    flexShrink: 0,
                   }}
                 >
                   <div
                     style={{
-                      width: '4px',
-                      borderRadius: '2px',
-                      alignSelf: 'stretch',
-                      background: color,
-                      flexShrink: 0,
+                      fontFamily: "'Teko', sans-serif",
+                      fontWeight: 600,
+                      fontSize: '10px',
+                      color: '#8a6a58',
+                      lineHeight: 1,
                     }}
-                  />
-                  <div style={{ flex: 1 }}>
-                    <div
-                      style={{
-                        fontFamily: "'Saira Condensed', sans-serif",
-                        fontWeight: 700,
-                        fontSize: '14px',
-                        color: '#e8dcd4',
-                        textTransform: 'uppercase',
-                      }}
-                    >
-                      {ev.opponent}
-                    </div>
-                    <div
-                      style={{
-                        fontFamily: "'Barlow', sans-serif",
-                        fontSize: '12px',
-                        color: '#6b5a50',
-                      }}
-                    >
-                      {d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })} · {ev.location}
-                    </div>
+                  >
+                    {month}
                   </div>
+                  <div
+                    style={{
+                      fontFamily: "'Teko', sans-serif",
+                      fontWeight: 600,
+                      fontSize: '18px',
+                      color: '#e8dcd4',
+                      lineHeight: 1,
+                    }}
+                  >
+                    {day}
+                  </div>
+                </div>
+
+                {/* Title + location */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div
+                    style={{
+                      fontFamily: "'Barlow Condensed', sans-serif",
+                      fontWeight: 700,
+                      fontSize: '14px',
+                      color: '#ffffff',
+                      textTransform: 'uppercase',
+                      lineHeight: 1.2,
+                    }}
+                  >
+                    {ev.opponent}
+                  </div>
+                  <div
+                    style={{
+                      fontFamily: "'Barlow Condensed', sans-serif",
+                      fontWeight: 400,
+                      fontSize: '12px',
+                      color: '#6b5a50',
+                      marginTop: '2px',
+                    }}
+                  >
+                    {ev.location}
+                  </div>
+                </div>
+
+                {/* Sport chip */}
+                <div
+                  style={{
+                    background: '#f57e4422',
+                    border: '1px solid #f57e4444',
+                    borderRadius: '4px',
+                    padding: '3px 8px',
+                    flexShrink: 0,
+                  }}
+                >
                   <span
                     style={{
                       fontFamily: "'Barlow Condensed', sans-serif",
                       fontWeight: 700,
                       fontSize: '9px',
-                      color,
-                      background: color + '22',
-                      padding: '3px 8px',
-                      borderRadius: '4px',
-                      textTransform: 'capitalize',
+                      color: '#f57e44',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.06em',
                     }}
                   >
                     {ev.sport}
                   </span>
                 </div>
-              )
-            })}
-          </div>
+              </div>
+            )
+          })
         )}
+      </div>
 
-        {/* Quick links */}
-        <SectionLabel>Quick Links</SectionLabel>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '8px' }}>
-          {[
-            { label: 'Calendar', href: '/calendar', icon: '📅' },
-            { label: 'Mind / R&R', href: '/mind', icon: '🧠' },
-            { label: 'Train', href: '/train', icon: '💪' },
-            { label: 'Fuel', href: '/fuel', icon: '🥗' },
-          ].map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
+      {/* E. My Sports — horizontal scroll strip */}
+      <div
+        style={{
+          fontFamily: "'Barlow Condensed', sans-serif",
+          fontWeight: 700,
+          fontSize: '11px',
+          color: '#6b5a50',
+          textTransform: 'uppercase',
+          letterSpacing: '0.12em',
+          padding: '20px 16px 8px',
+        }}
+      >
+        MY SPORTS
+      </div>
+
+      <div
+        style={{
+          display: 'flex',
+          overflowX: 'auto',
+          gap: '10px',
+          padding: '0 16px 4px',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+        } as React.CSSProperties}
+      >
+        {SPORTS_DATA.map((sport) => (
+          <div
+            key={sport.key}
+            onClick={() => router.push(`/sports/${sport.key}`)}
+            style={{
+              width: '140px',
+              flexShrink: 0,
+              height: '90px',
+              borderRadius: '10px',
+              overflow: 'hidden',
+              position: 'relative',
+              cursor: 'pointer',
+              backgroundImage: `url(${sport.bgImage})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          >
+            {/* Dark overlay */}
+            <div
               style={{
-                background: '#0f0b08',
-                border: '1px solid #1e1410',
-                borderRadius: '10px',
-                padding: '16px 14px',
-                textDecoration: 'none',
+                position: 'absolute',
+                inset: 0,
+                background: 'rgba(0,0,0,0.55)',
+              }}
+            />
+            {/* Content */}
+            <div
+              style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                padding: '8px',
                 display: 'flex',
+                flexDirection: 'column',
                 alignItems: 'center',
-                gap: '10px',
               }}
             >
-              <span style={{ fontSize: '20px' }}>{link.icon}</span>
-              <span
+              <div
                 style={{
                   fontFamily: "'Saira Condensed', sans-serif",
                   fontWeight: 700,
-                  fontSize: '14px',
-                  color: '#e8dcd4',
+                  fontSize: '16px',
+                  color: '#ffffff',
                   textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                  lineHeight: 1.1,
+                  textAlign: 'center',
                 }}
               >
-                {link.label}
-              </span>
-            </Link>
-          ))}
-        </div>
+                {sport.name}
+              </div>
+              <div
+                style={{
+                  fontFamily: "'Barlow Condensed', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '11px',
+                  color: '#f57e44',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.06em',
+                }}
+              >
+                {sport.position}
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
+
     </div>
   )
 }
