@@ -517,39 +517,132 @@ function WallCabinet({ wall }: { wall: 'left' | 'right' | 'back' }) {
         <boxGeometry args={[0.8, 0.12, along]} />
         <meshStandardMaterial color="#1a120a" roughness={0.4} metalness={0.6} />
       </mesh>
-      {/* front glass */}
-      <mesh position={[0.72, 2.4, 0]}>
-        <boxGeometry args={[0.02, 4.5, along - 0.1]} />
-        <meshPhysicalMaterial color="#bcd6ee" transparent opacity={0.06} roughness={0} metalness={0} transmission={0.6} thickness={0.4} envMapIntensity={2} side={THREE.DoubleSide} />
-      </mesh>
+      {/* open shelves — no glass, trophies are touchable and better lit */}
     </group>
   )
 }
 
-// ── Back feature wall: monogram + motto ─────────────────────────────────────────
+// ── Back feature wall: monogram · framed jerseys · dream wall ────────────────────
+
+function canvasTex(c: HTMLCanvasElement) {
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t
+}
+
+function makeJerseyTex(name: string, num: string, accent: string) {
+  if (typeof document === 'undefined') return null
+  const W = 420, H = 540, c = document.createElement('canvas'); c.width = W; c.height = H
+  const x = c.getContext('2d')!
+  const g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#16243f'); g.addColorStop(1, '#0a1126')
+  x.fillStyle = g; x.fillRect(0, 0, W, H)
+  x.fillStyle = 'rgba(255,255,255,0.05)'; x.fillRect(0, 0, W, 130)        // shoulder yoke
+  x.fillStyle = accent; x.fillRect(46, 104, W - 92, 7)                    // accent stripe
+  x.textAlign = 'center'
+  x.fillStyle = 'rgba(255,255,255,0.9)'; x.font = 'bold 38px "Arial Narrow", Arial, sans-serif'
+  x.fillText('KESHEQUA', W / 2, 78)
+  x.textBaseline = 'middle'
+  x.font = 'bold 250px "Arial Narrow", Arial, sans-serif'
+  x.fillStyle = '#ffffff'; x.fillText(num, W / 2, H / 2 + 28)
+  x.lineWidth = 7; x.strokeStyle = accent; x.strokeText(num, W / 2, H / 2 + 28)
+  x.textBaseline = 'alphabetic'; x.font = 'bold 32px "Arial Narrow", Arial, sans-serif'
+  x.fillStyle = 'rgba(255,255,255,0.82)'; x.fillText(name, W / 2, H - 36)
+  return canvasTex(c)
+}
+
+function makeDreamTex(label: string, title: string, sub: string, accent: string) {
+  if (typeof document === 'undefined') return null
+  const W = 520, H = 250, c = document.createElement('canvas'); c.width = W; c.height = H
+  const x = c.getContext('2d')!
+  x.fillStyle = '#16120c'; x.fillRect(0, 0, W, H)
+  x.fillStyle = accent; x.fillRect(0, 0, 9, H)                           // accent spine
+  x.textAlign = 'left'
+  x.fillStyle = accent; x.font = 'bold 26px "Barlow Condensed", Arial, sans-serif'
+  x.fillText(label.toUpperCase(), 40, 56)
+  // title (wrap to 2 lines)
+  x.fillStyle = 'rgba(255,255,255,0.95)'; x.font = 'bold 42px "Arial Narrow", Arial, sans-serif'
+  const words = title.split(' '); const lines: string[] = []; let cur = ''
+  for (const w of words) { const t = cur ? cur + ' ' + w : w; if (x.measureText(t).width > W - 70 && cur) { lines.push(cur); cur = w } else cur = t }
+  if (cur) lines.push(cur)
+  lines.slice(0, 2).forEach((ln, i) => x.fillText(ln, 40, 110 + i * 48))
+  x.fillStyle = 'rgba(255,255,255,0.45)'; x.font = '24px "Barlow Condensed", Arial, sans-serif'
+  x.fillText(sub, 40, H - 30)
+  return canvasTex(c)
+}
+
+const JERSEYS = [
+  { name: 'BASKETBALL', num: '10', accent: '#f57e44', x: -3.15 },
+  { name: 'SOCCER', num: '7', accent: '#22c55e', x: 3.15 },
+]
+
+const DREAM_WALL = [
+  { label: 'Achieved', title: '1,000 Career Points', sub: 'Joined the 1K club', accent: '#22c55e' },
+  { label: 'Achieved', title: 'Single-Season Record', sub: '436 points · 2025–26', accent: '#22c55e' },
+  { label: 'The Climb', title: 'Section VI Champion', sub: 'This season', accent: '#f5b942' },
+  { label: 'The Climb', title: 'Score in College', sub: 'Southeastern · committed', accent: '#f5b942' },
+]
 
 function FeatureWall() {
+  const jerseyTex = useMemo(() => JERSEYS.map((j) => makeJerseyTex(j.name, j.num, j.accent)), [])
+  const dreamTex = useMemo(() => DREAM_WALL.map((d) => makeDreamTex(d.label, d.title, d.sub, d.accent)), [])
+
   return (
-    <group position={[0, 0, -WALL_Z + 0.06]}>
-      <mesh position={[0, 2.5, -0.05]}>
-        <boxGeometry args={[5.2, 4.4, 0.06]} />
-        <meshStandardMaterial color="#0d0907" roughness={0.96} />
+    <group position={[0, 0, -WALL_Z + 0.08]}>
+      {/* wall panel */}
+      <mesh position={[0, 2.5, -0.06]}>
+        <boxGeometry args={[9.2, 4.6, 0.06]} />
+        <meshStandardMaterial color="#1a140d" roughness={0.94} />
       </mesh>
-      {/* monogram */}
-      <Html position={[0, 2.9, 0.05]} center transform distanceFactor={7} occlude pointerEvents="none">
-        <div style={{ fontFamily: "'Anton', sans-serif", fontSize: 120, color: 'rgba(245,185,66,0.10)', lineHeight: 1, userSelect: 'none' }}>K</div>
+
+      {/* monogram + motto */}
+      <Html position={[0, 4.0, 0.04]} center transform distanceFactor={7} occlude pointerEvents="none">
+        <div style={{ fontFamily: "'Anton', sans-serif", fontSize: 92, color: 'rgba(245,185,66,0.12)', lineHeight: 1, userSelect: 'none' }}>K</div>
       </Html>
-      {/* motto */}
-      <Html position={[0, 1.0, 0.05]} center transform distanceFactor={7} occlude pointerEvents="none">
-        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 22, color: 'rgba(245,185,66,0.32)', letterSpacing: '0.24em', textTransform: 'uppercase', whiteSpace: 'nowrap', userSelect: 'none' }}>
+      <Html position={[0, 3.28, 0.04]} center transform distanceFactor={7} occlude pointerEvents="none">
+        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 20, color: 'rgba(245,185,66,0.34)', letterSpacing: '0.24em', textTransform: 'uppercase', whiteSpace: 'nowrap', userSelect: 'none' }}>
           Be Relentless · Be Precise · Be Feared
         </div>
       </Html>
+
+      {/* framed jerseys flanking the monogram */}
+      {JERSEYS.map((j, i) => (
+        <group key={j.num} position={[j.x, 2.2, 0]}>
+          <mesh position={[0, 0, -0.02]} castShadow>
+            <boxGeometry args={[1.52, 1.96, 0.07]} />
+            <meshStandardMaterial color="#241a0e" roughness={0.42} metalness={0.55} />
+          </mesh>
+          <mesh position={[0, 0, 0.03]}>
+            <planeGeometry args={[1.36, 1.8]} />
+            <meshStandardMaterial map={jerseyTex[i] ?? undefined} color={jerseyTex[i] ? '#ffffff' : '#13203f'} roughness={0.7} metalness={0.05} />
+          </mesh>
+        </group>
+      ))}
+
+      {/* dream wall */}
+      <Html position={[0, 1.3, 0.04]} center transform distanceFactor={8} occlude pointerEvents="none">
+        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 16, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.3em', textTransform: 'uppercase', whiteSpace: 'nowrap', userSelect: 'none' }}>
+          The Dream Wall
+        </div>
+      </Html>
+      {DREAM_WALL.map((d, i) => {
+        const xs = [-3.45, -1.15, 1.15, 3.45]
+        return (
+          <group key={i} position={[xs[i], 0.58, 0]}>
+            <mesh position={[0, 0, -0.02]}>
+              <boxGeometry args={[1.92, 0.92, 0.05]} />
+              <meshStandardMaterial color="#241a0e" roughness={0.45} metalness={0.5} />
+            </mesh>
+            <mesh position={[0, 0, 0.02]}>
+              <planeGeometry args={[1.8, 0.8]} />
+              <meshStandardMaterial map={dreamTex[i] ?? undefined} color={dreamTex[i] ? '#ffffff' : '#16120c'} roughness={0.6} metalness={0.1} />
+            </mesh>
+          </group>
+        )
+      })}
+
       {/* gold trim lines */}
-      {[0.4, 4.6].map((y, i) => (
+      {[0.05, 4.55].map((y, i) => (
         <mesh key={i} position={[0, y, 0.02]}>
-          <boxGeometry args={[5.0, 0.018, 0.005]} />
-          <meshStandardMaterial color="#f5b942" emissive="#f5b942" emissiveIntensity={1.6} toneMapped={false} />
+          <boxGeometry args={[8.8, 0.016, 0.005]} />
+          <meshStandardMaterial color="#f5b942" emissive="#f5b942" emissiveIntensity={1.2} toneMapped={false} />
         </mesh>
       ))}
     </group>
@@ -568,18 +661,18 @@ function Ceiling() {
     <group>
       <mesh position={[0, ROOM_H, 0]}>
         <boxGeometry args={[WALL_X * 2 + 1, 0.2, WALL_Z * 2 + 1]} />
-        <meshStandardMaterial color="#0a0807" roughness={0.97} />
+        <meshStandardMaterial color="#17130d" roughness={0.95} />
       </mesh>
       {/* cove perimeter glow */}
       <mesh position={[0, ROOM_H - 0.18, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <ringGeometry args={[WALL_X - 0.5, WALL_X - 0.35, 4, 1]} />
-        <meshStandardMaterial color="#ffcaa0" emissive="#ffb877" emissiveIntensity={1.4} toneMapped={false} side={THREE.DoubleSide} />
+        <meshStandardMaterial color="#ffcaa0" emissive="#ffb877" emissiveIntensity={0.5} toneMapped={false} side={THREE.DoubleSide} />
       </mesh>
       {cans.map(([x, z], i) => (
         <group key={i} position={[x, ROOM_H - 0.12, z]}>
           <mesh rotation={[-Math.PI / 2, 0, 0]}>
             <circleGeometry args={[0.1, 20]} />
-            <meshStandardMaterial color="#fff4cc" emissive="#fff0c0" emissiveIntensity={5} toneMapped={false} />
+            <meshStandardMaterial color="#fff4cc" emissive="#fff0c0" emissiveIntensity={2.6} toneMapped={false} />
           </mesh>
         </group>
       ))}
@@ -621,9 +714,9 @@ function Shell() {
       <mesh position={[0, 0.11, -WALL_Z]}><boxGeometry args={[WALL_X * 2, 0.22, 0.1]} /><meshStandardMaterial color="#1a120b" roughness={0.5} metalness={0.4} /></mesh>
 
       {/* walls */}
-      <mesh position={[-WALL_X - 0.15, 2.6, 0]}><boxGeometry args={[0.3, ROOM_H, WALL_Z * 2 + 1]} /><meshStandardMaterial color="#0c0907" roughness={0.96} /></mesh>
-      <mesh position={[WALL_X + 0.15, 2.6, 0]}><boxGeometry args={[0.3, ROOM_H, WALL_Z * 2 + 1]} /><meshStandardMaterial color="#0c0907" roughness={0.96} /></mesh>
-      <mesh position={[0, 2.6, -WALL_Z - 0.15]}><boxGeometry args={[WALL_X * 2 + 1, ROOM_H, 0.3]} /><meshStandardMaterial color="#0c0907" roughness={0.96} /></mesh>
+      <mesh position={[-WALL_X - 0.15, 2.6, 0]}><boxGeometry args={[0.3, ROOM_H, WALL_Z * 2 + 1]} /><meshStandardMaterial color="#1a140d" roughness={0.92} /></mesh>
+      <mesh position={[WALL_X + 0.15, 2.6, 0]}><boxGeometry args={[0.3, ROOM_H, WALL_Z * 2 + 1]} /><meshStandardMaterial color="#1a140d" roughness={0.92} /></mesh>
+      <mesh position={[0, 2.6, -WALL_Z - 0.15]}><boxGeometry args={[WALL_X * 2 + 1, ROOM_H, 0.3]} /><meshStandardMaterial color="#1a140d" roughness={0.92} /></mesh>
 
       {/* front: a soft window glow (sunset, like the reference) on the open side */}
       <mesh position={[WALL_X - 0.4, 2.4, WALL_Z - 0.2]} rotation={[0, -Math.PI / 4, 0]}>
@@ -756,7 +849,9 @@ function Scene({
       <fog attach="fog" args={['#0a0604', 14, 34]} />
       <color attach="background" args={['#080503']} />
 
-      <ambientLight intensity={0.26} color="#ffb877" />
+      <ambientLight intensity={0.45} color="#ffceA0" />
+      {/* broad soft fill from above to ground the room (no shadow cost) */}
+      <hemisphereLight args={['#ffe6c4', '#3a2a1c', 0.5]} />
       {/* Custom studio environment: bright soft sources that streak across the
           gold/glass as real reflections (the fix for "plastic" looking metal). */}
       <Environment resolution={256} environmentIntensity={0.9}>

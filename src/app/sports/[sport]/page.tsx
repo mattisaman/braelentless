@@ -89,11 +89,11 @@ function SubNav({ sportKey, active }: { sportKey: string; active: string }) {
   )
 }
 
-function SectionHeader({ text, sub }: { text: string; sub?: string }) {
+function SectionHeader({ text, sub, color = '#f57e44' }: { text: string; sub?: string; color?: string }) {
   return (
     <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 12, padding: '30px 0 14px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <div style={{ width: 4, height: 24, background: 'linear-gradient(180deg, #f57e44, #e35d2a)', borderRadius: 2, flexShrink: 0, boxShadow: '0 0 12px rgba(245,126,68,0.5)' }} />
+        <div style={{ width: 4, height: 24, background: `linear-gradient(180deg, ${color}, ${color})`, borderRadius: 2, flexShrink: 0, boxShadow: `0 0 12px ${color}80` }} />
         <div className="lead-head">{text}</div>
       </div>
       {sub && <div className="lead-sub" style={{ marginBottom: 2 }}>{sub}</div>}
@@ -237,7 +237,7 @@ export default async function SportDetailPage({
         )}
 
         {/* Season stats */}
-        <SectionHeader text="Season Stats" sub={`${sport.name} · 2025–26`} />
+        <SectionHeader text="Season Stats" sub={`${sport.name} · 2025–26`} color={color} />
         <StatGrid stats={sport.stats} color={color} />
 
         {/* Season-by-season progression + charts */}
@@ -247,7 +247,7 @@ export default async function SportDetailPage({
         {/* Goals + side rail (next event + milestones) */}
         <div className="overview-row">
           <div>
-            <SectionHeader text="Season Goals" sub="Chase the number" />
+            <SectionHeader text="Season Goals" sub="Chase the number" color={color} />
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 12 }}>
               {sport.goals.map((goal) => (
                 <GoalCard key={goal.id} goal={goal} color={color} />
@@ -256,7 +256,7 @@ export default async function SportDetailPage({
           </div>
 
           <div>
-            <SectionHeader text="On Deck" />
+            <SectionHeader text="On Deck" color={color} />
             {/* Next event */}
             {nextEvent ? (
               <Link href={`/sports/${sport.key}/schedule`} className="tile-card" style={{ display: 'block', textDecoration: 'none', padding: '16px 18px', marginBottom: 12 }}>
@@ -316,7 +316,7 @@ export default async function SportDetailPage({
         {/* Recent form / PRs */}
         {prs.length > 0 && (
           <>
-            <SectionHeader text="Recent Form" sub="New territory" />
+            <SectionHeader text="Recent Form" sub="New territory" color={color} />
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 12 }}>
               {prs.map((pr) => {
                 const d = new Date(pr.date + 'T12:00:00')
@@ -340,7 +340,7 @@ export default async function SportDetailPage({
         )}
 
         {/* Quick actions */}
-        <SectionHeader text="Quick Actions" />
+        <SectionHeader text="Quick Actions" color={color} />
         <div className="overview-actions">
           <Link href={`/sports/${sport.key}/schedule`} className="ov-action ov-action-primary">Schedule</Link>
           <Link href={`/sports/${sport.key}/stats`} className="ov-action">Edit Stats</Link>
@@ -379,15 +379,15 @@ export default async function SportDetailPage({
           font-size: 14px;
           text-transform: uppercase;
           letter-spacing: 0.12em;
-          color: #f57e44;
+          color: ${color};
           background: var(--bg-2);
           border: 1px solid var(--tile-border);
           transition: border-color 0.2s ease, transform 0.2s ease;
         }
-        .ov-action:hover { border-color: rgba(245,126,68,0.4); transform: translateY(-2px); }
+        .ov-action:hover { border-color: ${color}66; transform: translateY(-2px); }
         .ov-action-primary {
-          color: #fff;
-          background: linear-gradient(135deg, #e35d2a, #f57e44);
+          color: #0a0706;
+          background: linear-gradient(135deg, ${color}, ${color}cc);
           border: none;
         }
       `}</style>
