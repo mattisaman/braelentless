@@ -107,33 +107,52 @@ function useHerringbone() {
   }, [])
 }
 
+// Returns { color, bump } canvases. Color = pebbled leather; bump = grain + grooves.
 function useBasketball() {
   return useMemo(() => {
-    if (typeof document === 'undefined') return null
-    const S = 512
-    const c = document.createElement('canvas')
-    c.width = c.height = S
-    const ctx = c.getContext('2d')!
-    ctx.fillStyle = '#c75a1e'
-    ctx.fillRect(0, 0, S, S)
-    // pebble noise
-    for (let i = 0; i < 14000; i++) {
-      const x = Math.random() * S, y = Math.random() * S
-      ctx.fillStyle = `rgba(${Math.random() > 0.5 ? '60,28,8' : '230,140,70'},${Math.random() * 0.25})`
-      ctx.beginPath()
-      ctx.arc(x, y, Math.random() * 1.4, 0, Math.PI * 2)
-      ctx.fill()
+    if (typeof document === 'undefined') return { color: null as THREE.Texture | null, bump: null as THREE.Texture | null }
+    const S = 1024
+    const mk = () => { const c = document.createElement('canvas'); c.width = c.height = S; return c }
+
+    // ── color map ──
+    const cc = mk(); const cx = cc.getContext('2d')!
+    // deep authentic basketball orange with subtle large-scale mottling
+    cx.fillStyle = '#b0531c'; cx.fillRect(0, 0, S, S)
+    for (let i = 0; i < 240; i++) {
+      cx.fillStyle = `rgba(${Math.random() > 0.5 ? '150,75,30' : '90,42,14'},0.05)`
+      cx.beginPath(); cx.arc(Math.random() * S, Math.random() * S, 30 + Math.random() * 90, 0, Math.PI * 2); cx.fill()
     }
-    // seams: vertical + horizontal + two curves
-    ctx.strokeStyle = '#1a0d04'
-    ctx.lineWidth = 7
-    ctx.beginPath(); ctx.moveTo(S / 2, 0); ctx.lineTo(S / 2, S); ctx.stroke()
-    ctx.beginPath(); ctx.moveTo(0, S / 2); ctx.lineTo(S, S / 2); ctx.stroke()
-    ctx.beginPath(); ctx.moveTo(S * 0.1, 0); ctx.quadraticCurveTo(S * 0.5, S * 0.5, S * 0.1, S); ctx.stroke()
-    ctx.beginPath(); ctx.moveTo(S * 0.9, 0); ctx.quadraticCurveTo(S * 0.5, S * 0.5, S * 0.9, S); ctx.stroke()
-    const tex = new THREE.CanvasTexture(c)
-    tex.colorSpace = THREE.SRGBColorSpace
-    return tex
+    // fine pebble grain (tight dots, both lighter and darker)
+    for (let i = 0; i < 70000; i++) {
+      const dark = Math.random() > 0.5
+      cx.fillStyle = dark ? `rgba(70,33,10,${Math.random() * 0.22})` : `rgba(245,170,105,${Math.random() * 0.16})`
+      cx.beginPath(); cx.arc(Math.random() * S, Math.random() * S, Math.random() * 1.2 + 0.3, 0, Math.PI * 2); cx.fill()
+    }
+
+    // ── bump map (grey: pebble + black grooves) ──
+    const bc = mk(); const bx = bc.getContext('2d')!
+    bx.fillStyle = '#8a8a8a'; bx.fillRect(0, 0, S, S)
+    for (let i = 0; i < 70000; i++) {
+      const v = Math.random() > 0.5 ? 255 : 60
+      bx.fillStyle = `rgba(${v},${v},${v},${Math.random() * 0.5})`
+      bx.beginPath(); bx.arc(Math.random() * S, Math.random() * S, Math.random() * 1.3 + 0.3, 0, Math.PI * 2); bx.fill()
+    }
+
+    // seams on BOTH maps (color = dark line, bump = deep black groove)
+    const seams = (ctx: CanvasRenderingContext2D, col: string, w: number) => {
+      ctx.strokeStyle = col; ctx.lineWidth = w; ctx.lineCap = 'round'
+      ctx.beginPath(); ctx.moveTo(S / 2, 0); ctx.lineTo(S / 2, S); ctx.stroke()
+      ctx.beginPath(); ctx.moveTo(0, S / 2); ctx.lineTo(S, S / 2); ctx.stroke()
+      ctx.beginPath(); ctx.moveTo(S * 0.15, 0); ctx.quadraticCurveTo(S * 0.40, S / 2, S * 0.15, S); ctx.stroke()
+      ctx.beginPath(); ctx.moveTo(S * 0.85, 0); ctx.quadraticCurveTo(S * 0.60, S / 2, S * 0.85, S); ctx.stroke()
+    }
+    seams(cx, '#1f0e03', S * 0.013)
+    seams(bx, '#000000', S * 0.02)
+
+    const color = new THREE.CanvasTexture(cc)
+    color.colorSpace = THREE.SRGBColorSpace; color.anisotropy = 8
+    const bump = new THREE.CanvasTexture(bc); bump.anisotropy = 8
+    return { color, bump }
   }, [])
 }
 
@@ -174,7 +193,16 @@ function useSoccer() {
 // ── Materials ──────────────────────────────────────────────────────────────────
 
 function GoldMat({ color }: { color: string }) {
-  return <meshStandardMaterial color={color} metalness={0.95} roughness={0.16} envMapIntensity={1.6} />
+  return (
+    <meshPhysicalMaterial
+      color={color}
+      metalness={1}
+      roughness={0.24}
+      clearcoat={0.5}
+      clearcoatRoughness={0.16}
+      envMapIntensity={2.4}
+    />
+  )
 }
 
 // ── Trophy / object geometries ──────────────────────────────────────────────────
@@ -235,11 +263,24 @@ function StarTrophy({ color }: { color: string }) {
   )
 }
 
-function Basketball({ tex }: { tex: THREE.Texture | null }) {
+type RoomTex = { bb: { color: THREE.Texture | null; bump: THREE.Texture | null }; soc: THREE.Texture | null }
+
+function Basketball({ tex }: { tex: RoomTex['bb'] }) {
   return (
     <mesh position={[0, 0.3, 0]} castShadow>
-      <sphereGeometry args={[0.3, 48, 48]} />
-      <meshStandardMaterial map={tex ?? undefined} color={tex ? '#ffffff' : '#c75a1e'} roughness={0.62} metalness={0.05} bumpMap={tex ?? undefined} bumpScale={0.012} />
+      <sphereGeometry args={[0.32, 64, 64]} />
+      <meshPhysicalMaterial
+        map={tex.color ?? undefined}
+        color={tex.color ? '#ffffff' : '#b0531c'}
+        roughness={0.82}
+        metalness={0}
+        bumpMap={tex.bump ?? undefined}
+        bumpScale={0.025}
+        clearcoat={0.18}
+        clearcoatRoughness={0.6}
+        sheen={0.3}
+        sheenColor="#3a1c08"
+      />
     </mesh>
   )
 }
@@ -278,33 +319,75 @@ function Medal({ color }: { color: string }) {
   )
 }
 
+// Engraved metal nameplate — the title is rendered into the plate texture
+// (with a highlight+shadow offset so it reads as cut into the metal).
+function usePlaqueTexture(label: string) {
+  return useMemo(() => {
+    if (typeof document === 'undefined') return null
+    const W = 512, H = 680
+    const c = document.createElement('canvas'); c.width = W; c.height = H
+    const ctx = c.getContext('2d')!
+    // brushed gold field
+    const g = ctx.createLinearGradient(0, 0, W, H)
+    g.addColorStop(0, '#c8a049'); g.addColorStop(0.5, '#eccd83'); g.addColorStop(1, '#b07f2c')
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H)
+    for (let i = 0; i < 600; i++) {
+      ctx.strokeStyle = `rgba(${Math.random() > 0.5 ? '255,244,210' : '110,72,18'},${Math.random() * 0.05})`
+      const y = Math.random() * H; ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke()
+    }
+    // inset border
+    ctx.strokeStyle = 'rgba(70,44,8,0.55)'; ctx.lineWidth = 5; ctx.strokeRect(26, 26, W - 52, H - 52)
+    ctx.strokeStyle = 'rgba(255,245,215,0.35)'; ctx.lineWidth = 2; ctx.strokeRect(30, 30, W - 60, H - 60)
+
+    // wrap the title
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
+    const fontSize = label.length > 22 ? 46 : 56
+    ctx.font = `bold ${fontSize}px "Arial Narrow", Arial, sans-serif`
+    const words = label.toUpperCase().split(/\s+/)
+    const lines: string[] = []; let cur = ''
+    for (const w of words) {
+      const t = cur ? cur + ' ' + w : w
+      if (ctx.measureText(t).width > W - 110 && cur) { lines.push(cur); cur = w } else cur = t
+    }
+    if (cur) lines.push(cur)
+    const lh = fontSize * 1.22
+    let y = H / 2 - ((lines.length - 1) * lh) / 2
+    for (const ln of lines) {
+      // engraved illusion: bright lower-right highlight, dark fill on top
+      ctx.fillStyle = 'rgba(255,247,220,0.5)'; ctx.fillText(ln, W / 2 + 1.5, y + 1.5)
+      ctx.fillStyle = 'rgba(38,24,5,0.92)'; ctx.fillText(ln, W / 2, y)
+      y += lh
+    }
+    const tex = new THREE.CanvasTexture(c)
+    tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8
+    return tex
+  }, [label])
+}
+
 function Plaque({ color, label }: { color: string; label: string }) {
+  const tex = usePlaqueTexture(label)
   return (
     <group>
+      {/* dark frame */}
       <mesh position={[0, 0.5, 0]} castShadow>
         <boxGeometry args={[0.62, 0.82, 0.05]} />
-        <meshStandardMaterial color="#2a1c0c" roughness={0.45} metalness={0.5} />
+        <meshStandardMaterial color="#241608" roughness={0.4} metalness={0.6} />
       </mesh>
-      <mesh position={[0, 0.5, 0.027]}>
-        <boxGeometry args={[0.5, 0.66, 0.012]} />
+      {/* thin gold bezel */}
+      <mesh position={[0, 0.5, 0.026]}>
+        <boxGeometry args={[0.54, 0.7, 0.01]} />
         <GoldMat color={color} />
       </mesh>
-      {/* engraved label */}
-      <Html position={[0, 0.5, 0.04]} center transform distanceFactor={2.4} occlude pointerEvents="none">
-        <div style={{
-          width: 150, textAlign: 'center',
-          fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700,
-          fontSize: 13, lineHeight: 1.1, letterSpacing: '0.04em',
-          color: '#1a1206', textTransform: 'uppercase',
-          textShadow: '0 1px 0 rgba(255,255,255,0.25)',
-          userSelect: 'none',
-        }}>{label}</div>
-      </Html>
+      {/* engraved nameplate face */}
+      <mesh position={[0, 0.5, 0.033]}>
+        <planeGeometry args={[0.48, 0.64]} />
+        <meshStandardMaterial map={tex ?? undefined} color={tex ? '#ffffff' : color} metalness={0.55} roughness={0.42} />
+      </mesh>
     </group>
   )
 }
 
-function ObjectForAchievement({ a, tex }: { a: Achievement; tex: { bb: THREE.Texture | null; soc: THREE.Texture | null } }) {
+function ObjectForAchievement({ a, tex }: { a: Achievement; tex: RoomTex }) {
   const color = CAT_COLOR[a.category] ?? '#f5b942'
   switch (a.category) {
     case 'championship': return <CupTrophy color={color} />
@@ -323,7 +406,7 @@ function ObjectForAchievement({ a, tex }: { a: Achievement; tex: { bb: THREE.Tex
 
 // ── Decorative filler objects for empty shelf slots ─────────────────────────────
 
-function Filler({ i, tex }: { i: number; tex: { bb: THREE.Texture | null; soc: THREE.Texture | null } }) {
+function Filler({ i, tex }: { i: number; tex: RoomTex }) {
   const kind = i % 4
   if (kind === 0) return <Basketball tex={tex.bb} />
   if (kind === 1) return <SoccerBall tex={tex.soc} />
@@ -343,7 +426,7 @@ function DisplaySlot({
   selected: boolean
   dim: boolean
   onClick: () => void
-  tex: { bb: THREE.Texture | null; soc: THREE.Texture | null }
+  tex: RoomTex
 }) {
   const ref = useRef<THREE.Group>(null!)
   const color = achievement ? (CAT_COLOR[achievement.category] ?? '#f5b942') : '#caa24a'
@@ -385,16 +468,6 @@ function DisplaySlot({
         </>
       )}
 
-      {interactive && (
-        <Html position={[0, 1.18, 0]} center distanceFactor={9} style={{ pointerEvents: 'none', userSelect: 'none' }}>
-          <div style={{
-            fontSize: 20,
-            opacity: dim ? 0.35 : 1,
-            filter: selected ? `drop-shadow(0 0 10px ${color})` : 'none',
-            transition: 'all 0.3s',
-          }}>{achievement!.emoji ?? '🏆'}</div>
-        </Html>
-      )}
     </group>
   )
 }
@@ -527,17 +600,17 @@ function Shell() {
           bumpMap={bump ?? undefined}
           bumpScale={0.04}
           resolution={1024}
-          mixBlur={1.1}
-          mixStrength={2.2}
-          blur={[420, 110]}
-          mirror={0}
-          depthScale={0.9}
-          minDepthThreshold={0.3}
-          maxDepthThreshold={1.2}
-          color="#3a2616"
-          metalness={0.45}
-          roughness={0.62}
-          envMapIntensity={0.5}
+          mixBlur={0.8}
+          mixStrength={4}
+          blur={[300, 90]}
+          mirror={0.35}
+          depthScale={1.0}
+          minDepthThreshold={0.25}
+          maxDepthThreshold={1.3}
+          color="#2e1f12"
+          metalness={0.6}
+          roughness={0.42}
+          envMapIntensity={0.7}
         />
       </mesh>
 
@@ -655,11 +728,14 @@ function Scene({
   const soc = useSoccer()
   const tex = useMemo(() => ({ bb, soc }), [bb, soc])
 
-  // Build wall slots: left, right, then back side-columns
+  // Build wall slots, interleaving left/right so achievements (which fill the
+  // first N slots) spread across BOTH walls instead of filling one side.
   const slots = useMemo<Slot[]>(() => {
     const out: Slot[] = []
-    for (const z of SHELF_Z) for (const y of SHELF_Y) out.push({ pos: [-WALL_X + 0.75, y, z], normal: [1, 0, 0], key: `L-${y}-${z}` })
-    for (const z of SHELF_Z) for (const y of SHELF_Y) out.push({ pos: [WALL_X - 0.75, y, z], normal: [-1, 0, 0], key: `R-${y}-${z}` })
+    for (const z of SHELF_Z) for (const y of SHELF_Y) {
+      out.push({ pos: [-WALL_X + 0.75, y, z], normal: [1, 0, 0], key: `L-${y}-${z}` })
+      out.push({ pos: [WALL_X - 0.75, y, z], normal: [-1, 0, 0], key: `R-${y}-${z}` })
+    }
     return out
   }, [])
 
@@ -679,13 +755,16 @@ function Scene({
       <fog attach="fog" args={['#0a0604', 14, 34]} />
       <color attach="background" args={['#080503']} />
 
-      <ambientLight intensity={0.18} color="#ffb877" />
-      <Environment preset="apartment" environmentIntensity={0.45} />
+      <ambientLight intensity={0.26} color="#ffb877" />
+      <Environment preset="apartment" environmentIntensity={0.85} />
 
       {/* key spot from ceiling, the only shadow caster */}
-      <spotLight position={[0, ROOM_H - 0.3, 2.5]} angle={0.7} penumbra={0.8} intensity={32} distance={16} decay={2} color="#ffe2b8" castShadow shadow-mapSize={[1024, 1024]} shadow-bias={-0.0005} />
-      <spotLight position={[-4, ROOM_H - 0.3, -3]} angle={0.8} penumbra={1} intensity={14} distance={14} decay={2} color="#ffcf9a" />
-      <spotLight position={[4, ROOM_H - 0.3, -3]} angle={0.8} penumbra={1} intensity={14} distance={14} decay={2} color="#ffcf9a" />
+      <spotLight position={[0, ROOM_H - 0.3, 2.5]} angle={0.72} penumbra={0.85} intensity={42} distance={18} decay={2} color="#fff0d6" castShadow shadow-mapSize={[2048, 2048]} shadow-bias={-0.0004} />
+      {/* warm wall-wash spots that give the metals something bright to reflect */}
+      <spotLight position={[-4, ROOM_H - 0.3, -3]} angle={0.85} penumbra={1} intensity={20} distance={15} decay={2} color="#ffd9a6" />
+      <spotLight position={[4, ROOM_H - 0.3, -3]} angle={0.85} penumbra={1} intensity={20} distance={15} decay={2} color="#ffd9a6" />
+      <spotLight position={[-6, 3, 4]} angle={1.1} penumbra={1} intensity={10} distance={16} decay={2} color="#ffe8c4" />
+      <spotLight position={[6, 3, 4]} angle={1.1} penumbra={1} intensity={10} distance={16} decay={2} color="#ffe8c4" />
 
       <Shell />
       <WallCabinet wall="left" />
@@ -769,7 +848,7 @@ export default function TrophyRoom3D() {
       <Canvas
         camera={{ position: [0, 2.7, 6.4], fov: 55 }}
         shadows
-        gl={{ antialias: false, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.05 }}
+        gl={{ antialias: false, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.18 }}
         dpr={[1, 2]}
         style={{ width: '100%', height: '100%' }}
         onPointerMissed={() => setSelected(null)}
@@ -777,9 +856,9 @@ export default function TrophyRoom3D() {
         <Suspense fallback={null}>
           <Scene achievements={achievements} selected={selected} onSelect={setSelected} />
           <EffectComposer multisampling={4}>
-            <N8AO aoRadius={1.2} intensity={2.2} distanceFalloff={1} quality="medium" />
-            <Bloom mipmapBlur luminanceThreshold={0.62} luminanceSmoothing={0.2} intensity={1.15} radius={0.7} />
-            <Vignette eskil={false} offset={0.28} darkness={0.78} />
+            <N8AO aoRadius={1.3} intensity={2.6} distanceFalloff={1} quality="medium" />
+            <Bloom mipmapBlur luminanceThreshold={0.55} luminanceSmoothing={0.25} intensity={1.0} radius={0.75} />
+            <Vignette eskil={false} offset={0.3} darkness={0.72} />
           </EffectComposer>
         </Suspense>
       </Canvas>
