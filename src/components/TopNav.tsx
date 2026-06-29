@@ -10,6 +10,7 @@ import { useAuth } from './AuthProvider'
 const NAV_LINKS = [
   { label: 'HOME', href: '/' },
   { label: 'SPORTS', href: '/sports' },
+  { label: 'TROPHIES', href: '/trophies' },
   { label: 'PENTATHLON', href: '/pent' },
   { label: 'TRAIN', href: '/train' },
   { label: 'FUEL', href: '/fuel' },
