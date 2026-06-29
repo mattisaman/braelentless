@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { SPORTS_DATA, DEFAULT_PRS, DEFAULT_SCHEDULE } from '@/lib/data'
+import type { SportData } from '@/lib/types'
 import SportHero from '@/components/SportHero'
 import StatGrid from '@/components/StatGrid'
 import GoalCard from '@/components/GoalCard'
@@ -12,6 +13,45 @@ const SPORT_COLORS: Record<string, string> = {
 }
 
 const SUB_TABS = ['Overview', 'Stats', 'Schedule', 'Goals'] as const
+
+// ── Basketball performance rating (0–100) from per-game stats ──────────────────
+function statVal(stats: SportData['stats'], label: string): number {
+  const s = stats.find((x) => x.label === label)
+  if (!s) return 0
+  return typeof s.value === 'number' ? s.value : parseFloat(String(s.value)) || 0
+}
+
+function bballRating(stats: SportData['stats']): number {
+  const ppg = statVal(stats, 'PPG')
+  const rpg = statVal(stats, 'RPG')
+  const apg = statVal(stats, 'APG')
+  const spg = statVal(stats, 'SPG')
+  const fgpct = statVal(stats, 'FG%') / 100
+  const ftpct = statVal(stats, 'FT%') / 100
+  const bpg = 0.6   // not surfaced as a tile; from season box score
+  const topg = 3.2
+  return Math.round(
+    Math.min(ppg / 25, 1) * 30 + Math.min(apg / 8, 1) * 20 + Math.min(rpg / 12, 1) * 15 +
+    Math.min(spg / 4, 1) * 15 + Math.min(fgpct / 0.5, 1) * 10 + Math.min(ftpct / 0.8, 1) * 5 +
+    Math.min(bpg / 2, 1) * 3 + Math.max(0, 1 - topg / 5) * 2
+  )
+}
+
+function ratingLabel(r: number): string {
+  if (r >= 90) return 'D1 ELITE'
+  if (r >= 80) return 'ALL-STATE'
+  if (r >= 70) return 'ALL-CONFERENCE'
+  if (r >= 60) return 'VARSITY STARTER'
+  return 'DEVELOPING'
+}
+
+function ratingColor(r: number): string {
+  if (r >= 90) return '#f59e0b'
+  if (r >= 80) return '#f57e44'
+  if (r >= 70) return '#fb923c'
+  if (r >= 60) return '#60a5fa'
+  return '#94a3b8'
+}
 
 function SubNav({ sportKey, active }: { sportKey: string; active: string }) {
   const hrefFor = (label: string) =>
@@ -71,6 +111,9 @@ export default async function SportDetailPage({
 
   const color = SPORT_COLORS[sport.key] ?? '#f57e44'
   const isTrack = sport.key === 'track'
+  const isBasketball = sport.key === 'basketball'
+  const rating = isBasketball ? bballRating(sport.stats) : 0
+  const pentPts = SPORTS_DATA.find((s) => s.key === 'track')?.stats.find((t) => t.label === 'Pent Pts')?.value ?? 2523
 
   // Recent form: this sport's PRs (most recent first)
   const prs = DEFAULT_PRS
@@ -146,14 +189,49 @@ export default async function SportDetailPage({
                   </div>
                 </div>
                 <div style={{ textAlign: 'center', flexShrink: 0 }}>
-                  <div style={{ fontFamily: "'Anton', sans-serif", fontSize: 'clamp(48px, 8vw, 72px)', color, lineHeight: 0.85, textShadow: `0 0 40px ${color}55` }}>3461</div>
-                  <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 11, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.16em', marginTop: 2 }}>Current Points</div>
+                  <div style={{ fontFamily: "'Anton', sans-serif", fontSize: 'clamp(48px, 8vw, 72px)', color, lineHeight: 0.85, textShadow: `0 0 40px ${color}55` }}>{pentPts}</div>
+                  <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 11, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.16em', marginTop: 2 }}>PB Points</div>
                   <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 12, background: color, borderRadius: 999, padding: '7px 16px', color: '#0a0706', fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.12em' }}>
                     Open Calculator <span style={{ fontSize: 15, lineHeight: 1 }}>›</span>
                   </div>
                 </div>
               </div>
             </Link>
+          </div>
+        )}
+
+        {/* Performance rating — basketball only */}
+        {isBasketball && (
+          <div style={{ marginTop: 24 }}>
+            <div
+              style={{
+                borderRadius: 16,
+                border: `1px solid ${ratingColor(rating)}55`,
+                background: `linear-gradient(135deg, ${ratingColor(rating)}1f, var(--bg-2))`,
+                padding: '20px 24px',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+                <div>
+                  <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 11, color: ratingColor(rating), textTransform: 'uppercase', letterSpacing: '0.16em' }}>
+                    Performance Rating
+                  </div>
+                  <div style={{ fontFamily: "'Anton', sans-serif", fontSize: 'clamp(28px, 4vw, 40px)', color: 'var(--text)', lineHeight: 1, marginTop: 6 }}>
+                    {ratingLabel(rating)}
+                  </div>
+                  <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: 13, color: 'var(--text-3)', marginTop: 8, maxWidth: 460, lineHeight: 1.5 }}>
+                    A 0–100 composite of scoring, playmaking, rebounding, defense and efficiency from this season&apos;s per-game line.
+                  </div>
+                </div>
+                <div style={{ textAlign: 'center', flexShrink: 0 }}>
+                  <div style={{ fontFamily: "'Anton', sans-serif", fontSize: 'clamp(48px, 8vw, 72px)', color: ratingColor(rating), lineHeight: 0.85, textShadow: `0 0 40px ${ratingColor(rating)}55` }}>{rating}</div>
+                  <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 11, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.16em', marginTop: 2 }}>out of 100</div>
+                </div>
+              </div>
+              <div style={{ marginTop: 16, height: 8, borderRadius: 999, background: 'var(--bg-3, rgba(255,255,255,0.08))', overflow: 'hidden' }}>
+                <div style={{ width: `${rating}%`, height: '100%', borderRadius: 999, background: ratingColor(rating) }} />
+              </div>
+            </div>
           </div>
         )}
 
