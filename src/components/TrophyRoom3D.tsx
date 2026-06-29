@@ -3,14 +3,12 @@
 import { Suspense, useState, useRef, useEffect, useMemo } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import {
-  OrbitControls,
   Environment,
   Lightformer,
   ContactShadows,
   MeshReflectorMaterial,
   Sparkles,
   Html,
-  RoundedBox,
 } from '@react-three/drei'
 import { EffectComposer, Bloom, Vignette, N8AO } from '@react-three/postprocessing'
 import * as THREE from 'three'
@@ -40,8 +38,9 @@ const CAT_COLOR: Record<string, string> = {
 const WALL_X = 6.9        // left/right walls at ∓ / ±
 const WALL_Z = 6.9        // back wall at -WALL_Z
 const ROOM_H = 5.2
-const SHELF_Y = [1.2, 2.35, 3.5]            // three shelf heights
+const SHELF_Y = [1.2, 2.35, 3.5]            // three shelf heights (board centers at SHELF_Y - 0.16)
 const SHELF_Z = [-4.4, -1.5, 1.5, 4.4]      // positions along left/right walls
+const SHELF_TOP = 0.135                      // board top sits this far below the SHELF_Y label — sit objects here so they rest ON the board
 
 // ── Procedural textures ───────────────────────────────────────────────────────
 
@@ -53,10 +52,10 @@ function useHerringbone() {
     c.width = c.height = S
     const ctx = c.getContext('2d')!
     // warm base
-    ctx.fillStyle = '#3a2616'
+    ctx.fillStyle = '#5a3d22'
     ctx.fillRect(0, 0, S, S)
 
-    const planks = ['#6b4a2c', '#5c3f25', '#74512f', '#553a22', '#664628', '#4d3420']
+    const planks = ['#8a6038', '#74502e', '#9a6c42', '#6b4828', '#82592f', '#5e3f23']
     const pL = 150, pW = 38
     let ci = 0
 
@@ -99,7 +98,7 @@ function useHerringbone() {
 
     const map = new THREE.CanvasTexture(c)
     map.wrapS = map.wrapT = THREE.RepeatWrapping
-    map.repeat.set(3, 3)
+    map.repeat.set(5, 5)
     map.anisotropy = 8
     map.colorSpace = THREE.SRGBColorSpace
     const bump = map.clone()
@@ -118,9 +117,9 @@ function useBasketball() {
     // ── color map ──
     const cc = mk(); const cx = cc.getContext('2d')!
     // deep authentic basketball orange with subtle large-scale mottling
-    cx.fillStyle = '#b0531c'; cx.fillRect(0, 0, S, S)
+    cx.fillStyle = '#ce6a26'; cx.fillRect(0, 0, S, S)
     for (let i = 0; i < 240; i++) {
-      cx.fillStyle = `rgba(${Math.random() > 0.5 ? '150,75,30' : '90,42,14'},0.05)`
+      cx.fillStyle = `rgba(${Math.random() > 0.5 ? '190,100,45' : '120,55,22'},0.06)`
       cx.beginPath(); cx.arc(Math.random() * S, Math.random() * S, 30 + Math.random() * 90, 0, Math.PI * 2); cx.fill()
     }
     // fine pebble grain (tight dots, both lighter and darker)
@@ -147,8 +146,8 @@ function useBasketball() {
       ctx.beginPath(); ctx.moveTo(S * 0.15, 0); ctx.quadraticCurveTo(S * 0.40, S / 2, S * 0.15, S); ctx.stroke()
       ctx.beginPath(); ctx.moveTo(S * 0.85, 0); ctx.quadraticCurveTo(S * 0.60, S / 2, S * 0.85, S); ctx.stroke()
     }
-    seams(cx, '#1f0e03', S * 0.013)
-    seams(bx, '#000000', S * 0.02)
+    seams(cx, '#160a02', S * 0.016)
+    seams(bx, '#000000', S * 0.026)
 
     const color = new THREE.CanvasTexture(cc)
     color.colorSpace = THREE.SRGBColorSpace; color.anisotropy = 8
@@ -160,33 +159,56 @@ function useBasketball() {
 function useSoccer() {
   return useMemo(() => {
     if (typeof document === 'undefined') return null
-    const S = 512
-    const c = document.createElement('canvas')
-    c.width = c.height = S
+    const S = 1024
+    const c = document.createElement('canvas'); c.width = c.height = S
     const ctx = c.getContext('2d')!
-    ctx.fillStyle = '#f2f2f2'
-    ctx.fillRect(0, 0, S, S)
-    ctx.fillStyle = '#15171c'
-    // scatter pentagon-ish dark patches
-    const pent = (cx: number, cy: number, r: number) => {
+    // off-white leather base
+    ctx.fillStyle = '#e9e7e2'; ctx.fillRect(0, 0, S, S)
+
+    const R = 86
+    const hexPath = (cx: number, cy: number, r: number) => {
       ctx.beginPath()
-      for (let i = 0; i < 5; i++) {
-        const a = (i / 5) * Math.PI * 2 - Math.PI / 2
+      for (let i = 0; i < 6; i++) {
+        const a = (Math.PI / 3) * i              // flat-top hexagon
         const px = cx + Math.cos(a) * r, py = cy + Math.sin(a) * r
         i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py)
       }
-      ctx.closePath(); ctx.fill()
+      ctx.closePath()
     }
-    for (let y = 60; y < S; y += 150) {
-      for (let x = 60; x < S; x += 150) {
-        pent(x + (Math.random() * 30 - 15), y + (Math.random() * 30 - 15), 34)
+    const dx = R * 1.5
+    const dy = Math.sin(Math.PI / 3) * R * 2     // row spacing (√3·R)
+    let col = 0
+    for (let cx = -R; cx < S + R; cx += dx, col++) {
+      const offRow = (col % 2) * (dy / 2)
+      for (let cy = -R + offRow; cy < S + R; cy += dy) {
+        const rowIdx = Math.round((cy - offRow) / dy)
+        const hsh = Math.sin(col * 12.9898 + rowIdx * 78.233) * 43758.5453
+        const black = (hsh - Math.floor(hsh)) < 0.3   // ~30% black panels
+        hexPath(cx, cy, R * 0.94)
+        const g = ctx.createRadialGradient(cx - R * 0.32, cy - R * 0.32, R * 0.08, cx, cy, R)
+        if (black) {
+          ctx.fillStyle = '#191a1e'; ctx.fill()
+          g.addColorStop(0, 'rgba(96,96,104,0.42)'); g.addColorStop(1, 'rgba(0,0,0,0)')
+        } else {
+          ctx.fillStyle = '#ecebe6'; ctx.fill()
+          g.addColorStop(0, 'rgba(255,255,255,0.55)'); g.addColorStop(1, 'rgba(150,148,140,0.14)')
+        }
+        ctx.fillStyle = g; ctx.fill()
+        // seam groove
+        ctx.lineJoin = 'round'
+        ctx.strokeStyle = 'rgba(18,18,22,0.6)'; ctx.lineWidth = 7; ctx.stroke()
+        // stitch dashes inset from the seam
+        ctx.save(); ctx.setLineDash([6, 9]); ctx.strokeStyle = 'rgba(45,45,50,0.55)'; ctx.lineWidth = 2
+        hexPath(cx, cy, R * 0.82); ctx.stroke(); ctx.restore()
       }
     }
-    ctx.strokeStyle = 'rgba(0,0,0,0.25)'
-    ctx.lineWidth = 3
-    for (let y = 0; y <= S; y += 75) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(S, y); ctx.stroke() }
+    // fine leather grain
+    for (let i = 0; i < 9000; i++) {
+      ctx.fillStyle = `rgba(${Math.random() > 0.5 ? '255,255,255' : '120,120,120'},${Math.random() * 0.05})`
+      ctx.beginPath(); ctx.arc(Math.random() * S, Math.random() * S, Math.random() * 1.2 + 0.3, 0, Math.PI * 2); ctx.fill()
+    }
     const tex = new THREE.CanvasTexture(c)
-    tex.colorSpace = THREE.SRGBColorSpace
+    tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8
     return tex
   }, [])
 }
@@ -211,29 +233,55 @@ function GoldMat({ color }: { color: string }) {
 function CupTrophy({ color }: { color: string }) {
   return (
     <group>
-      <mesh position={[0, 0.05, 0]} castShadow>
-        <boxGeometry args={[0.42, 0.1, 0.42]} />
-        <meshStandardMaterial color="#15100a" roughness={0.5} metalness={0.4} />
+      {/* stepped dark marble base */}
+      <mesh position={[0, 0.04, 0]} castShadow receiveShadow>
+        <boxGeometry args={[0.4, 0.08, 0.4]} />
+        <meshPhysicalMaterial color="#0f0b07" roughness={0.35} metalness={0.2} clearcoat={0.6} clearcoatRoughness={0.3} />
       </mesh>
-      <mesh position={[0, 0.13, 0]} castShadow>
-        <cylinderGeometry args={[0.12, 0.16, 0.08, 24]} />
+      <mesh position={[0, 0.105, 0]} castShadow>
+        <boxGeometry args={[0.3, 0.05, 0.3]} />
+        <meshPhysicalMaterial color="#161009" roughness={0.4} metalness={0.3} clearcoat={0.5} />
+      </mesh>
+      {/* engraved gold nameplate band on the base front */}
+      <mesh position={[0, 0.04, 0.201]}>
+        <planeGeometry args={[0.3, 0.05]} />
+        <meshStandardMaterial color={color} metalness={0.9} roughness={0.3} emissive={color} emissiveIntensity={0.12} />
+      </mesh>
+      {/* gold foot + stem */}
+      <mesh position={[0, 0.17, 0]} castShadow>
+        <cylinderGeometry args={[0.13, 0.17, 0.07, 32]} />
         <GoldMat color={color} />
       </mesh>
-      <mesh position={[0, 0.3, 0]} castShadow>
-        <cylinderGeometry args={[0.05, 0.07, 0.28, 20]} />
+      <mesh position={[0, 0.33, 0]} castShadow>
+        <cylinderGeometry args={[0.045, 0.06, 0.26, 24]} />
         <GoldMat color={color} />
       </mesh>
-      <mesh position={[0, 0.56, 0]} castShadow>
-        <cylinderGeometry args={[0.26, 0.12, 0.42, 32, 1, true]} />
-        <meshStandardMaterial color={color} metalness={0.95} roughness={0.16} side={THREE.DoubleSide} envMapIntensity={1.8} />
-      </mesh>
-      <mesh position={[0, 0.78, 0]} castShadow>
-        <torusGeometry args={[0.26, 0.035, 10, 36]} />
+      {/* knop */}
+      <mesh position={[0, 0.45, 0]} castShadow>
+        <sphereGeometry args={[0.055, 20, 20]} />
         <GoldMat color={color} />
       </mesh>
+      {/* bowl — lathe profile for a real cup silhouette */}
+      <mesh position={[0, 0.46, 0]} castShadow>
+        <latheGeometry args={[[
+          new THREE.Vector2(0.05, 0.0),
+          new THREE.Vector2(0.14, 0.02),
+          new THREE.Vector2(0.2, 0.1),
+          new THREE.Vector2(0.235, 0.24),
+          new THREE.Vector2(0.265, 0.4),
+          new THREE.Vector2(0.275, 0.42),
+        ], 48]} />
+        <meshPhysicalMaterial color={color} metalness={1} roughness={0.18} clearcoat={0.6} clearcoatRoughness={0.18} envMapIntensity={2.2} side={THREE.DoubleSide} />
+      </mesh>
+      {/* rim */}
+      <mesh position={[0, 0.88, 0]} castShadow>
+        <torusGeometry args={[0.272, 0.018, 12, 48]} />
+        <GoldMat color={color} />
+      </mesh>
+      {/* loop handles on each side */}
       {[-1, 1].map((s) => (
-        <mesh key={s} position={[s * 0.32, 0.6, 0]} rotation={[Math.PI / 2, 0, s * -0.4]} castShadow>
-          <torusGeometry args={[0.1, 0.02, 8, 18, Math.PI * 1.2]} />
+        <mesh key={s} position={[s * 0.3, 0.72, 0]} rotation={[Math.PI / 2, 0, 0]} scale={[1, 1.5, 1]} castShadow>
+          <torusGeometry args={[0.085, 0.018, 12, 28]} />
           <GoldMat color={color} />
         </mesh>
       ))}
@@ -268,51 +316,118 @@ type RoomTex = { bb: { color: THREE.Texture | null; bump: THREE.Texture | null }
 
 function Basketball({ tex }: { tex: RoomTex['bb'] }) {
   return (
-    <mesh position={[0, 0.3, 0]} castShadow>
-      <sphereGeometry args={[0.32, 64, 64]} />
-      <meshPhysicalMaterial
-        map={tex.color ?? undefined}
-        color={tex.color ? '#ffffff' : '#b0531c'}
-        roughness={0.82}
-        metalness={0}
-        bumpMap={tex.bump ?? undefined}
-        bumpScale={0.025}
-        clearcoat={0.18}
-        clearcoatRoughness={0.6}
-        sheen={0.3}
-        sheenColor="#3a1c08"
-      />
-    </mesh>
+    <group>
+      {/* polished chrome ball stand (round base + two cradle posts) */}
+      <mesh position={[0, 0.025, 0]} castShadow receiveShadow>
+        <cylinderGeometry args={[0.21, 0.24, 0.05, 56]} />
+        <meshStandardMaterial color="#e2e6ec" metalness={1} roughness={0.11} envMapIntensity={2.4} />
+      </mesh>
+      <mesh position={[0, 0.06, 0]} castShadow>
+        <cylinderGeometry args={[0.16, 0.2, 0.03, 56]} />
+        <meshStandardMaterial color="#23262b" metalness={0.9} roughness={0.28} />
+      </mesh>
+      {[-1, 1].map((s) => (
+        <mesh key={s} position={[s * 0.115, 0.25, 0]} rotation={[0, 0, s * 0.16]} castShadow>
+          <cylinderGeometry args={[0.017, 0.022, 0.36, 20]} />
+          <meshStandardMaterial color="#e8ebf0" metalness={1} roughness={0.11} envMapIntensity={2.4} />
+        </mesh>
+      ))}
+      {/* ball cradled above the stand */}
+      <mesh position={[0, 0.61, 0]} castShadow>
+        <sphereGeometry args={[0.3, 128, 128]} />
+        <meshPhysicalMaterial
+          map={tex.color ?? undefined}
+          color={tex.color ? '#ffffff' : '#cf6a24'}
+          roughness={0.92}
+          metalness={0}
+          bumpMap={tex.bump ?? undefined}
+          bumpScale={0.07}
+          clearcoat={0.1}
+          clearcoatRoughness={0.78}
+          sheen={0.5}
+          sheenRoughness={0.6}
+          sheenColor="#6b3414"
+          envMapIntensity={0.55}
+        />
+      </mesh>
+    </group>
   )
 }
 
 function SoccerBall({ tex }: { tex: THREE.Texture | null }) {
   return (
-    <mesh position={[0, 0.28, 0]} castShadow>
-      <sphereGeometry args={[0.28, 48, 48]} />
-      <meshStandardMaterial map={tex ?? undefined} color={tex ? '#ffffff' : '#eeeeee'} roughness={0.5} metalness={0.04} />
-    </mesh>
+    <group>
+      {/* stepped wood trophy base */}
+      <mesh position={[0, 0.055, 0]} castShadow receiveShadow>
+        <boxGeometry args={[0.5, 0.11, 0.42]} />
+        <meshPhysicalMaterial color="#3c2613" roughness={0.42} metalness={0.1} clearcoat={0.6} clearcoatRoughness={0.32} />
+      </mesh>
+      <mesh position={[0, 0.135, 0]} castShadow>
+        <boxGeometry args={[0.4, 0.06, 0.34]} />
+        <meshPhysicalMaterial color="#4a3018" roughness={0.38} metalness={0.1} clearcoat={0.6} clearcoatRoughness={0.3} />
+      </mesh>
+      {/* brass nameplate on the front face */}
+      <mesh position={[0, 0.055, 0.211]}>
+        <planeGeometry args={[0.34, 0.07]} />
+        <meshStandardMaterial color="#d9b24a" metalness={0.9} roughness={0.3} emissive="#5a4416" emissiveIntensity={0.2} />
+      </mesh>
+      {/* clear acrylic riser ring */}
+      <mesh position={[0, 0.23, 0]}>
+        <cylinderGeometry args={[0.155, 0.17, 0.13, 44, 1, true]} />
+        <meshPhysicalMaterial color="#cfe0ee" transparent opacity={0.32} roughness={0.08} metalness={0} clearcoat={1} clearcoatRoughness={0.1} side={THREE.DoubleSide} />
+      </mesh>
+      {/* ball resting in the riser */}
+      <mesh position={[0, 0.55, 0]} castShadow>
+        <sphereGeometry args={[0.27, 96, 96]} />
+        <meshPhysicalMaterial
+          map={tex ?? undefined}
+          color={tex ? '#ffffff' : '#f2f2f2'}
+          roughness={0.44}
+          metalness={0.02}
+          clearcoat={0.28}
+          clearcoatRoughness={0.42}
+          bumpMap={tex ?? undefined}
+          bumpScale={0.014}
+          sheen={0.3}
+          sheenColor="#c4c4c4"
+        />
+      </mesh>
+    </group>
   )
 }
 
 function Medal({ color }: { color: string }) {
   return (
     <group>
-      {/* ribbon */}
-      <mesh position={[-0.07, 0.55, 0]} rotation={[0, 0, 0.32]} castShadow>
-        <boxGeometry args={[0.07, 0.5, 0.012]} />
-        <meshStandardMaterial color="#b3122b" roughness={0.6} />
+      {/* display stand base resting on the shelf */}
+      <mesh position={[0, 0.025, -0.02]} castShadow receiveShadow>
+        <cylinderGeometry args={[0.17, 0.2, 0.05, 36]} />
+        <meshPhysicalMaterial color="#0f0b07" roughness={0.4} metalness={0.3} clearcoat={0.5} clearcoatRoughness={0.3} />
       </mesh>
-      <mesh position={[0.07, 0.55, 0]} rotation={[0, 0, -0.32]} castShadow>
-        <boxGeometry args={[0.07, 0.5, 0.012]} />
-        <meshStandardMaterial color="#1b3fae" roughness={0.6} />
+      {/* upright post + arched hook the ribbon hangs from */}
+      <mesh position={[0, 0.46, -0.085]} castShadow>
+        <cylinderGeometry args={[0.018, 0.024, 0.86, 16]} />
+        <GoldMat color="#caa24a" />
+      </mesh>
+      <mesh position={[0, 0.86, -0.05]} rotation={[Math.PI / 2, 0, 0]} castShadow>
+        <torusGeometry args={[0.05, 0.016, 12, 24, Math.PI]} />
+        <GoldMat color="#caa24a" />
+      </mesh>
+      {/* ribbon draping from the hook */}
+      <mesh position={[-0.06, 0.6, -0.01]} rotation={[0, 0, 0.26]} castShadow>
+        <boxGeometry args={[0.075, 0.48, 0.012]} />
+        <meshStandardMaterial color="#b3122b" roughness={0.62} />
+      </mesh>
+      <mesh position={[0.06, 0.6, -0.01]} rotation={[0, 0, -0.26]} castShadow>
+        <boxGeometry args={[0.075, 0.48, 0.012]} />
+        <meshStandardMaterial color="#1b3fae" roughness={0.62} />
       </mesh>
       {/* disc */}
-      <mesh position={[0, 0.27, 0.02]} rotation={[Math.PI / 2, 0, 0]} castShadow>
-        <cylinderGeometry args={[0.15, 0.15, 0.03, 40]} />
+      <mesh position={[0, 0.31, 0.01]} rotation={[Math.PI / 2, 0, 0]} castShadow>
+        <cylinderGeometry args={[0.15, 0.15, 0.03, 44]} />
         <GoldMat color={color} />
       </mesh>
-      <mesh position={[0, 0.27, 0.037]}>
+      <mesh position={[0, 0.31, 0.027]}>
         <circleGeometry args={[0.1, 32]} />
         <meshStandardMaterial color={color} metalness={0.9} roughness={0.3} emissive={color} emissiveIntensity={0.15} />
       </mesh>
@@ -369,21 +484,29 @@ function Plaque({ color, label }: { color: string; label: string }) {
   const tex = usePlaqueTexture(label)
   return (
     <group>
-      {/* dark frame */}
-      <mesh position={[0, 0.5, 0]} castShadow>
-        <boxGeometry args={[0.62, 0.82, 0.05]} />
-        <meshStandardMaterial color="#241608" roughness={0.4} metalness={0.6} />
+      {/* base foot resting on the shelf */}
+      <mesh position={[0, 0.03, 0.05]} castShadow receiveShadow>
+        <boxGeometry args={[0.46, 0.06, 0.2]} />
+        <meshPhysicalMaterial color="#120c07" roughness={0.4} metalness={0.3} clearcoat={0.5} clearcoatRoughness={0.3} />
       </mesh>
-      {/* thin gold bezel */}
-      <mesh position={[0, 0.5, 0.026]}>
-        <boxGeometry args={[0.54, 0.7, 0.01]} />
-        <GoldMat color={color} />
-      </mesh>
-      {/* engraved nameplate face */}
-      <mesh position={[0, 0.5, 0.033]}>
-        <planeGeometry args={[0.48, 0.64]} />
-        <meshStandardMaterial map={tex ?? undefined} color={tex ? '#ffffff' : color} metalness={0.55} roughness={0.42} />
-      </mesh>
+      {/* the plate stands on the foot, leaning back slightly like a real award */}
+      <group position={[0, 0.06, -0.01]} rotation={[-0.1, 0, 0]}>
+        {/* dark frame */}
+        <mesh position={[0, 0.4, 0]} castShadow>
+          <boxGeometry args={[0.58, 0.78, 0.05]} />
+          <meshStandardMaterial color="#241608" roughness={0.4} metalness={0.6} />
+        </mesh>
+        {/* thin gold bezel */}
+        <mesh position={[0, 0.4, 0.026]}>
+          <boxGeometry args={[0.5, 0.66, 0.01]} />
+          <GoldMat color={color} />
+        </mesh>
+        {/* engraved nameplate face */}
+        <mesh position={[0, 0.4, 0.033]}>
+          <planeGeometry args={[0.44, 0.6]} />
+          <meshStandardMaterial map={tex ?? undefined} color={tex ? '#ffffff' : color} metalness={0.55} roughness={0.42} />
+        </mesh>
+      </group>
     </group>
   )
 }
@@ -429,20 +552,15 @@ function DisplaySlot({
   onClick: () => void
   tex: RoomTex
 }) {
-  const ref = useRef<THREE.Group>(null!)
   const color = achievement ? (CAT_COLOR[achievement.category] ?? '#f5b942') : '#caa24a'
-
-  useFrame((_, dt) => {
-    if (ref.current) ref.current.rotation.y += dt * (selected ? 0.5 : 0.18)
-  })
-
   const interactive = !!achievement
+  // orient each piece to face out into the room — no spinning
+  const yaw = Math.atan2(slot.normal[0], slot.normal[2])
 
   return (
-    <group position={slot.pos}>
-      {/* spinning object */}
+    <group position={slot.pos} rotation={[0, yaw, 0]}>
+      {/* object, facing the viewer */}
       <group
-        ref={ref}
         onClick={interactive ? (e) => { e.stopPropagation(); onClick() } : undefined}
         onPointerOver={interactive ? (e) => { e.stopPropagation(); document.body.style.cursor = 'pointer' } : undefined}
         onPointerOut={interactive ? () => { document.body.style.cursor = 'auto' } : undefined}
@@ -692,37 +810,52 @@ function Shell() {
         <MeshReflectorMaterial
           map={map ?? undefined}
           bumpMap={bump ?? undefined}
-          bumpScale={0.04}
+          bumpScale={0.14}
           resolution={1024}
-          mixBlur={0.8}
-          mixStrength={4}
-          blur={[300, 90]}
-          mirror={0.35}
-          depthScale={1.0}
-          minDepthThreshold={0.25}
-          maxDepthThreshold={1.3}
-          color="#2e1f12"
-          metalness={0.6}
-          roughness={0.42}
-          envMapIntensity={0.7}
+          mixBlur={1.4}
+          mixStrength={1.1}
+          blur={[140, 50]}
+          mirror={0.42}
+          depthScale={1.1}
+          minDepthThreshold={0.3}
+          maxDepthThreshold={1.4}
+          color="#e8c79c"
+          metalness={0.25}
+          roughness={0.5}
+          envMapIntensity={0.6}
         />
       </mesh>
 
-      {/* baseboards (anchor the floor-to-wall seam near the viewer) */}
-      <mesh position={[-WALL_X, 0.11, 0]}><boxGeometry args={[0.1, 0.22, WALL_Z * 2]} /><meshStandardMaterial color="#1a120b" roughness={0.5} metalness={0.4} /></mesh>
-      <mesh position={[WALL_X, 0.11, 0]}><boxGeometry args={[0.1, 0.22, WALL_Z * 2]} /><meshStandardMaterial color="#1a120b" roughness={0.5} metalness={0.4} /></mesh>
-      <mesh position={[0, 0.11, -WALL_Z]}><boxGeometry args={[WALL_X * 2, 0.22, 0.1]} /><meshStandardMaterial color="#1a120b" roughness={0.5} metalness={0.4} /></mesh>
+      {/* baseboards on all four walls (anchor the floor-to-wall seam) */}
+      <mesh position={[-WALL_X, 0.11, 0]}><boxGeometry args={[0.1, 0.22, WALL_Z * 2]} /><meshStandardMaterial color="#181b22" roughness={0.5} metalness={0.4} /></mesh>
+      <mesh position={[WALL_X, 0.11, 0]}><boxGeometry args={[0.1, 0.22, WALL_Z * 2]} /><meshStandardMaterial color="#181b22" roughness={0.5} metalness={0.4} /></mesh>
+      <mesh position={[0, 0.11, -WALL_Z]}><boxGeometry args={[WALL_X * 2, 0.22, 0.1]} /><meshStandardMaterial color="#181b22" roughness={0.5} metalness={0.4} /></mesh>
+      <mesh position={[0, 0.11, WALL_Z]}><boxGeometry args={[WALL_X * 2, 0.22, 0.1]} /><meshStandardMaterial color="#181b22" roughness={0.5} metalness={0.4} /></mesh>
 
-      {/* walls */}
-      <mesh position={[-WALL_X - 0.15, 2.6, 0]}><boxGeometry args={[0.3, ROOM_H, WALL_Z * 2 + 1]} /><meshStandardMaterial color="#1a140d" roughness={0.92} /></mesh>
-      <mesh position={[WALL_X + 0.15, 2.6, 0]}><boxGeometry args={[0.3, ROOM_H, WALL_Z * 2 + 1]} /><meshStandardMaterial color="#1a140d" roughness={0.92} /></mesh>
-      <mesh position={[0, 2.6, -WALL_Z - 0.15]}><boxGeometry args={[WALL_X * 2 + 1, ROOM_H, 0.3]} /><meshStandardMaterial color="#1a140d" roughness={0.92} /></mesh>
+      {/* four walls — fully enclosed so a 360° look never lands "outside" */}
+      <mesh position={[-WALL_X - 0.15, 2.6, 0]} receiveShadow><boxGeometry args={[0.3, ROOM_H, WALL_Z * 2 + 1]} /><meshStandardMaterial color="#2b3140" roughness={0.86} metalness={0.06} /></mesh>
+      <mesh position={[WALL_X + 0.15, 2.6, 0]} receiveShadow><boxGeometry args={[0.3, ROOM_H, WALL_Z * 2 + 1]} /><meshStandardMaterial color="#2b3140" roughness={0.86} metalness={0.06} /></mesh>
+      <mesh position={[0, 2.6, -WALL_Z - 0.15]} receiveShadow><boxGeometry args={[WALL_X * 2 + 1, ROOM_H, 0.3]} /><meshStandardMaterial color="#2b3140" roughness={0.86} metalness={0.06} /></mesh>
 
-      {/* front: a soft window glow (sunset, like the reference) on the open side */}
-      <mesh position={[WALL_X - 0.4, 2.4, WALL_Z - 0.2]} rotation={[0, -Math.PI / 4, 0]}>
-        <planeGeometry args={[2.4, 3.0]} />
-        <meshStandardMaterial color="#ff9b5c" emissive="#ff8c42" emissiveIntensity={0.5} toneMapped={false} side={THREE.DoubleSide} />
+      {/* front wall (the 4th wall, behind the viewer at start) with a lit entry portal */}
+      <mesh position={[0, 2.6, WALL_Z + 0.15]} receiveShadow><boxGeometry args={[WALL_X * 2 + 1, ROOM_H, 0.3]} /><meshStandardMaterial color="#252b38" roughness={0.88} metalness={0.06} /></mesh>
+      {/* tall warm doorway glow set into the front wall */}
+      <mesh position={[0, 1.85, WALL_Z - 0.02]}>
+        <planeGeometry args={[2.0, 3.3]} />
+        <meshStandardMaterial color="#ffb070" emissive="#ff9344" emissiveIntensity={0.6} toneMapped={false} side={THREE.DoubleSide} />
       </mesh>
+      {/* gold door frame */}
+      {[[-1.06, 1.85, 0.06, 3.5], [1.06, 1.85, 0.06, 3.5], [0, 3.56, 2.18, 0.07]].map(([x, y, w, h], i) => (
+        <mesh key={i} position={[x, y, WALL_Z - 0.04]}><boxGeometry args={[w, h, 0.02]} /><meshStandardMaterial color="#f5b942" emissive="#f5b942" emissiveIntensity={0.8} toneMapped={false} /></mesh>
+      ))}
+
+      {/* crown trim where walls meet ceiling — reads the room boundary all the way around */}
+      {([[0, ROOM_H - 0.25, -WALL_Z + 0.05, WALL_X * 2, 0.04], [0, ROOM_H - 0.25, WALL_Z - 0.05, WALL_X * 2, 0.04]] as const).map(([x, y, z, w, d], i) => (
+        <mesh key={`tz${i}`} position={[x, y, z]}><boxGeometry args={[w, 0.05, d]} /><meshStandardMaterial color="#caa24a" emissive="#caa24a" emissiveIntensity={0.5} toneMapped={false} /></mesh>
+      ))}
+      {([[-WALL_X + 0.05, ROOM_H - 0.25, 0], [WALL_X - 0.05, ROOM_H - 0.25, 0]] as const).map(([x, y, z], i) => (
+        <mesh key={`tx${i}`} position={[x, y, z]}><boxGeometry args={[0.04, 0.05, WALL_Z * 2]} /><meshStandardMaterial color="#caa24a" emissive="#caa24a" emissiveIntensity={0.5} toneMapped={false} /></mesh>
+      ))}
 
       <Ceiling />
     </group>
@@ -731,82 +864,126 @@ function Shell() {
 
 // ── Center bench + rug ───────────────────────────────────────────────────────────
 
+// Floor medallion the viewer stands on — grounds the center of the room without
+// putting furniture where the camera lives.
 function CenterPiece() {
   return (
     <group position={[0, 0, 0]}>
-      {/* rug */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.012, 0]} receiveShadow>
-        <planeGeometry args={[5.2, 3.6]} />
-        <meshStandardMaterial color="#2a2622" roughness={0.95} />
+      {/* dark inlaid rug field */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.013, 0]} receiveShadow>
+        <circleGeometry args={[2.4, 64]} />
+        <meshStandardMaterial color="#241b12" roughness={0.96} />
       </mesh>
-      {/* tufted leather ottoman */}
-      <RoundedBox args={[1.9, 0.5, 1.0]} radius={0.08} smoothness={4} position={[0, 0.28, 0]} castShadow receiveShadow>
-        <meshStandardMaterial color="#15110d" roughness={0.5} metalness={0.1} />
-      </RoundedBox>
-      {/* base glow strip */}
-      <mesh position={[0, 0.03, 0]}>
-        <boxGeometry args={[1.7, 0.02, 0.85]} />
-        <meshStandardMaterial color="#ffcf8a" emissive="#ffcf8a" emissiveIntensity={1.6} toneMapped={false} />
+      {/* subtle inlaid brass ring (the viewer stands on this — keep it gentle) */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
+        <ringGeometry args={[2.18, 2.24, 80]} />
+        <meshStandardMaterial color="#caa24a" emissive="#caa24a" emissiveIntensity={0.45} toneMapped={false} side={THREE.DoubleSide} />
       </mesh>
     </group>
   )
 }
 
-// ── Camera rig: orbit from center + fly-to-inspect ──────────────────────────────
+// ── Camera: viewer STANDS in the center of the room and looks around ────────────
+// First-person look: camera position is pinned to eye-height at room center, so
+// no matter how far you rotate you can never end up "behind" a wall. Tapping a
+// trophy flies you in to inspect it; releasing returns you to the center.
 
-const OVERVIEW_POS = new THREE.Vector3(0, 2.7, 6.4)
-const OVERVIEW_TGT = new THREE.Vector3(0, 1.6, -1)
+const EYE = new THREE.Vector3(0, 1.62, 0)
+const UP = new THREE.Vector3(0, 1, 0)
 
-function CameraRig({ focus }: { focus: Slot | null }) {
-  const camera = useThree((s) => s.camera)
-  const controls = useThree((s) => s.controls) as any
-  const goalPos = useRef(OVERVIEW_POS.clone())
-  const goalTgt = useRef(OVERVIEW_TGT.clone())
+// Forward vector for a YXZ camera at (yaw, pitch)
+function dirFromYawPitch(yaw: number, pitch: number) {
+  const cp = Math.cos(pitch)
+  return new THREE.Vector3(-Math.sin(yaw) * cp, Math.sin(pitch), -Math.cos(yaw) * cp)
+}
+
+function Controls({ focus }: { focus: Slot | null }) {
+  const camera = useThree((s) => s.camera) as THREE.PerspectiveCamera
+  const gl = useThree((s) => s.gl)
+  const yaw = useRef(-1.4)         // open facing the right wall of trophies
+  const pitch = useRef(0.16)       // tilt up toward the shelves (never pitched at the floor)
   const flying = useRef(false)
+  const first = useRef(true)
+  const goalPos = useRef(EYE.clone())
+  const goalTgt = useRef(EYE.clone().add(dirFromYawPitch(-1.4, 0.16)))
+  const drag = useRef<{ x: number; y: number } | null>(null)
 
+  // drag to look around (free-look only — disabled while inspecting a trophy)
+  useEffect(() => {
+    const el = gl.domElement
+    const down = (e: PointerEvent) => { if (!focus) drag.current = { x: e.clientX, y: e.clientY } }
+    const move = (e: PointerEvent) => {
+      if (!drag.current || focus) return
+      const dx = e.clientX - drag.current.x, dy = e.clientY - drag.current.y
+      drag.current = { x: e.clientX, y: e.clientY }
+      yaw.current -= dx * 0.0042
+      pitch.current = THREE.MathUtils.clamp(pitch.current - dy * 0.0042, -0.62, 0.62)
+    }
+    const up = () => { drag.current = null }
+    el.addEventListener('pointerdown', down)
+    window.addEventListener('pointermove', move)
+    window.addEventListener('pointerup', up)
+    return () => {
+      el.removeEventListener('pointerdown', down)
+      window.removeEventListener('pointermove', move)
+      window.removeEventListener('pointerup', up)
+    }
+  }, [gl, focus])
+
+  // scroll / pinch zooms the lens (FOV) — the viewer never leaves the center
+  useEffect(() => {
+    const el = gl.domElement
+    const wheel = (e: WheelEvent) => {
+      if (focus) return
+      e.preventDefault()
+      camera.fov = THREE.MathUtils.clamp(camera.fov + e.deltaY * 0.03, 32, 70)
+      camera.updateProjectionMatrix()
+    }
+    el.addEventListener('wheel', wheel, { passive: false })
+    return () => el.removeEventListener('wheel', wheel)
+  }, [gl, camera, focus])
+
+  // pick new fly target whenever selection changes
   useEffect(() => {
     if (focus) {
       const n = new THREE.Vector3(...focus.normal)
       const p = new THREE.Vector3(...focus.pos)
-      goalTgt.current.copy(p)
-      goalPos.current.copy(p).addScaledVector(n, 1.7)
-      goalPos.current.y = p.y + 0.15
+      goalTgt.current.copy(p).add(new THREE.Vector3(0, 0.45, 0))   // aim at the object resting on its stand
+      goalPos.current.copy(p).addScaledVector(n, 1.65)
+      goalPos.current.y = p.y + 0.55
+      flying.current = true
+    } else if (first.current) {
+      first.current = false        // initial view: apply free-look immediately (no fly handoff bug)
+      flying.current = false
     } else {
-      goalPos.current.copy(OVERVIEW_POS)
-      goalTgt.current.copy(OVERVIEW_TGT)
+      goalPos.current.copy(EYE)
+      goalTgt.current.copy(EYE).add(dirFromYawPitch(yaw.current, pitch.current))
+      flying.current = true
     }
-    flying.current = true
-    if (controls) controls.enabled = false
-  }, [focus, controls])
+  }, [focus])
 
   useFrame(() => {
-    if (!flying.current) return
-    camera.position.lerp(goalPos.current, 0.08)
-    if (controls) {
-      controls.target.lerp(goalTgt.current, 0.08)
-      controls.update()
-    } else {
-      camera.lookAt(goalTgt.current)
+    if (flying.current) {
+      camera.position.lerp(goalPos.current, 0.1)
+      const m = new THREE.Matrix4().lookAt(camera.position, goalTgt.current, UP)
+      camera.quaternion.slerp(new THREE.Quaternion().setFromRotationMatrix(m), 0.12)
+      if (camera.position.distanceTo(goalPos.current) < 0.03) {
+        flying.current = false
+        if (!focus) {
+          const e = new THREE.Euler().setFromQuaternion(camera.quaternion, 'YXZ')
+          yaw.current = e.y; pitch.current = e.x
+        }
+      }
+      return
     }
-    if (camera.position.distanceTo(goalPos.current) < 0.06) {
-      flying.current = false
-      if (controls) { controls.target.copy(goalTgt.current); controls.enabled = true; controls.update() }
+    if (!focus) {
+      camera.position.copy(EYE)
+      camera.rotation.order = 'YXZ'
+      camera.rotation.set(pitch.current, yaw.current, 0)
     }
   })
 
-  return (
-    <OrbitControls
-      makeDefault
-      enablePan={false}
-      enableDamping
-      dampingFactor={0.08}
-      minDistance={1.2}
-      maxDistance={9}
-      minPolarAngle={0.25}
-      maxPolarAngle={Math.PI / 2.05}
-      target={OVERVIEW_TGT}
-    />
-  )
+  return null
 }
 
 // ── Scene ────────────────────────────────────────────────────────────────────────
@@ -827,8 +1004,9 @@ function Scene({
   const slots = useMemo<Slot[]>(() => {
     const out: Slot[] = []
     for (const z of SHELF_Z) for (const y of SHELF_Y) {
-      out.push({ pos: [-WALL_X + 0.75, y, z], normal: [1, 0, 0], key: `L-${y}-${z}` })
-      out.push({ pos: [WALL_X - 0.75, y, z], normal: [-1, 0, 0], key: `R-${y}-${z}` })
+      const gy = y - SHELF_TOP   // rest objects on the shelf board, not floating above it
+      out.push({ pos: [-WALL_X + 0.75, gy, z], normal: [1, 0, 0], key: `L-${y}-${z}` })
+      out.push({ pos: [WALL_X - 0.75, gy, z], normal: [-1, 0, 0], key: `R-${y}-${z}` })
     }
     return out
   }, [])
@@ -849,12 +1027,15 @@ function Scene({
       <fog attach="fog" args={['#0a0604', 14, 34]} />
       <color attach="background" args={['#080503']} />
 
-      <ambientLight intensity={0.45} color="#ffceA0" />
+      <ambientLight intensity={0.7} color="#ffceA0" />
       {/* broad soft fill from above to ground the room (no shadow cost) */}
-      <hemisphereLight args={['#ffe6c4', '#3a2a1c', 0.5]} />
+      <hemisphereLight args={['#ffe6c4', '#3a2a1c', 0.75]} />
+      {/* central chandelier-style fill: the viewer stands here, so this washes
+          all four walls evenly from the middle of the room */}
+      <pointLight position={[0, 3.2, 0]} intensity={10} distance={16} decay={2} color="#ffe6c4" />
       {/* Custom studio environment: bright soft sources that streak across the
           gold/glass as real reflections (the fix for "plastic" looking metal). */}
-      <Environment resolution={256} environmentIntensity={0.9}>
+      <Environment resolution={256} environmentIntensity={1.15}>
         <Lightformer intensity={2.2} color="#fff2dd" form="rect" position={[0, 6, 1]} scale={[12, 8, 1]} rotation={[Math.PI / 2, 0, 0]} />
         <Lightformer intensity={3} color="#ffe0ad" form="rect" position={[-7, 3.5, 3]} scale={[1.5, 7, 1]} rotation={[0, Math.PI / 2, 0]} />
         <Lightformer intensity={3} color="#ffe0ad" form="rect" position={[7, 3.5, 3]} scale={[1.5, 7, 1]} rotation={[0, -Math.PI / 2, 0]} />
@@ -890,7 +1071,7 @@ function Scene({
         />
       ))}
 
-      <CameraRig focus={focus} />
+      <Controls focus={focus} />
     </>
   )
 }
@@ -950,7 +1131,7 @@ export default function TrophyRoom3D() {
       </div>
 
       <Canvas
-        camera={{ position: [0, 2.7, 6.4], fov: 55 }}
+        camera={{ position: [0, 1.62, 0], fov: 58 }}
         shadows
         gl={{ antialias: false, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.18 }}
         dpr={[1, 2]}
@@ -962,7 +1143,7 @@ export default function TrophyRoom3D() {
           <EffectComposer multisampling={4}>
             <N8AO aoRadius={1.3} intensity={2.6} distanceFalloff={1} quality="medium" />
             <Bloom mipmapBlur luminanceThreshold={0.55} luminanceSmoothing={0.25} intensity={1.0} radius={0.75} />
-            <Vignette eskil={false} offset={0.3} darkness={0.72} />
+            <Vignette eskil={false} offset={0.35} darkness={0.55} />
           </EffectComposer>
         </Suspense>
       </Canvas>
@@ -991,7 +1172,7 @@ export default function TrophyRoom3D() {
 
       {!selected && (
         <div style={{ position: 'absolute', bottom: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 10, pointerEvents: 'none', textAlign: 'center' }}>
-          <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, color: 'rgba(255,255,255,0.18)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>Drag to orbit · Pinch / scroll to zoom · Tap a trophy</div>
+          <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, color: 'rgba(255,255,255,0.18)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>Drag to look around · Scroll to zoom · Tap a trophy to inspect</div>
         </div>
       )}
     </div>
