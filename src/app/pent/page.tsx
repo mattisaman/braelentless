@@ -1,7 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { loadData, saveData } from '@/lib/storage'
+
+// localStorage + Supabase key for the saved goal scenario (persists edits)
+const PENT_GOAL_KEY = 'pentGoal'
 
 /* ============================================================
    GIRLS HIGH SCHOOL PENTATHLON — World Athletics scoring tables
@@ -32,15 +36,17 @@ interface EventDef {
   min: number
   max: number
   step: number
-  current: number // Braelyn's current mark (baseline)
+  current: number // Braelyn's personal best (the baseline / reference point)
 }
 
+// Baselines below are Braelyn's verified personal bests.
+// PB total scores 2,523 pts (Varsity Level) on these World Athletics tables.
 const EVENTS: EventDef[] = [
-  { key: '100h', label: '100m Hurdles', short: '100mH', kind: 'run', A: 9.23076, B: 26.7, C: 1.835, min: 13.0, max: 20.0, step: 0.01, current: 14.2 },
-  { key: 'hj', label: 'High Jump', short: 'HJ', kind: 'jump', A: 1.84523, B: 75, C: 1.348, min: 1.2, max: 1.9, step: 0.01, current: 1.63 },
-  { key: 'sp', label: 'Shot Put', short: 'SP', kind: 'throw', A: 56.0211, B: 1.5, C: 1.05, min: 5.0, max: 14.0, step: 0.01, current: 9.79 },
-  { key: 'lj', label: 'Long Jump', short: 'LJ', kind: 'jump', A: 0.188807, B: 210, C: 1.41, min: 3.5, max: 6.5, step: 0.01, current: 4.80 },
-  { key: '800', label: '800m', short: '800m', kind: 'run', A: 0.11193, B: 254, C: 1.88, min: 120, max: 200, step: 0.1, current: 148 },
+  { key: '100h', label: '100m Hurdles', short: '100mH', kind: 'run', A: 9.23076, B: 26.7, C: 1.835, min: 13.0, max: 20.0, step: 0.01, current: 20.0 },
+  { key: 'hj', label: 'High Jump', short: 'HJ', kind: 'jump', A: 1.84523, B: 75, C: 1.348, min: 1.2, max: 1.9, step: 0.01, current: 1.35 },
+  { key: 'sp', label: 'Shot Put', short: 'SP', kind: 'throw', A: 56.0211, B: 1.5, C: 1.05, min: 5.0, max: 14.0, step: 0.01, current: 9.60 },
+  { key: 'lj', label: 'Long Jump', short: 'LJ', kind: 'jump', A: 0.188807, B: 210, C: 1.41, min: 3.5, max: 6.5, step: 0.01, current: 4.86 },
+  { key: '800', label: '800m', short: '800m', kind: 'run', A: 0.11193, B: 254, C: 1.88, min: 120, max: 200, step: 0.1, current: 146.6 },
 ]
 
 const TIERS = [
@@ -121,6 +127,24 @@ export default function PentPage() {
   )
   const [showCompare, setShowCompare] = useState(true)
 
+  // Hydrate any saved goal scenario after mount (avoids SSR mismatch).
+  useEffect(() => {
+    const saved = loadData<Record<string, number> | null>(PENT_GOAL_KEY, null)
+    if (saved && typeof saved === 'object') {
+      setValues((prev) => ({ ...prev, ...saved }))
+      setText(
+        Object.fromEntries(
+          EVENTS.map((e) => {
+            const v = saved[e.key] ?? e.current
+            return [e.key, e.key === '800' ? secToClock(v) : v.toFixed(2)]
+          })
+        )
+      )
+    }
+  }, [])
+
+  const persist = (vals: Record<string, number>) => saveData(PENT_GOAL_KEY, vals)
+
   const eventPoints = EVENTS.map((e) => ({
     ev: e,
     value: values[e.key],
@@ -139,7 +163,11 @@ export default function PentPage() {
 
   function setVal(ev: EventDef, v: number) {
     const clamped = Math.min(ev.max, Math.max(ev.min, v))
-    setValues((prev) => ({ ...prev, [ev.key]: clamped }))
+    setValues((prev) => {
+      const next = { ...prev, [ev.key]: clamped }
+      persist(next)
+      return next
+    })
   }
 
   function onSlider(ev: EventDef, v: number) {
@@ -154,8 +182,10 @@ export default function PentPage() {
   }
 
   function reset() {
-    setValues(Object.fromEntries(EVENTS.map((e) => [e.key, e.current])))
+    const base = Object.fromEntries(EVENTS.map((e) => [e.key, e.current]))
+    setValues(base)
     setText(Object.fromEntries(EVENTS.map((e) => [e.key, e.key === '800' ? secToClock(e.current) : e.current.toFixed(2)])))
+    persist(base)
   }
 
   return (
@@ -198,7 +228,7 @@ export default function PentPage() {
               )}
               {showCompare && totalDelta !== 0 && (
                 <span style={{ display: 'inline-block', borderRadius: '20px', padding: '4px 12px', fontFamily: "'Space Mono', monospace", fontWeight: 700, fontSize: '12px', background: totalDelta > 0 ? 'rgba(34,197,94,0.14)' : 'rgba(239,68,68,0.14)', color: totalDelta > 0 ? '#22c55e' : '#ef4444', border: `1px solid ${totalDelta > 0 ? 'rgba(34,197,94,0.4)' : 'rgba(239,68,68,0.4)'}` }}>
-                  {totalDelta > 0 ? '+' : ''}{totalDelta} vs current
+                  {totalDelta > 0 ? '+' : ''}{totalDelta} vs PB
                 </span>
               )}
             </div>
@@ -217,7 +247,7 @@ export default function PentPage() {
             )}
 
             <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginTop: 16 }}>
-              <button onClick={reset} style={{ background: 'var(--input-bg)', border: '1px solid var(--input-border)', color: 'var(--text-3)', borderRadius: 8, padding: '7px 14px', cursor: 'pointer', fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase' }}>Reset to current</button>
+              <button onClick={reset} style={{ background: 'var(--input-bg)', border: '1px solid var(--input-border)', color: 'var(--text-3)', borderRadius: 8, padding: '7px 14px', cursor: 'pointer', fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase' }}>Reset to PB</button>
               <button onClick={() => setShowCompare((s) => !s)} style={{ background: showCompare ? 'rgba(245,126,68,0.14)' : 'var(--input-bg)', border: `1px solid ${showCompare ? 'rgba(245,126,68,0.4)' : 'var(--input-border)'}`, color: showCompare ? '#f57e44' : 'var(--text-3)', borderRadius: 8, padding: '7px 14px', cursor: 'pointer', fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase' }}>Compare {showCompare ? 'on' : 'off'}</button>
             </div>
           </div>

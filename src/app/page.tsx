@@ -302,7 +302,7 @@ export default function HomePage() {
             { value: '3', unit: 'SPORTS' },
             { value: String(SPORTS_DATA.find(s => s.key === 'basketball')?.stats[0]?.value ?? '17.4'), unit: 'PPG' },
             { value: String(SPORTS_DATA.find(s => s.key === 'soccer')?.stats[0]?.value ?? '28'), unit: 'GOALS' },
-            { value: '3461', unit: 'PENT' },
+            { value: String(SPORTS_DATA.find(s => s.key === 'track')?.stats.find(t => t.label === 'Pent Pts')?.value ?? '2523'), unit: 'PENT' },
           ].map((s, i) => (
             <div key={i} style={{ flex: 1, padding: '12px 6px', textAlign: 'center', borderLeft: i > 0 ? '1px solid rgba(0,0,0,0.2)' : 'none' }}>
               <div style={{ fontFamily: "'Teko', sans-serif", fontWeight: 700, fontSize: 'clamp(26px, 4vw, 34px)', color: '#0a0706', lineHeight: 1 }}>{s.value}</div>

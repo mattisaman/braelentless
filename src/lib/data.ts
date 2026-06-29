@@ -79,21 +79,22 @@ export const SPORTS_DATA: SportData[] = [
     position: 'Pentathlon',
     bgImage: '/track-night.png',
     stats: [
-      { label: '100m H', value: '14.2', unit: 's' },
-      { label: 'High Jump', value: "5'4\"", unit: '' },
-      { label: 'Shot Put', value: "32'1\"", unit: '' },
-      { label: 'Long Jump', value: "15'9\"", unit: '' },
-      { label: '800m', value: '2:28', unit: '' },
-      { label: 'Pent Pts', value: 3461, unit: '' },
+      { label: '100m H', value: '20.0', unit: 's' },
+      { label: 'High Jump', value: "4'5\"", unit: '' },
+      { label: 'Shot Put', value: "31'6\"", unit: '' },
+      { label: 'Long Jump', value: "15'11\"", unit: '' },
+      { label: '800m', value: '2:26.6', unit: '' },
+      { label: 'Pent Pts', value: 2523, unit: '' },
     ],
     goals: [
-      { id: 'track-g1', label: 'Pentathlon Score', current: 3461, target: 3800, unit: 'pts' },
-      { id: 'track-g2', label: '100m Hurdles', current: 14.2, target: 13.8, unit: 's', lowerBetter: true },
-      { id: 'track-g3', label: 'Long Jump', current: 189, target: 200, unit: 'in' },
+      { id: 'track-g1', label: 'Pentathlon Score', current: 2523, target: 2800, unit: 'pts' },
+      { id: 'track-g2', label: '100m Hurdles', current: 20.0, target: 18.0, unit: 's', lowerBetter: true },
+      { id: 'track-g3', label: 'Long Jump', current: 191, target: 204, unit: 'in' },
     ],
     milestones: [
+      { label: 'Scored 5 Pentathlon Events (PBs set)', achieved: true },
+      { label: 'Reach D2/D3 Tier (2,800 pts)', achieved: false },
       { label: 'Section VI Champion', achieved: false },
-      { label: 'PR in All 5 Events', achieved: false },
     ],
     motto: 'Five events. One champion. No excuses.',
   },
@@ -352,10 +353,12 @@ export const DEFAULT_DREAMS: Dream[] = [
 ]
 
 export const DEFAULT_PRS: PersonalRecord[] = [
-  { id: 'pr-1', sport: 'track', event: '100m Hurdles', value: '14.2s', date: '2026-05-30', prev: '14.6s', note: 'Sectional qualifier' },
-  { id: 'pr-2', sport: 'track', event: 'High Jump', value: "5'4\"", date: '2026-05-16', prev: "5'2\"" },
+  { id: 'pr-1', sport: 'track', event: '100m Hurdles', value: '20.0s', date: '2026-05-30', note: 'First attempt' },
+  { id: 'pr-2', sport: 'track', event: 'High Jump', value: "4'5\"", date: '2026-05-16' },
   { id: 'pr-3', sport: 'basketball', event: 'Points (game)', value: '31', date: '2026-02-04', prev: '27', note: 'vs. Letchworth' },
-  { id: 'pr-4', sport: 'track', event: 'Long Jump', value: "15'9\"", date: '2026-05-09', prev: "15'3\"" },
+  { id: 'pr-4', sport: 'track', event: 'Long Jump', value: "15'11.5\"", date: '2026-05-09' },
+  { id: 'pr-6', sport: 'track', event: 'Shot Put', value: "31'6\"", date: '2026-05-23' },
+  { id: 'pr-7', sport: 'track', event: '800m', value: '2:26.6', date: '2026-05-30' },
   { id: 'pr-5', sport: 'soccer', event: 'Goals (game)', value: '3', date: '2025-10-11', prev: '2', note: 'Hat trick vs. Genesee Valley' },
 ]
 
