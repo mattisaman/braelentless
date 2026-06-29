@@ -46,9 +46,9 @@ export default function GoalCard({ goal, color = '#f57e44' }: GoalCardProps) {
             fontFamily: "'Barlow Condensed', sans-serif",
             fontWeight: 700,
             fontSize: '11px',
-            color: complete ? '#22c55e' : color,
-            background: complete ? 'rgba(34,197,94,0.12)' : `${color}1f`,
-            border: `1px solid ${complete ? 'rgba(34,197,94,0.35)' : `${color}44`}`,
+            color: complete ? '#f57e44' : color,
+            background: complete ? 'rgba(245,126,68,0.14)' : `${color}1f`,
+            border: `1px solid ${complete ? 'rgba(245,126,68,0.4)' : `${color}44`}`,
             borderRadius: 999,
             padding: '2px 10px',
             flexShrink: 0,
@@ -68,7 +68,7 @@ export default function GoalCard({ goal, color = '#f57e44' }: GoalCardProps) {
         </span>
       </div>
 
-      <ProgressBar pct={displayPct} height={6} color={complete ? '#22c55e' : color} />
+      <ProgressBar pct={displayPct} height={6} color={complete ? '#f57e44' : color} />
     </div>
   )
 }

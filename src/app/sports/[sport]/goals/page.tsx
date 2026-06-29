@@ -8,9 +8,9 @@ import ProgressBar from '@/components/ProgressBar'
 import type { Goal } from '@/lib/types'
 
 const SPORT_COLORS: Record<string, string> = {
-  soccer: '#22c55e',
+  soccer: '#a8b0ba',
   basketball: '#f57e44',
-  track: '#60a5fa',
+  track: '#a8b0ba',
 }
 
 const SUB_TABS = ['Overview', 'Stats', 'Schedule', 'Goals'] as const
@@ -199,8 +199,8 @@ export default function GoalsPage({
                   </div>
                 )}
 
-                <ProgressBar pct={pct} height={6} color={complete ? '#22c55e' : color} />
-                <div style={{ textAlign: 'right', marginTop: 5, fontFamily: "'Space Mono', monospace", fontSize: 10, color: complete ? '#22c55e' : 'var(--text-4)' }}>
+                <ProgressBar pct={pct} height={6} color={complete ? '#f57e44' : color} />
+                <div style={{ textAlign: 'right', marginTop: 5, fontFamily: "'Space Mono', monospace", fontSize: 10, color: complete ? '#f57e44' : 'var(--text-4)' }}>
                   {Math.round(pct)}%
                 </div>
               </div>

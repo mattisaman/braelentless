@@ -8,9 +8,9 @@ import ScheduleCard from '@/components/ScheduleCard'
 import type { ScheduleEvent, SportKey } from '@/lib/types'
 
 const SPORT_COLORS: Record<string, string> = {
-  soccer: '#22c55e',
+  soccer: '#a8b0ba',
   basketball: '#f57e44',
-  track: '#60a5fa',
+  track: '#a8b0ba',
 }
 
 const SUB_TABS = ['Overview', 'Stats', 'Schedule', 'Goals'] as const

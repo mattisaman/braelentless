@@ -46,9 +46,9 @@ const INPUT_STYLE: React.CSSProperties = {
 }
 
 const SPORT_COLORS: Record<string, string> = {
-  soccer: '#22c55e',
+  soccer: '#a8b0ba',
   basketball: '#f57e44',
-  track: '#60a5fa',
+  track: '#a8b0ba',
   life: '#f57e44',
 }
 
@@ -219,9 +219,9 @@ export default function HomePage() {
                   {profile.school}
                 </div>
                 {profile.commit && (
-                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', marginTop: '8px', background: 'rgba(34,197,94,0.14)', border: '1px solid rgba(34,197,94,0.35)', borderRadius: '6px', padding: '3px 10px' }}>
-                    <span style={{ fontSize: '9px', color: '#22c55e' }}>✓</span>
-                    <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '11px', color: '#22c55e', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{profile.commit}</span>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', marginTop: '8px', background: 'rgba(245,126,68,0.14)', border: '1px solid rgba(245,126,68,0.35)', borderRadius: '6px', padding: '3px 10px' }}>
+                    <span style={{ fontSize: '9px', color: '#f57e44' }}>✓</span>
+                    <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '11px', color: '#f57e44', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{profile.commit}</span>
                   </div>
                 )}
               </div>

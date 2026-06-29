@@ -5,9 +5,9 @@ import Link from 'next/link'
 import { SPORTS_DATA } from '@/lib/data'
 
 const SPORT_COLORS: Record<string, string> = {
-  soccer: '#22c55e',
+  soccer: '#a8b0ba',
   basketball: '#f57e44',
-  track: '#60a5fa',
+  track: '#a8b0ba',
 }
 
 export default function SportsPage() {

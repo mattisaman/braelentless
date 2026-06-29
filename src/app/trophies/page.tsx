@@ -4,8 +4,8 @@ import AddAchievementButton from '@/components/AddAchievementButton'
 
 const SPORT_COLORS: Record<string, string> = {
   basketball: '#f57e44',
-  soccer: '#22c55e',
-  track: '#60a5fa',
+  soccer: '#a8b0ba',
+  track: '#a8b0ba',
 }
 
 const GOLD = '#f59e0b'

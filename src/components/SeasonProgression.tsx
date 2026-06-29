@@ -116,8 +116,8 @@ export default function SeasonProgression({ sport, color }: { sport: SportData; 
   return (
     <div style={{ marginTop: 28 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '4px 0 14px' }}>
-        <div style={{ width: 4, height: 18, background: color, borderRadius: 2, boxShadow: `0 0 12px ${color}80` }} />
-        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 12, color, textTransform: 'uppercase', letterSpacing: '0.16em' }}>Career Progression</div>
+        <div style={{ width: 4, height: 18, background: '#f57e44', borderRadius: 2, boxShadow: '0 0 12px rgba(245,126,68,0.5)' }} />
+        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 12, color: '#f57e44', textTransform: 'uppercase', letterSpacing: '0.16em' }}>Career Progression</div>
       </div>
 
       {/* marquee chart card */}

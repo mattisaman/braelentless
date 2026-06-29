@@ -8,9 +8,9 @@ import GoalCard from '@/components/GoalCard'
 import SeasonProgression from '@/components/SeasonProgression'
 
 const SPORT_COLORS: Record<string, string> = {
-  soccer: '#22c55e',
+  soccer: '#a8b0ba',
   basketball: '#f57e44',
-  track: '#60a5fa',
+  track: '#a8b0ba',
 }
 
 const SUB_TABS = ['Overview', 'Stats', 'Schedule', 'Goals'] as const
@@ -50,7 +50,7 @@ function ratingColor(r: number): string {
   if (r >= 90) return '#f59e0b'
   if (r >= 80) return '#f57e44'
   if (r >= 70) return '#fb923c'
-  if (r >= 60) return '#60a5fa'
+  if (r >= 60) return '#a8b0ba'
   return '#94a3b8'
 }
 
@@ -237,7 +237,7 @@ export default async function SportDetailPage({
         )}
 
         {/* Season stats */}
-        <SectionHeader text="Season Stats" sub={`${sport.name} · 2025–26`} color={color} />
+        <SectionHeader text="Season Stats" sub={`${sport.name} · 2025–26`} />
         <StatGrid stats={sport.stats} color={color} />
 
         {/* Season-by-season progression + charts */}
@@ -247,7 +247,7 @@ export default async function SportDetailPage({
         {/* Goals + side rail (next event + milestones) */}
         <div className="overview-row">
           <div>
-            <SectionHeader text="Season Goals" sub="Chase the number" color={color} />
+            <SectionHeader text="Season Goals" sub="Chase the number" />
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 12 }}>
               {sport.goals.map((goal) => (
                 <GoalCard key={goal.id} goal={goal} color={color} />
@@ -256,7 +256,7 @@ export default async function SportDetailPage({
           </div>
 
           <div>
-            <SectionHeader text="On Deck" color={color} />
+            <SectionHeader text="On Deck" />
             {/* Next event */}
             {nextEvent ? (
               <Link href={`/sports/${sport.key}/schedule`} className="tile-card" style={{ display: 'block', textDecoration: 'none', padding: '16px 18px', marginBottom: 12 }}>
@@ -316,7 +316,7 @@ export default async function SportDetailPage({
         {/* Recent form / PRs */}
         {prs.length > 0 && (
           <>
-            <SectionHeader text="Recent Form" sub="New territory" color={color} />
+            <SectionHeader text="Recent Form" sub="New territory" />
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 12 }}>
               {prs.map((pr) => {
                 const d = new Date(pr.date + 'T12:00:00')
@@ -340,7 +340,7 @@ export default async function SportDetailPage({
         )}
 
         {/* Quick actions */}
-        <SectionHeader text="Quick Actions" color={color} />
+        <SectionHeader text="Quick Actions" />
         <div className="overview-actions">
           <Link href={`/sports/${sport.key}/schedule`} className="ov-action ov-action-primary">Schedule</Link>
           <Link href={`/sports/${sport.key}/stats`} className="ov-action">Edit Stats</Link>
@@ -387,7 +387,7 @@ export default async function SportDetailPage({
         .ov-action:hover { border-color: ${color}66; transform: translateY(-2px); }
         .ov-action-primary {
           color: #0a0706;
-          background: linear-gradient(135deg, ${color}, ${color}cc);
+          background: linear-gradient(135deg, #f57e44, #e35d2a);
           border: none;
         }
       `}</style>
