@@ -44,6 +44,12 @@ export const SPORTS_DATA: SportData[] = [
       { label: 'Career Goals Record (96)', achieved: false },
     ],
     motto: 'Be relentless. Be precise. Be feared.',
+    seasons: [
+      { season: '8th', year: "'22", metrics: { goals: 13, assists: 6 } },
+      { season: '9th', year: "'23", metrics: { goals: 26, assists: 12 } },
+      { season: '10th', year: "'24", metrics: { goals: 17, assists: 19 } },
+      { season: '11th', year: "'25", metrics: { goals: 28, assists: 20 } },
+    ],
   },
   {
     key: 'basketball',
@@ -71,6 +77,12 @@ export const SPORTS_DATA: SportData[] = [
       { label: 'Broke Single-Season Scoring Record (436 pts)', achieved: true },
     ],
     motto: 'Every shot is earned. Every rep compounds.',
+    seasons: [
+      { season: '8th', year: "'22–23", metrics: { pts: 252, ppg: 10.1, rpg: 4.9, apg: 2.6, spg: 3.1, bpg: 0.4 } },
+      { season: '9th', year: "'23–24", metrics: { pts: 244, ppg: 10.2, rpg: 6.9, apg: 4.4, spg: 3.8, bpg: 0.4, fg: 43.4, ft: 53.8 } },
+      { season: '10th', year: "'24–25", metrics: { pts: 348, ppg: 14.5, rpg: 9.4, apg: 6.1, spg: 4.3, bpg: 0.6, fg: 45.2, ft: 58.7 } },
+      { season: '11th', year: "'25–26", metrics: { pts: 436, ppg: 17.4, rpg: 9.7, apg: 6.8, spg: 5.2, bpg: 0.9, fg: 50.0, ft: 60.6 } },
+    ],
   },
   {
     key: 'track',

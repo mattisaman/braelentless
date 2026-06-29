@@ -5,6 +5,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import {
   OrbitControls,
   Environment,
+  Lightformer,
   ContactShadows,
   MeshReflectorMaterial,
   Sparkles,
@@ -756,7 +757,15 @@ function Scene({
       <color attach="background" args={['#080503']} />
 
       <ambientLight intensity={0.26} color="#ffb877" />
-      <Environment preset="apartment" environmentIntensity={0.85} />
+      {/* Custom studio environment: bright soft sources that streak across the
+          gold/glass as real reflections (the fix for "plastic" looking metal). */}
+      <Environment resolution={256} environmentIntensity={0.9}>
+        <Lightformer intensity={2.2} color="#fff2dd" form="rect" position={[0, 6, 1]} scale={[12, 8, 1]} rotation={[Math.PI / 2, 0, 0]} />
+        <Lightformer intensity={3} color="#ffe0ad" form="rect" position={[-7, 3.5, 3]} scale={[1.5, 7, 1]} rotation={[0, Math.PI / 2, 0]} />
+        <Lightformer intensity={3} color="#ffe0ad" form="rect" position={[7, 3.5, 3]} scale={[1.5, 7, 1]} rotation={[0, -Math.PI / 2, 0]} />
+        <Lightformer intensity={1.6} color="#ffd9a0" form="rect" position={[0, 3.5, -8]} scale={[10, 5, 1]} />
+        <Lightformer intensity={1.2} color="#9bb8ff" form="circle" position={[0, 5, 8]} scale={[4, 4, 1]} rotation={[-Math.PI / 2, 0, 0]} />
+      </Environment>
 
       {/* key spot from ceiling, the only shadow caster */}
       <spotLight position={[0, ROOM_H - 0.3, 2.5]} angle={0.72} penumbra={0.85} intensity={42} distance={18} decay={2} color="#fff0d6" castShadow shadow-mapSize={[2048, 2048]} shadow-bias={-0.0004} />

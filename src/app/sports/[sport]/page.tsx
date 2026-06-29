@@ -5,6 +5,7 @@ import type { SportData } from '@/lib/types'
 import SportHero from '@/components/SportHero'
 import StatGrid from '@/components/StatGrid'
 import GoalCard from '@/components/GoalCard'
+import SeasonProgression from '@/components/SeasonProgression'
 
 const SPORT_COLORS: Record<string, string> = {
   soccer: '#22c55e',
@@ -238,6 +239,10 @@ export default async function SportDetailPage({
         {/* Season stats */}
         <SectionHeader text="Season Stats" sub={`${sport.name} · 2025–26`} />
         <StatGrid stats={sport.stats} color={color} />
+
+        {/* Season-by-season progression + charts */}
+        <SeasonProgression sport={sport} color={color} />
+
 
         {/* Goals + side rail (next event + milestones) */}
         <div className="overview-row">

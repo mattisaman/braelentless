@@ -31,6 +31,13 @@ export interface ScheduleEvent {
   result?: string
 }
 
+// One row of season-by-season history for progression charts.
+export interface SeasonStat {
+  season: string                 // short label, e.g. '8th'
+  year: string                   // e.g. "'22–23"
+  metrics: Record<string, number> // keyed by metric, e.g. { ppg: 10.1, pts: 252 }
+}
+
 export interface SportData {
   key: SportKey
   name: string
@@ -41,6 +48,7 @@ export interface SportData {
   goals: Goal[]
   milestones: Milestone[]
   motto: string
+  seasons?: SeasonStat[]         // oldest → newest; powers career progression
 }
 
 export interface JournalEntry {

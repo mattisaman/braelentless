@@ -43,6 +43,13 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   const [email, setEmail] = useState<string | null>(null)
 
   useEffect(() => {
+    // Local-only dev bypass (never set in production). Lets the app load
+    // without Google sign-in for local inspection.
+    if (process.env.NEXT_PUBLIC_DISABLE_AUTH === '1') {
+      setEmail('dev@local')
+      setStatus('authorized')
+      return
+    }
     if (!supabase) {
       setStatus('unconfigured')
       return
