@@ -244,10 +244,13 @@ export default async function SportDetailPage({
         {/* Season-by-season progression + charts */}
         <SeasonProgression sport={sport} color={color} />
 
-        {/* Jersey */}
+        {/* Jersey(s) — hang in the Trophy Hall too */}
         <SectionHeader text="The Jersey" sub="Hangs in the Trophy Hall" />
-        <div style={{ maxWidth: 420 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isBasketball ? 'repeat(auto-fit, minmax(300px, 1fr))' : '1fr', gap: 12, maxWidth: isBasketball ? 720 : 420 }}>
           <JerseyUpload storageKey={`braelentless_jersey_${sport.key}`} caption={`${sport.name} Jersey`} color={color} />
+          {isBasketball && (
+            <JerseyUpload storageKey="braelentless_jersey_seu" caption="SEU · Fire (Committed)" color="#f57e44" />
+          )}
         </div>
 
 
