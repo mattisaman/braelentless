@@ -58,8 +58,8 @@ export default function FuelPage() {
 
   const RINGS = [
     { label: 'Calories', value: meal.calories, target: TARGETS.calories, unit: 'kcal', color: '#f57e44' },
-    { label: 'Protein', value: meal.protein, target: TARGETS.protein, unit: 'g', color: '#22c55e' },
-    { label: 'Carbs', value: meal.carbs, target: TARGETS.carbs, unit: 'g', color: '#60a5fa' },
+    { label: 'Protein', value: meal.protein, target: TARGETS.protein, unit: 'g', color: '#cbb89a' },
+    { label: 'Carbs', value: meal.carbs, target: TARGETS.carbs, unit: 'g', color: '#8aa0b5' },
     { label: 'Fat', value: meal.fat, target: TARGETS.fat, unit: 'g', color: '#fbbf24' },
   ]
 
@@ -73,8 +73,8 @@ export default function FuelPage() {
 
   const macroCalBase = meal.carbs * 4 + meal.protein * 4 + meal.fat * 9 || 1
   const MACRO_SPLIT = [
-    { label: 'Carbs', color: '#60a5fa', cals: meal.carbs * 4 },
-    { label: 'Protein', color: '#22c55e', cals: meal.protein * 4 },
+    { label: 'Carbs', color: '#8aa0b5', cals: meal.carbs * 4 },
+    { label: 'Protein', color: '#cbb89a', cals: meal.protein * 4 },
     { label: 'Fat', color: '#fbbf24', cals: meal.fat * 9 },
   ]
 
@@ -313,13 +313,13 @@ export default function FuelPage() {
             <div className="tile-card" style={{ padding: '18px 20px' }}>
               <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 14 }}>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
-                  <span style={{ fontFamily: "'Teko', sans-serif", fontWeight: 700, fontSize: 46, color: '#60a5fa', lineHeight: 0.9 }}>{water}</span>
+                  <span style={{ fontFamily: "'Teko', sans-serif", fontWeight: 700, fontSize: 46, color: '#8aa0b5', lineHeight: 0.9 }}>{water}</span>
                   <span style={{ fontFamily: "'Teko', sans-serif", fontWeight: 500, fontSize: 22, color: 'var(--text-4)' }}>/ {meal.water} oz</span>
                 </div>
-                <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 12, color: '#60a5fa' }}>{Math.round(waterPct)}%</span>
+                <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 12, color: '#8aa0b5' }}>{Math.round(waterPct)}%</span>
               </div>
               <div className="prog-track" style={{ height: 8, marginBottom: 16 }}>
-                <div className="prog-fill" style={{ width: `${waterPct}%`, background: 'linear-gradient(90deg, #3b82f6, #60a5fa)' }} />
+                <div className="prog-fill" style={{ width: `${waterPct}%`, background: 'linear-gradient(90deg, #6f889e, #8aa0b5)' }} />
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>
                 {Array.from({ length: glassesTarget }).map((_, i) => {
@@ -333,9 +333,9 @@ export default function FuelPage() {
                         width: 30,
                         height: 38,
                         borderRadius: '5px 5px 8px 8px',
-                        border: `1px solid ${filled ? '#60a5fa' : 'var(--border-2)'}`,
-                        background: filled ? 'rgba(96,165,250,0.25)' : 'var(--bg-3)',
-                        boxShadow: filled ? '0 0 10px rgba(96,165,250,0.4)' : 'none',
+                        border: `1px solid ${filled ? '#8aa0b5' : 'var(--border-2)'}`,
+                        background: filled ? 'rgba(138,160,181,0.25)' : 'var(--bg-3)',
+                        boxShadow: filled ? '0 0 10px rgba(138,160,181,0.4)' : 'none',
                         cursor: 'pointer',
                         fontSize: 14,
                         display: 'flex',
@@ -352,7 +352,7 @@ export default function FuelPage() {
               <div style={{ display: 'flex', gap: 8 }}>
                 <button
                   onClick={() => setWaterOz(water + 8)}
-                  style={{ flex: 1, padding: '9px', borderRadius: 8, border: '1px solid rgba(96,165,250,0.4)', background: 'rgba(96,165,250,0.12)', color: '#60a5fa', fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.1em', cursor: 'pointer' }}
+                  style={{ flex: 1, padding: '9px', borderRadius: 8, border: '1px solid rgba(138,160,181,0.4)', background: 'rgba(138,160,181,0.12)', color: '#8aa0b5', fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.1em', cursor: 'pointer' }}
                 >
                   + Glass (8oz)
                 </button>
@@ -376,7 +376,7 @@ export default function FuelPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginBottom: 20 }}>
             {[
               { label: 'Average', value: avgSleep.toFixed(1), color: '#f57e44' },
-              { label: 'Best', value: maxSleep.toFixed(1), color: '#22c55e' },
+              { label: 'Best', value: maxSleep.toFixed(1), color: '#f57e44' },
               { label: 'Worst', value: minSleep.toFixed(1), color: 'var(--text-3)' },
             ].map((s) => (
               <div key={s.label} style={{ textAlign: 'center' }}>

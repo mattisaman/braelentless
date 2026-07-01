@@ -13,7 +13,26 @@ import {
 import { EffectComposer, Bloom, Vignette, N8AO } from '@react-three/postprocessing'
 import * as THREE from 'three'
 import { supabase } from '@/lib/supabase'
+import { loadData } from '@/lib/storage'
 import Link from 'next/link'
+
+// Load a data-URL image into a THREE texture (CORS-free); null until present.
+function useDataUrlTexture(url: string | null) {
+  return useMemo(() => {
+    if (!url || typeof document === 'undefined') return null
+    const tex = new THREE.TextureLoader().load(url)
+    tex.colorSpace = THREE.SRGBColorSpace
+    tex.anisotropy = 8
+    return tex
+  }, [url])
+}
+
+// Read an uploaded image (data URL) from storage by key → THREE texture.
+function useStoredTexture(key: string) {
+  const [url, setUrl] = useState<string>('')
+  useEffect(() => { setUrl(loadData<string>(key, '')) }, [key])
+  return useDataUrlTexture(url || null)
+}
 
 type Achievement = {
   id: string
@@ -511,11 +530,32 @@ function Plaque({ color, label }: { color: string; label: string }) {
   )
 }
 
+// Framed jersey used for the 'commitment' achievement (replaces the old cup).
+// Shows the uploaded SEU/Fire jersey photo if present, else a stylized default.
+function JerseyObject() {
+  const photo = useStoredTexture('braelentless_jersey_seu')
+  const fallback = useMemo(() => makeJerseyTex('FIRE', '2', '#c8102e'), [])
+  const tex = photo ?? fallback
+  return (
+    <group>
+      <mesh position={[0, 0.55, -0.02]} castShadow>
+        <boxGeometry args={[0.64, 0.86, 0.05]} />
+        <meshStandardMaterial color="#241a0e" roughness={0.42} metalness={0.55} />
+      </mesh>
+      <mesh position={[0, 0.55, 0.03]}>
+        <planeGeometry args={[0.52, 0.72]} />
+        <meshStandardMaterial map={tex ?? undefined} color={tex ? '#ffffff' : '#13203f'} roughness={0.7} metalness={0.05} />
+      </mesh>
+    </group>
+  )
+}
+
 function ObjectForAchievement({ a, tex }: { a: Achievement; tex: RoomTex }) {
   const color = CAT_COLOR[a.category] ?? '#f5b942'
   switch (a.category) {
     case 'championship': return <CupTrophy color={color} />
-    case 'commitment': return <CupTrophy color="#22c55e" />
+    case 'commitment': return <JerseyObject />
+
     case 'milestone': return <StarTrophy color={color} />
     case 'record':
       return a.sport === 'basketball'
@@ -687,19 +727,37 @@ function makeDreamTex(label: string, title: string, sub: string, accent: string)
 }
 
 const JERSEYS = [
-  { name: 'BASKETBALL', num: '10', accent: '#f57e44', x: -3.15 },
-  { name: 'SOCCER', num: '7', accent: '#22c55e', x: 3.15 },
+  { name: 'BASKETBALL', num: '10', accent: '#f57e44', x: -3.15, key: 'braelentless_jersey_basketball' },
+  { name: 'SOCCER', num: '7', accent: '#a8b0ba', x: 3.15, key: 'braelentless_jersey_soccer' },
 ]
 
 const DREAM_WALL = [
-  { label: 'Achieved', title: '1,000 Career Points', sub: 'Joined the 1K club', accent: '#22c55e' },
-  { label: 'Achieved', title: 'Single-Season Record', sub: '436 points · 2025–26', accent: '#22c55e' },
+  { label: 'Achieved', title: '1,000 Career Points', sub: 'Joined the 1K club', accent: '#f57e44' },
+  { label: 'Achieved', title: 'Single-Season Record', sub: '436 points · 2025–26', accent: '#f57e44' },
   { label: 'The Climb', title: 'Section VI Champion', sub: 'This season', accent: '#f5b942' },
   { label: 'The Climb', title: 'Score in College', sub: 'Southeastern · committed', accent: '#f5b942' },
 ]
 
+// A framed jersey on the back wall — uploaded photo if present, else stylized.
+function WallJersey({ j }: { j: typeof JERSEYS[number] }) {
+  const photo = useStoredTexture(j.key)
+  const fallback = useMemo(() => makeJerseyTex(j.name, j.num, j.accent), [j])
+  const tex = photo ?? fallback
+  return (
+    <group position={[j.x, 2.2, 0]}>
+      <mesh position={[0, 0, -0.02]} castShadow>
+        <boxGeometry args={[1.52, 1.96, 0.07]} />
+        <meshStandardMaterial color="#241a0e" roughness={0.42} metalness={0.55} />
+      </mesh>
+      <mesh position={[0, 0, 0.03]}>
+        <planeGeometry args={[1.36, 1.8]} />
+        <meshStandardMaterial map={tex ?? undefined} color={tex ? '#ffffff' : '#13203f'} roughness={0.7} metalness={0.05} />
+      </mesh>
+    </group>
+  )
+}
+
 function FeatureWall() {
-  const jerseyTex = useMemo(() => JERSEYS.map((j) => makeJerseyTex(j.name, j.num, j.accent)), [])
   const dreamTex = useMemo(() => DREAM_WALL.map((d) => makeDreamTex(d.label, d.title, d.sub, d.accent)), [])
 
   return (
@@ -720,19 +778,8 @@ function FeatureWall() {
         </div>
       </Html>
 
-      {/* framed jerseys flanking the monogram */}
-      {JERSEYS.map((j, i) => (
-        <group key={j.num} position={[j.x, 2.2, 0]}>
-          <mesh position={[0, 0, -0.02]} castShadow>
-            <boxGeometry args={[1.52, 1.96, 0.07]} />
-            <meshStandardMaterial color="#241a0e" roughness={0.42} metalness={0.55} />
-          </mesh>
-          <mesh position={[0, 0, 0.03]}>
-            <planeGeometry args={[1.36, 1.8]} />
-            <meshStandardMaterial map={jerseyTex[i] ?? undefined} color={jerseyTex[i] ? '#ffffff' : '#13203f'} roughness={0.7} metalness={0.05} />
-          </mesh>
-        </group>
-      ))}
+      {/* framed jerseys flanking the monogram (uploaded photos if present) */}
+      {JERSEYS.map((j) => <WallJersey key={j.num} j={j} />)}
 
       {/* dream wall */}
       <Html position={[0, 1.3, 0.04]} center transform distanceFactor={8} occlude pointerEvents="none">

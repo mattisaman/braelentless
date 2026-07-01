@@ -6,6 +6,7 @@ import SportHero from '@/components/SportHero'
 import StatGrid from '@/components/StatGrid'
 import GoalCard from '@/components/GoalCard'
 import SeasonProgression from '@/components/SeasonProgression'
+import JerseyUpload from '@/components/JerseyUpload'
 
 const SPORT_COLORS: Record<string, string> = {
   soccer: '#a8b0ba',
@@ -242,6 +243,12 @@ export default async function SportDetailPage({
 
         {/* Season-by-season progression + charts */}
         <SeasonProgression sport={sport} color={color} />
+
+        {/* Jersey */}
+        <SectionHeader text="The Jersey" sub="Hangs in the Trophy Hall" />
+        <div style={{ maxWidth: 420 }}>
+          <JerseyUpload storageKey={`braelentless_jersey_${sport.key}`} caption={`${sport.name} Jersey`} color={color} />
+        </div>
 
 
         {/* Goals + side rail (next event + milestones) */}
