@@ -17,6 +17,7 @@ import { loadData, saveData } from '@/lib/storage'
 import DailyWorkoutTile from '@/components/DailyWorkoutTile'
 import DailyMealTile from '@/components/DailyMealTile'
 import DailyHabitList from '@/components/DailyHabitList'
+import DreamCard from '@/components/DreamCard'
 
 interface HeroProfile {
   name: string
@@ -377,19 +378,7 @@ export default function HomePage() {
         <div className="dream-grid">
           {DEFAULT_DREAMS.map((dream) => {
             const color = SPORT_COLORS[dream.sport ?? 'life'] ?? '#f57e44'
-            return (
-              <div key={dream.id} className="dream-card">
-                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: `linear-gradient(90deg, ${color}, transparent)` }} />
-                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', color }}>{dream.horizon}</div>
-                <div style={{ fontFamily: "'Saira Condensed', sans-serif", fontWeight: 800, fontSize: 19, color: 'var(--text)', textTransform: 'uppercase', lineHeight: 1.05, margin: '8px 0 6px' }}>{dream.title}</div>
-                <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: 13, color: 'var(--text-3)', lineHeight: 1.5, minHeight: 56 }}>{dream.detail}</div>
-                {typeof dream.progress === 'number' && (
-                  <div style={{ marginTop: 14 }}>
-                    <div className="prog-track"><div className="prog-fill" style={{ width: `${dream.progress}%`, background: `linear-gradient(90deg, ${color}aa, ${color})` }} /></div>
-                  </div>
-                )}
-              </div>
-            )
+            return <DreamCard key={dream.id} dream={dream} color={color} />
           })}
         </div>
 
